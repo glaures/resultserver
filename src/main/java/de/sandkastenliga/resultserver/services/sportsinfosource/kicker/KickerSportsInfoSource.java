@@ -11,7 +11,6 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.text.DateFormat;
@@ -29,7 +28,7 @@ public class KickerSportsInfoSource implements SportsInfoSource {
     private FifaRankingService fifaRankingService;
 
     @Autowired
-    public KickerSportsInfoSource(FifaRankingService fifaRankingService){
+    public KickerSportsInfoSource(FifaRankingService fifaRankingService) {
         this.fifaRankingService = fifaRankingService;
     }
 
@@ -81,7 +80,9 @@ public class KickerSportsInfoSource implements SportsInfoSource {
                 StringTokenizer tok = new StringTokenizer(challengeString.trim(), "(,)", false);
                 String region = tok.nextToken().trim();
                 String challenge = tok.nextToken().trim();
-                String round = tok.nextToken().trim();
+                String round = "0";
+                if (tok.hasMoreTokens())
+                    round = tok.nextToken().trim();
                 String challengeRankingUrl = getChallengeRankingUrl(h3);
                 boolean koMode = false;
                 Element sib = h3.nextElementSibling();
