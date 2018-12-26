@@ -135,7 +135,7 @@ public class MatchService extends AbstractJpaDependentService {
         Date minStart = cal.getTime();
         cal.add(Calendar.MONTH, 4);
         Date maxStart = cal.getTime();
-        List<Match> matches = matchRepository.findMatchByChallengeAndTeamsAndTimeframe(c, t1, t2, round, maxStart, maxStart);
+        List<Match> matches = matchRepository.findMatchByChallengeAndTeamsAndTimeframe(c, t1, t2, round, minStart, maxStart);
         if (matches.size() > 0)
             return matches.get(0);
         return null;
