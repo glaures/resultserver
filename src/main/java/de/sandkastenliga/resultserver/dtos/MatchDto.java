@@ -1,5 +1,6 @@
 package de.sandkastenliga.resultserver.dtos;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import de.sandkastenliga.resultserver.model.ChallengeMode;
 import de.sandkastenliga.resultserver.model.MatchState;
 import de.sandkastenliga.tools.projector.core.Projection;
@@ -94,6 +95,7 @@ public class MatchDto {
 		this.goalsTeam2 = goalsTeam2;
 	}
 
+	@JsonIgnore
 	public int getMatchState() {
 		return matchStateEnum.getIntValue();
 	}
