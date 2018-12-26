@@ -95,7 +95,6 @@ public class MatchDto {
 		this.goalsTeam2 = goalsTeam2;
 	}
 
-	@JsonIgnore
 	public int getMatchState() {
 		return matchStateEnum.getIntValue();
 	}
@@ -140,6 +139,7 @@ public class MatchDto {
 		this.featured = featured;
 	}
 
+	@JsonIgnore
 	public ChallengeMode getChallengeMode() {
 		return challengeMode;
 	}
