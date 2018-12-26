@@ -15,7 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.util.Calendar;
 import java.util.Date;
@@ -39,53 +38,61 @@ public class RetrievalJob {
     private TeamService teamService;
 
     private Date turboStop = new Date();
+    private Boolean running = false;
 
     // @PostConstruct
     public void initIfEmptyDB() throws ServiceException {
-        if(challengeService.getAllChallenges().size() == 0)
+        if (challengeService.getAllChallenges().size() == 0)
             updateSchedule();
     }
 
     @Scheduled(fixedDelay = 1000 * 60 * 5)
+    public void updateUnfinishedMatchedInTurboMode() throws ServiceException {
+        if (isInTurbo())
+            updateUnfinishedMatches();
+    }
+
+    @Scheduled(fixedDelay = 1000 * 60 * 60)
     public void updateUnfinishedMatches() throws ServiceException {
-        // update every 5 minute only in turbo mode
-        // else every hour
-        if (!isInTurbo()) {
-            int minute = Calendar.getInstance().get(Calendar.MINUTE);
-            if (!(minute % (int) (Math.random() * 60) == 0)) {
-                return;
-            }
-        }
-        Calendar lastParsed = Calendar.getInstance();
-        lastParsed.add(Calendar.DATE, 1);
-        resestToStartOfDay(lastParsed);
-        Calendar yesterday = Calendar.getInstance();
-        yesterday.add(Calendar.DATE, -1);
-        resestToStartOfDay(yesterday);
-        List<MatchDto> unfinishedPastMatches = matchService.getUnfinishedMatchesBefore(lastParsed.getTime());
-        for (MatchDto m : unfinishedPastMatches) {
-            try {
-                if (m.getStart().before(lastParsed.getTime())) {
-                    List<MatchInfo> mis = infoSource.getMatchInfoForDay(m.getStart());
-                    for (MatchInfo mi : mis) {
-                        if (mi.getStart().before(yesterday.getTime()) && mi.getGoalsTeam1() < 0) {
-                            mi.setState(MatchState.postponed);
+        synchronized (running) {
+            if (!running) {
+                running = true;
+                try {
+                    Calendar lastParsed = Calendar.getInstance();
+                    lastParsed.add(Calendar.DATE, 1);
+                    resestToStartOfDay(lastParsed);
+                    Calendar yesterday = Calendar.getInstance();
+                    yesterday.add(Calendar.DATE, -1);
+                    resestToStartOfDay(yesterday);
+                    List<MatchDto> unfinishedPastMatches = matchService.getUnfinishedMatchesBefore(lastParsed.getTime());
+                    for (MatchDto m : unfinishedPastMatches) {
+                        try {
+                            if (m.getStart().before(lastParsed.getTime())) {
+                                List<MatchInfo> mis = infoSource.getMatchInfoForDay(m.getStart());
+                                for (MatchInfo mi : mis) {
+                                    if (mi.getStart().before(yesterday.getTime()) && mi.getGoalsTeam1() < 0) {
+                                        mi.setState(MatchState.postponed);
+                                    }
+                                    matchService.handleMatchUpdate(mi.getRegion(), mi.getChallenge(), mi.getChallengeRankingUrl(),
+                                            mi.getRound(), mi.getTeam1(), mi.getTeam2(), mi.getStart(), mi.getGoalsTeam1(),
+                                            mi.getGoalsTeam2(), mi.getState(), mi.getStart());
+                                }
+                            }
+                            MatchDto mDto = matchService.getMatch(m.getId());
+                            if (mDto.getStart().before(yesterday.getTime())
+                                    && !(MatchState.isFinishedState(MatchState.values()[mDto.getMatchState()]))) {
+                                matchService.markMatchAsCanceled(m.getId());
+                            }
+                        } catch (Throwable t) {
+                            throw new ServiceException("error.retrieval", t);
+                        } finally {
+                            lastParsed.setTime(m.getStart());
+                            resestToStartOfDay(lastParsed);
                         }
-                        matchService.handleMatchUpdate(mi.getRegion(), mi.getChallenge(), mi.getChallengeRankingUrl(),
-                                mi.getRound(), mi.getTeam1(), mi.getTeam2(), mi.getStart(), mi.getGoalsTeam1(),
-                                mi.getGoalsTeam2(), mi.getState(), mi.getStart());
                     }
+                } finally {
+                    running = false;
                 }
-                MatchDto mDto = matchService.getMatch(m.getId());
-                if (mDto.getStart().before(yesterday.getTime())
-                        && !(MatchState.isFinishedState(MatchState.values()[mDto.getMatchState()]))) {
-                    matchService.markMatchAsCanceled(m.getId());
-                }
-            } catch (Throwable t) {
-                throw new ServiceException("error.retrieval", t);
-            } finally {
-                lastParsed.setTime(m.getStart());
-                resestToStartOfDay(lastParsed);
             }
         }
     }
