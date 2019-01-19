@@ -8,7 +8,9 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.task.SimpleAsyncTaskExecutor;
 import org.springframework.scheduling.TaskScheduler;
+import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.concurrent.ConcurrentTaskScheduler;
 
 import javax.annotation.PostConstruct;
@@ -17,9 +19,11 @@ import java.sql.Time;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.TimeZone;
+import java.util.concurrent.Executor;
 import java.util.logging.Logger;
 
 @Configuration
+@EnableScheduling
 public class ResultServerConfiguration {
 
     private final static Log log = LogFactory.getLog(ResultServerConfiguration.class);
@@ -37,8 +41,14 @@ public class ResultServerConfiguration {
 
     @Bean
     public TaskScheduler taskScheduler() {
-        return new ConcurrentTaskScheduler();
+        return new ConcurrentTaskScheduler(); //single threaded by default
     }
+
+    @Bean
+    public Executor taskExecutor() {
+        return new SimpleAsyncTaskExecutor();
+    }
+
 
     @PostConstruct
     void started() {

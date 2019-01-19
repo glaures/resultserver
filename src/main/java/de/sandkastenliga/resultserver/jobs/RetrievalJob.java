@@ -46,13 +46,13 @@ public class RetrievalJob {
             updateSchedule();
     }
 
-    @Scheduled(fixedDelay = 1000 * 60 * 5)
+    @Scheduled(fixedDelay = 1000 * 60 * 2)
     public void updateUnfinishedMatchedInTurboMode() throws ServiceException {
         if (isInTurbo())
             updateUnfinishedMatches();
     }
 
-    @Scheduled(fixedDelay = 1000 * 60 * 60)
+    @Scheduled(fixedDelay = 1000 * 60 * 3)
     public void updateUnfinishedMatches() throws ServiceException {
         synchronized (running) {
             if (!running) {
@@ -130,8 +130,9 @@ public class RetrievalJob {
         }
     }
 
-    @Scheduled(fixedDelay = 1000 * 60 * 60 * 24)
+    @Scheduled(fixedRate = 1000 * 60 * 60 * 24)
     public void updateTeamPositions() throws ServiceException, IOException, InterruptedException {
+        /*
         List<ChallengeDto> allChallenges = challengeService.getAllChallenges();
         for (ChallengeDto c : allChallenges) {
             if (c.getRankUrl() != null) {
@@ -143,6 +144,7 @@ public class RetrievalJob {
         }
         // Fifa
         teamService.updateFifaTeamPositions();
+        */
     }
 
     public Date getTurboStop() {
