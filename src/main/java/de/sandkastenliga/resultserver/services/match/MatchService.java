@@ -22,6 +22,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -71,7 +72,10 @@ public class MatchService extends AbstractJpaDependentService {
     }
 
     public MatchDto getMatch(Integer matchId) throws ServiceException {
-        return projector.project(getMatch(matchId), MatchDto.class);
+        Optional<Match> mOpt = matchRepository.findById(matchId);
+        if (!mOpt.isPresent())
+            throw new ServiceException("error.noSuchObject", new String[]{"match", "" + matchId});
+        return projector.project(mOpt.get(), MatchDto.class);
     }
 
     public List<MatchDto> getUnfinishedMatchesBefore(Date date) {
