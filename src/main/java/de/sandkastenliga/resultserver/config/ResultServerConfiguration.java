@@ -4,16 +4,25 @@ import de.sandkastenliga.resultserver.services.sportsinfosource.SportsInfoSource
 import de.sandkastenliga.resultserver.services.sportsinfosource.fifaranking.FifaRankingService;
 import de.sandkastenliga.resultserver.services.sportsinfosource.kicker.KickerSportsInfoSource;
 import de.sandkastenliga.tools.projector.core.Projector;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.TaskScheduler;
 import org.springframework.scheduling.concurrent.ConcurrentTaskScheduler;
 
+import javax.annotation.PostConstruct;
 import java.io.IOException;
+import java.sql.Time;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.TimeZone;
+import java.util.logging.Logger;
 
 @Configuration
 public class ResultServerConfiguration {
 
+    private final static Log log = LogFactory.getLog(ResultServerConfiguration.class);
     private final Projector projector = new Projector();
 
     @Bean
@@ -29,5 +38,12 @@ public class ResultServerConfiguration {
     @Bean
     public TaskScheduler taskScheduler() {
         return new ConcurrentTaskScheduler();
+    }
+
+    @PostConstruct
+    void started() {
+        TimeZone.setDefault(TimeZone.getTimeZone("Europe/Berlin"));
+        log.info("Time zone set to :" + TimeZone.getDefault().getDisplayName());
+        log.info("Current time is: " + new SimpleDateFormat().format(new Date()));
     }
 }
