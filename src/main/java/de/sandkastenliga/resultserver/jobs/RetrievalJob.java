@@ -141,11 +141,15 @@ public class RetrievalJob {
     public void updateTeamPositions() throws ServiceException, IOException, InterruptedException {
         List<ChallengeDto> allChallenges = challengeService.getAllChallenges();
         for (ChallengeDto c : allChallenges) {
-            if (c.getRankUrl() != null && readyMatchesInChallenge(c)) {
-                Map<String, Integer> ranking;
-                ranking = infoSource.getTeamRankings(c.getRankUrl());
-                teamService.updateTeamPositions(c.getId(), ranking);
-                // Thread.sleep((long) (Math.random() * (1000 * 60 * 30)));
+            try {
+                if (c.getRankUrl() != null && readyMatchesInChallenge(c)) {
+                    Map<String, Integer> ranking;
+                    ranking = infoSource.getTeamRankings(c.getRankUrl());
+                    teamService.updateTeamPositions(c.getId(), ranking);
+                    // Thread.sleep((long) (Math.random() * (1000 * 60 * 30)));
+                }
+            } catch (Throwable t) {
+                t.printStackTrace();
             }
         }
         // Fifa
