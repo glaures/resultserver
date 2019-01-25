@@ -3,7 +3,10 @@ package de.sandkastenliga.resultserver.jobs;
 import de.sandkastenliga.resultserver.dtos.ChallengeDto;
 import de.sandkastenliga.resultserver.dtos.MatchDto;
 import de.sandkastenliga.resultserver.dtos.MatchInfo;
+import de.sandkastenliga.resultserver.model.Match;
 import de.sandkastenliga.resultserver.model.MatchState;
+import de.sandkastenliga.resultserver.repositories.ChallengeRepository;
+import de.sandkastenliga.resultserver.repositories.MatchRepository;
 import de.sandkastenliga.resultserver.services.ServiceException;
 import de.sandkastenliga.resultserver.services.challenge.ChallengeService;
 import de.sandkastenliga.resultserver.services.match.MatchService;
@@ -34,6 +37,10 @@ public class RetrievalJob {
     private SportsInfoSource infoSource;
     @Autowired
     private FifaRankingService fifaRankingService;
+    @Autowired
+    private MatchRepository matchRepository;
+    @Autowired
+    private ChallengeRepository challengeRepository;
     @Autowired
     private TeamService teamService;
 
@@ -134,7 +141,7 @@ public class RetrievalJob {
     public void updateTeamPositions() throws ServiceException, IOException, InterruptedException {
         List<ChallengeDto> allChallenges = challengeService.getAllChallenges();
         for (ChallengeDto c : allChallenges) {
-            if (c.getRankUrl() != null) {
+            if (c.getRankUrl() != null && readyMatchesInChallenge(c)) {
                 Map<String, Integer> ranking;
                 ranking = infoSource.getTeamRankings(c.getRankUrl());
                 teamService.updateTeamPositions(c.getId(), ranking);
@@ -143,6 +150,10 @@ public class RetrievalJob {
         }
         // Fifa
         // teamService.updateFifaTeamPositions();
+    }
+
+    private boolean readyMatchesInChallenge(ChallengeDto c) {
+        return matchRepository.getReadyMatches(challengeRepository.getOne(c.getId())).size() > 0;
     }
 
     public Date getTurboStop() {
