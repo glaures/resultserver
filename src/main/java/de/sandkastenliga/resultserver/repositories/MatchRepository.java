@@ -2,6 +2,7 @@ package de.sandkastenliga.resultserver.repositories;
 
 import de.sandkastenliga.resultserver.model.Challenge;
 import de.sandkastenliga.resultserver.model.Match;
+import de.sandkastenliga.resultserver.model.MatchState;
 import de.sandkastenliga.resultserver.model.Team;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -24,7 +25,7 @@ public interface MatchRepository extends JpaRepository<Match, Integer> {
     @Query("select m from Match m where m.state in ('scheduled', 'ready', 'running') and m.start<:startDate order by start desc")
     List<Match> getUnfinishedMatchesBefore(@Param("startDate") Date startDate);
 
-    @Query("select m from Match m where m.challenge=:c and m.state in ('ready') order by start asc")
+    @Query("select m from Match m where m.challenge=:c and m.state=1 order by start asc")
     List<Match> getReadyMatches(@Param("c") Challenge c);
 
     @Query("select m from Match m where id in (:idList)")

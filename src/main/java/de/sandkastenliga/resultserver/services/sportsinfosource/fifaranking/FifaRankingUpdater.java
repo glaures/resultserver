@@ -27,6 +27,9 @@ public class FifaRankingUpdater {
     public List<String> getUpdatedRanking() throws IOException {
         log.info("retrieving Fifa ranking...");
         List<String> res = new ArrayList<String>();
+        log.info("... skipped retrieving Fifa ranking.");
+        return res;
+        /*
         Document doc = Jsoup.connect(url).get();
         Elements tds = doc.select("td.tbl-teamname");
         for (Element e : tds) {
@@ -34,6 +37,7 @@ public class FifaRankingUpdater {
         }
         log.info("... done retrieving Fifa ranking.");
         return res;
+        */
     }
 
 }

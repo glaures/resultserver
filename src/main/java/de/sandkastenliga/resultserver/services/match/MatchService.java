@@ -72,10 +72,7 @@ public class MatchService extends AbstractJpaDependentService {
     }
 
     public MatchDto getMatch(Integer matchId) throws ServiceException {
-        Optional<Match> mOpt = matchRepository.findById(matchId);
-        if (!mOpt.isPresent())
-            throw new ServiceException("error.noSuchObject", new String[]{"match", "" + matchId});
-        return projector.project(mOpt.get(), MatchDto.class);
+        return projector.project(getValid(matchId, matchRepository), MatchDto.class);
     }
 
     public List<MatchDto> getUnfinishedMatchesBefore(Date date) {

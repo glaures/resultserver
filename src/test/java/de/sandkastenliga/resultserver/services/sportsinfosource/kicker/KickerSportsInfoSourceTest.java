@@ -44,4 +44,9 @@ public class KickerSportsInfoSourceTest {
             }
         }
     }
+
+    @Test
+    public void testGetTeamRankings() throws Throwable{
+        kickerSportsInfoSource.getTeamRankings("http://www.kicker.de/news/fussball/bundesliga/spieltag/1-bundesliga/2018-19/18/0/spieltag.html");
+    }
 }

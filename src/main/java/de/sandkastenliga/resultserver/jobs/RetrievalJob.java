@@ -132,19 +132,17 @@ public class RetrievalJob {
 
     @Scheduled(fixedRate = 1000 * 60 * 60 * 24)
     public void updateTeamPositions() throws ServiceException, IOException, InterruptedException {
-        /*
         List<ChallengeDto> allChallenges = challengeService.getAllChallenges();
         for (ChallengeDto c : allChallenges) {
             if (c.getRankUrl() != null) {
                 Map<String, Integer> ranking;
                 ranking = infoSource.getTeamRankings(c.getRankUrl());
                 teamService.updateTeamPositions(c.getId(), ranking);
-                Thread.sleep((long) (Math.random() * (1000 * 60 * 30)));
+                // Thread.sleep((long) (Math.random() * (1000 * 60 * 30)));
             }
         }
         // Fifa
-        teamService.updateFifaTeamPositions();
-        */
+        // teamService.updateFifaTeamPositions();
     }
 
     public Date getTurboStop() {

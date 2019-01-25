@@ -12,10 +12,16 @@ public class FifaRankingService {
     private List<String> ranking = new ArrayList<String>();
 
     public FifaRankingService() throws IOException {
-        update();
     }
 
     public List<String> getRanking() {
+        if(ranking.size() == 0) {
+            try {
+                update();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
         return ranking;
     }
 
