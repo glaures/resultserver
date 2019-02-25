@@ -94,6 +94,8 @@ public class MatchService extends AbstractJpaDependentService {
     @Transactional
     public int handleMatchUpdate(String region, String challenge, String challengeRankingUrl, String round,
                                  String team1, String team2, Date date, int goalsTeam1, int goalsTeam2, MatchState matchState, Date start) throws ServiceException {
+        if(!challengeService.isRelevantRegion(region))
+            return -1;
         Challenge c = challengeService.getOrCreateChallenge(region, challenge, challengeRankingUrl, date);
         Team t1 = teamRepository.getOne(teamService.getOrCreateTeam(team1).getName());
         Team t2 = teamRepository.getOne(teamService.getOrCreateTeam(team2).getName());

@@ -9,7 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.NoResultException;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -17,6 +17,7 @@ import java.util.stream.Collectors;
 @Service
 public class ChallengeService {
 
+    private final static String[] RELEVANT_REGIONS = new String[]{"Weltweit", "Deutschland", "Schweiz", "Österreich", "Europa", "(Weltweit)", "(Europa)"};
     @Autowired
     private ChallengeRepository challengeRepository;
     @Autowired
@@ -25,12 +26,12 @@ public class ChallengeService {
     public List<ChallengeDto> getAllChallenges() {
         return challengeRepository.findAll().stream().map(c -> projector.project(c, ChallengeDto.class)).collect(Collectors.toList());
     }
-    
+
     @Transactional
     public Challenge getOrCreateChallenge(String region, String challenge, String challengeRankingUrl,
                                           Date challengeRankingUrlDate) {
         Challenge c = challengeRepository.findChallengeByRegionAndName(region, challenge);
-        if(c == null){
+        if (c == null) {
             c = new Challenge();
             c.setRegion(region);
             c.setName(challenge);
@@ -53,6 +54,10 @@ public class ChallengeService {
     public void markKoChallenge(String region, String challengeName) {
         Challenge c = getOrCreateChallenge(region, challengeName, null, null);
         c.setChallengeMode(ChallengeMode.ko);
+    }
+
+    public boolean isRelevantRegion(String region) {
+        return Arrays.asList(RELEVANT_REGIONS).contains(region);
     }
 
 }
