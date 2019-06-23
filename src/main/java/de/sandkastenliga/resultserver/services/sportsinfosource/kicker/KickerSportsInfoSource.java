@@ -4,16 +4,27 @@ import de.sandkastenliga.resultserver.dtos.MatchInfo;
 import de.sandkastenliga.resultserver.model.MatchState;
 import de.sandkastenliga.resultserver.services.sportsinfosource.SportsInfoSource;
 import de.sandkastenliga.resultserver.services.sportsinfosource.fifaranking.FifaRankingService;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.HttpClientBuilder;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.text.DateFormat;
+import java.text.NumberFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -23,9 +34,12 @@ public class KickerSportsInfoSource implements SportsInfoSource {
     private static final String KO_URL = "http://www.kicker.de/news/fussball/intligen/intpokale/internationale-pokale.html";
     private static final String URL_PREFIX = "http://www.kicker.de/news/live-news/matchkalender/";
     private static final String URL_POSTFIX = "/1/matchkalender_fussball.html";
-    private static final Log log = LogFactory.getLog(KickerSportsInfoSource.class);
+    private final Logger logger = LoggerFactory.getLogger(KickerSportsInfoSource.class);
     private final DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
     private FifaRankingService fifaRankingService;
+
+    @Value("${resultserver.ko-challenges.file}")
+    private String koChallengesFileName;
 
     @Autowired
     public KickerSportsInfoSource(FifaRankingService fifaRankingService) {
@@ -34,200 +48,165 @@ public class KickerSportsInfoSource implements SportsInfoSource {
 
     public List<String[]> getAllKoChallenges() throws IOException {
         List<String[]> res = new ArrayList<String[]>();
-        Document doc = Jsoup.connect(KO_URL).get();
-        Element table = doc.getElementsByTag("table").get(0);
-        boolean first = true;
-        String currRegion = null;
-        for (Element row : table.getElementsByTag("tr")) {
-            if (first)
-                first = false;
-            else {
-                if (!row.hasClass("tr_sep")) {
-                    Elements cells = row.getElementsByTag("td");
-                    String challenge = cells.get(1).text().trim();
-                    String region = cells.get(0).text().trim();
-                    if (region == null || "".equals(region)) {
-                        region = currRegion;
-                    }
-                    String[] arr = new String[]{region, challenge};
-                    res.add(arr);
-                    currRegion = region;
-                }
-            }
+        BufferedReader br = new BufferedReader(new InputStreamReader(getClass().getClassLoader().getResourceAsStream(koChallengesFileName)));
+        String line = null;
+        while ((line = br.readLine()) != null) {
+            StringTokenizer tok = new StringTokenizer(line, ",", false);
+            String challenge = tok.nextToken();
+            String region = tok.nextToken();
+            res.add(new String[]{region, challenge});
         }
-        // special treatment for DFB Pokal as might not be listed
-        boolean dfbFound = false;
-        for (String[] rc : res) {
-            if (rc[1].equals("DFB-Pokal")) {
-                dfbFound = true;
-                break;
-            }
-        }
-        if (!dfbFound)
-            res.add(new String[]{"Deutschland", "DFB-Pokal"});
         return res;
     }
 
-    public List<MatchInfo> getMatchInfoForDay(Date date) throws IOException {
+    public List<MatchInfo> getMatchInfoForDay(Date matchDate) throws IOException {
         List<MatchInfo> res = new ArrayList<MatchInfo>();
-        String url = URL_PREFIX + this.dateFormat.format(date) + URL_POSTFIX;
-        log.debug("parsing " + url + "...");
-        Document doc = Jsoup.connect(url).get();
-        Elements allH3 = doc.getElementsByTag("h3");
-        for (Element h3 : allH3) {
-            if (h3.hasClass("thead580") && h3.hasClass("thead580_2")) {
-                String challengeString = h3.text();
-                StringTokenizer tok = new StringTokenizer(challengeString.trim(), "(,)", false);
-                String region = tok.nextToken().trim();
-                String challenge = tok.nextToken().trim();
-                String round = "0";
-                if (tok.hasMoreTokens())
-                    round = tok.nextToken().trim();
-                String challengeRankingUrl = getChallengeRankingUrl(h3);
-                boolean koMode = false;
-                Element sib = h3.nextElementSibling();
-                /*
-                while (!(sib instanceof HtmlElement)) {
-                    sib = sib.getNextSibling();
+        String url = URL_PREFIX + this.dateFormat.format(matchDate) + URL_POSTFIX;
+        logger.info("parsing " + url + "...");
+        Document doc = Jsoup.parse(loadContentByHttpClient(url), "UTF-8", "");
+        Elements allGameLists = doc.getElementsByClass("kick__v100-gameList");
+        for (Element gameList : allGameLists) {
+            Calendar startOfParsedGame = null;
+            MatchState matchState = MatchState.scheduled;
+            // determine challenge
+            Element gameListHeader = gameList.getElementsByClass("kick__v100-gameList__header").first();
+            String challengeString = gameListHeader.text().trim();
+            StringTokenizer tok = new StringTokenizer(challengeString.trim(), "(,)", false);
+            String region = tok.nextToken().trim();
+            String challenge = tok.nextToken().trim();
+            String round = "0";
+            String challengeRankingUrl = null;
+            if (tok.hasMoreTokens()) {
+                String roundStr = tok.nextToken();
+                if (roundStr.contains(".") && roundStr.indexOf(".") < 3) {
+                    round = roundStr.substring(0, roundStr.indexOf(".")).trim();
+                    // if the round is set, there must be a ranking URL
+                    Element flagLink = gameListHeader.select("a.kick__flag-link").first();
+                    challengeRankingUrl = flagLink.attr("href").replace("spieltag", "tabelle");
                 }
-                */
-                Element table = sib.getElementsByTag("table").get(0);
-                Calendar currentDate = Calendar.getInstance();
-                currentDate.setTime(date);
-                currentDate.set(Calendar.HOUR_OF_DAY, 0);
-                currentDate.set(Calendar.MINUTE, 0);
-                currentDate.set(Calendar.SECOND, 0);
-                currentDate.set(Calendar.MILLISECOND, 0);
-                Date initialTimeOfDay = currentDate.getTime();
+            }
+            boolean koMode = false;
+            // start parsing games
+            Elements gameRows = gameList.getElementsByClass("kick__v100-gameList__gameRow");
+            for (Element gameRow : gameRows) {
+                Elements teamNames = gameRow.getElementsByClass("kick__v100-gameCell__team__name");
+                String team1 = teamNames.get(0).text();
+                String team2 = teamNames.get(1).text();
+                // parse date if applicable
+                Calendar matchDateCal = Calendar.getInstance();
+                matchDateCal.setTime(matchDate);
+                resetToStartOfDay(matchDateCal);
+                Elements dateHolderElem = gameRow.getElementsByClass("kick__v100-scoreBoard__dateHolder");
+                if (dateHolderElem.size() > 1) {
+                    // second row carries time info
+                    Date exactTime = parseDateFromResultFieldOnKIckerPage(dateHolderElem.get(0).text().trim(), dateHolderElem.get(1).text().trim(), matchDateCal);
+                    if (exactTime != null) {
+                        startOfParsedGame = Calendar.getInstance();
+                        startOfParsedGame.setTime(exactTime);
+                        matchState = MatchState.ready;
+                    }
+                }
+                // check if there is a result already
                 boolean determined = true;
-                Elements allRows = table.getElementsByTag("tr");
-                for (Element row : allRows) {
-                    if (!row.hasClass("tr_sep") && row.getElementsByTag("td").size() > 0) {
-                        String team1 = "";
-                        String team2 = "";
-                        int goalsTeam1 = -1;
-                        int goalsTeam2 = -1;
-                        Date startTime;
-                        MatchState matchState = MatchState.scheduled;
-                        // start time
-                        Elements cells = row.getElementsByTag("td");
-                        String time = cells.get(0).text().trim();
-                        if (!time.equals("")) {
-                            Calendar cal = Calendar.getInstance();
-                            cal.setTime(date);
-                            cal.set(Calendar.HOUR_OF_DAY,
-                                    Integer.parseInt(time.substring(0, time.indexOf(":"))));
-                            cal.set(Calendar.MINUTE, Integer.parseInt(time.substring(time.indexOf(":") + 1)));
-                            cal.set(Calendar.SECOND, 0);
-                            cal.set(Calendar.MILLISECOND, 0);
-                            currentDate.setTime(cal.getTime());
-                            determined = true;
+                int goalsTeam1 = -1;
+                int goalsTeam2 = -1;
+                Elements resultHolderElems = gameRow.getElementsByClass("kick__v100-scoreBoard__scoreHolder");
+                if (resultHolderElems.size() > 0) {
+                    Element elem = resultHolderElems.first();
+                    Elements scoreholderElems = elem.select(".kick__v100-scoreBoard__scoreHolder__score");
+                    if (scoreholderElems.size() == 2) {
+                        String score1Str = scoreholderElems.get(0).text().trim();
+                        String score2Str = scoreholderElems.get(1).text().trim();
+                        if ("-".equals(score1Str)) {
+                            goalsTeam1 = 0;
+                            goalsTeam2 = 0;
                         } else {
-                            if (allRows.indexOf(row) == 1)
-                                determined = false;
-                        }
-                        startTime = currentDate.getTime();
-                        team1 = cells.get(1).text().trim();
-                        team2 = cells.get(3).text().trim();
-                        int[] teamScores = parseTeamScores(cells.get(4).html(), currentDate.getTime(),
-                                koMode, determined);
-                        goalsTeam1 = teamScores[0];
-                        goalsTeam2 = teamScores[1];
-                        String stateTxt = cells.get(5).text();
-                        if (isCanceled(stateTxt)) {
-                            matchState = MatchState.canceled;
-                        } else if (isPostponed(stateTxt)) {
-                            matchState = MatchState.postponed;
-                        } else {
-                            matchState = MatchState.values()[teamScores[2]];
-                            if (matchState == MatchState.finished) {
-                                // check if time is at least 20 minutes
-                                // over official end
-                                Calendar over = Calendar.getInstance();
-                                over.setTime(startTime);
-                                over.add(Calendar.MINUTE, 90 + 15 + 20);
-                                if (new Date().before(over.getTime()) || startTime.equals(initialTimeOfDay)) {
-                                    matchState = MatchState.running;
-                                }
+                            try {
+                                goalsTeam1 = (NumberFormat.getIntegerInstance().parse(score1Str).intValue());
+                                goalsTeam2 = (NumberFormat.getIntegerInstance().parse(score2Str).intValue());
+                            } catch (ParseException pe) {
+                                pe.printStackTrace();
                             }
                         }
-                        System.out.println(DateFormat.getDateTimeInstance().format(startTime) + " \t" + region
-                                + "/" + challenge + " \t" + team1 + "-" + team2 + " " + goalsTeam1 + ":"
-                                + goalsTeam2 + " (" + matchState + ")");
-                        MatchInfo mi = new MatchInfo();
-                        mi.setChallenge(challenge);
-                        mi.setRound(round);
-                        mi.setRegion(region);
-                        mi.setGoalsTeam1(goalsTeam1);
-                        mi.setGoalsTeam2(goalsTeam2);
-                        mi.setTeam1(team1);
-                        mi.setTeam2(team2);
-                        mi.setChallengeRankingUrl(challengeRankingUrl);
-                        mi.setStart(startTime);
-                        mi.setState(matchState);
-                        res.add(mi);
                     }
                 }
+                int i = 0;
+                i++;
+                MatchInfo mi = new MatchInfo();
+                mi.setChallenge(challenge);
+                mi.setRound(round);
+                mi.setRegion(region);
+                mi.setGoalsTeam1(goalsTeam1);
+                mi.setGoalsTeam2(goalsTeam2);
+                mi.setTeam1(team1);
+                mi.setTeam2(team2);
+                mi.setChallengeRankingUrl(challengeRankingUrl);
+                mi.setStart(startOfParsedGame != null ? startOfParsedGame.getTime() : null);
+                mi.setState(matchState);
+                res.add(mi);
+                logger.debug(mi.toString());
             }
         }
+        logger.info("... done parsing " + url + ". Found " + res.size() + " matches.");
         return res;
     }
 
-    private String getChallengeRankingUrl(Element h3) {
-        for (Element e : h3.getElementsByTag("a")) {
-            String text = e.text().trim();
-            if (text.equals("Tabelle"))
-                return BASE_URL + e.attr("href");
-        }
-        return null;
-    }
-
-
-    private int[] parseTeamScores(String xml, Date matchStart, boolean koMode, boolean determined) {
-        int[] res = {-1, -1, MatchState.scheduled.ordinal()};
-        try {
-            boolean penalty = xml.contains("i.E.");
-            boolean overtime = xml.contains("n.V.");
-            int colonPos = 0;
-            if (!penalty) {
-                // take the first colon with numbers around
-                boolean finished = false;
-                while (colonPos >= 0 && !finished) {
-                    int nextColonOffset = xml.substring(colonPos + 1).indexOf(":");
-                    if (nextColonOffset == -1) {
-                        colonPos = -1;
-                    } else {
-                        if (Character.isDigit(xml.charAt((colonPos + 1) + nextColonOffset - 1))) {
-                            finished = true;
-                        }
-                        colonPos = (colonPos + 1) + nextColonOffset;
-                    }
-                }
+    /**
+     * Method will try to determine the date and time of the game
+     * Returns null, if it was not possible and the former value will be reused
+     */
+    private Date parseDateFromResultFieldOnKIckerPage(String line1, String line2, Calendar requestedDayCal) {
+        Calendar resultCal = Calendar.getInstance();
+        resultCal.setTime(requestedDayCal.getTime());
+        resetToStartOfDay(resultCal);
+        if (isToday(requestedDayCal)) {
+            if (line2.contains("heute")) { // no result in line1 but the time
+                setHourAndMinuteFromString(line1, resultCal);
+                return resultCal.getTime();
             } else {
-                // take the last colon
-                colonPos = xml.lastIndexOf(":");
+                return null; // do not change the time
             }
-            if (colonPos <= 0) {
-                res[2] = determined ? MatchState.ready.ordinal() : MatchState.scheduled.ordinal();
-                return res;
-            }
-            int firstDigitPos = findFirstDigitFromColonPos(xml, colonPos);
-            res[0] = Integer.parseInt(xml.substring(firstDigitPos, colonPos));
-            int lastDigitPos = colonPos + 1;
-            while (lastDigitPos + 1 < xml.length() && Character.isDigit(xml.charAt(lastDigitPos + 1))) {
-                lastDigitPos++;
-            }
-            res[1] = Integer.parseInt(xml.substring(colonPos + 1, lastDigitPos + 1));
-            boolean isRunning = isRunning(xml, matchStart, koMode, res);
-            if (isRunning || (res[0] == res[1] && overtime)) {
-                res[2] = MatchState.running.ordinal();
-            } else if (res[0] >= 0) {
-                res[2] = MatchState.finished.ordinal();
-            }
-        } catch (NumberFormatException nfe) {
-            nfe.printStackTrace();
+        } else if (isFuture(requestedDayCal)) {
+            // line 2 contains the time
+            setHourAndMinuteFromString(line2, resultCal);
+            return resultCal.getTime();
+        } else {
+            // we are parsing a game from a past or future day
+            // the field does not contain the date time anymore but the result
+            // let's hope we know the game's time and result already call this
+            // method with a past date
+            return resultCal.getTime();
         }
-        return res;
+    }
+
+    private void setHourAndMinuteFromString(String str, Calendar cal) {
+        final DateFormat timeFormat = new SimpleDateFormat("HH:mm");
+        try {
+            Date timeDate = timeFormat.parse(str);
+            Calendar timeCal = Calendar.getInstance();
+            timeCal.setTime(timeDate);
+            cal.set(Calendar.HOUR_OF_DAY, timeCal.get(Calendar.HOUR_OF_DAY));
+            cal.set(Calendar.MINUTE, timeCal.get(Calendar.MINUTE));
+        } catch (Throwable t) {
+            return;
+        }
+    }
+
+    private void resetToStartOfDay(Calendar cal) {
+        cal.set(Calendar.HOUR_OF_DAY, 0);
+        cal.set(Calendar.MINUTE, 0);
+        cal.set(Calendar.SECOND, 0);
+        cal.set(Calendar.MILLISECOND, 0);
+    }
+
+    private boolean isToday(Calendar day) {
+        Calendar now = Calendar.getInstance();
+        return day.get(Calendar.DAY_OF_YEAR) == now.get(Calendar.DAY_OF_YEAR) &&
+                day.get(Calendar.YEAR) == now.get(Calendar.YEAR);
+    }
+
+    private boolean isFuture(Calendar day) {
+        return day.getTime().after(new Date());
     }
 
     public boolean isRunning(String score, Date matchStart, boolean koChallenge, int[] res) {
@@ -274,42 +253,33 @@ public class KickerSportsInfoSource implements SportsInfoSource {
     }
 
     public Map<String, Integer> getTeamRankings(String urlStr) throws IOException {
-        log.info("Parsing team ranking at " + urlStr);
+        logger.info("Parsing team ranking at " + urlStr);
         Map<String, Integer> res = new HashMap<String, Integer>();
-        Document doc = Jsoup.connect(urlStr).get();
-        Elements tables = doc.getElementsByTag("table");
-        for (Element table : tables) {
-            if (table.hasAttr("summary") && table.attr("summary").equals("Tabelle")) {
-                int currPos = 1;
-                Elements rows = table.getElementsByTag("tr");
-                for (int idx = 1; idx < rows.size(); idx++) {
-                    Element row = rows.get(idx);
-                    String css = row.attr("class");
-                    if (css != null) {
-                        css = css.trim().toLowerCase();
-                        String id = row.id().toLowerCase();
-                        if ((css.contains("alt") || "".equals(css) || css.contains("tablinie"))
-                                && !id.contains("placeholder") && !"tr_septablinie".equals(css)) {
-                            Elements cells = row.getElementsByTag("td");
-                            int pos = currPos;
-                            String posStr = cells.get(0).text().trim();
-                            if (!"".equals(posStr)) {
-                                pos = Integer.parseInt(posStr);
-                                currPos = pos;
-                            }
-                            String team = cells.get(2).text().trim();
-                            team = removeSuffixes(team);
-                            res.put(team, pos);
+        Document doc = Jsoup.connect(BASE_URL + urlStr).get();
+        Element tableElem = doc.selectFirst("table.kick__table--ranking");
+        if (tableElem == null)
+            return res;
+        int currentRank = 1;
+        for (Element tableRow : tableElem.getElementsByTag("tr")) {
+            int rank = currentRank;
+            String team = null;
+            for (Element rowCell : tableRow.getElementsByTag("td")) {
+                if (rowCell.hasClass("kick__table--ranking__rank")) {
+                    String rankStr = rowCell.text().trim();
+                    if (rankStr.length() > 0) {
+                        try {
+                            rank = (NumberFormat.getIntegerInstance().parse(rankStr)).intValue();
+                            currentRank = rank;
+                        } catch (ParseException pe) {
+                            logger.warn("parsinfg ranks at " + urlStr + " failed: " + pe.getMessage());
                         }
                     }
+                } else if (rowCell.hasClass("kick__table--ranking__teamname")) {
+                    team = removeSuffixes(rowCell.getElementsByClass("kick__table--show-desktop").first().text().trim());
                 }
+                if (team != null)
+                    res.put(team, rank);
             }
-        }
-        // add the Fifa ranking
-        List<String> fifaRanking = fifaRankingService.getRanking();
-        int rank = 1;
-        for (String t : fifaRanking) {
-            res.put(t, rank++);
         }
         return res;
     }
@@ -320,5 +290,18 @@ public class KickerSportsInfoSource implements SportsInfoSource {
         }
         return t;
     }
+
+    public void setKoChallengesFileName(String koChallengesFileName) {
+        this.koChallengesFileName = koChallengesFileName;
+    }
+
+    public static InputStream loadContentByHttpClient(String url)
+            throws ClientProtocolException, IOException {
+        HttpClient client = HttpClientBuilder.create().build();
+        HttpGet request = new HttpGet(url);
+        HttpResponse response = client.execute(request);
+        return response.getEntity().getContent();
+    }
+
 
 }

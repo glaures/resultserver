@@ -7,6 +7,7 @@ import de.sandkastenliga.resultserver.repositories.ChallengeRepository;
 import de.sandkastenliga.resultserver.repositories.MatchRepository;
 import de.sandkastenliga.resultserver.repositories.TeamRepository;
 
+import java.util.Map;
 import java.util.Optional;
 
 public abstract class AbstractJpaDependentService {

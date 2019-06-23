@@ -30,6 +30,8 @@ public class Match {
     private int posTeam1 = -1;
     private int posTeam2 = -1;
     private int tendence = -1;
+    private int rankTeam1 = 1;
+    private int rankTeam2 = 1;
     private boolean featured = false;
 
     public Integer getId() {
@@ -135,6 +137,14 @@ public class Match {
 
     public void setFeatured(boolean featured) {
         this.featured = featured;
+    }
+
+    public int getRankTeam2() {
+        return rankTeam2;
+    }
+
+    public void setRankTeam2(int rankTeam2) {
+        this.rankTeam2 = rankTeam2;
     }
 
     private void updateTendence() {

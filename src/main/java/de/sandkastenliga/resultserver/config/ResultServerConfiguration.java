@@ -55,5 +55,6 @@ public class ResultServerConfiguration {
         TimeZone.setDefault(TimeZone.getTimeZone("Europe/Berlin"));
         log.info("Time zone set to :" + TimeZone.getDefault().getDisplayName());
         log.info("Current time is: " + new SimpleDateFormat().format(new Date()));
+        System.setProperty("java.util.logging.manager", "org.apache.logging.log4j.jul.LogManager");
     }
 }

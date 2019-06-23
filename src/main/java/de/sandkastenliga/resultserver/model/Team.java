@@ -15,9 +15,6 @@ public class Team {
 
 	@Id
 	private String name;
-	@ManyToOne
-	private Challenge mainChallenge;
-	private int mainChallengePos;
 
 	public String getName() {
 		return name;
@@ -25,22 +22,6 @@ public class Team {
 
 	public void setName(String name) {
 		this.name = name;
-	}
-
-	public Challenge getMainChallenge() {
-		return mainChallenge;
-	}
-
-	public void setMainChallenge(Challenge mainChallenge) {
-		this.mainChallenge = mainChallenge;
-	}
-
-	public int getMainChallengePos() {
-		return mainChallengePos;
-	}
-
-	public void setMainChallengePos(int mainChallengePos) {
-		this.mainChallengePos = mainChallengePos;
 	}
 
 }

@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -35,4 +36,7 @@ public interface MatchRepository extends JpaRepository<Match, Integer> {
     List<Match> getAllMatchesAtDays(@Param("startDate") Date start, @Param("endDate") Date end);
 
     List<Match> findMatchesByChallenge_RegionAndChallenge_NameAndStart(String country, String challengeName, Date date);
+
+    @Query("select distinct(m.challenge) from Match m where m.state in ('scheduled', 'ready')")
+    List<Challenge> getAllChallengesWithOpenMatches();
 }

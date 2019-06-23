@@ -1,5 +1,6 @@
 package de.sandkastenliga.resultserver.services.match;
 
+import de.sandkastenliga.resultserver.dtos.ChallengeDto;
 import de.sandkastenliga.resultserver.dtos.MatchDto;
 import de.sandkastenliga.resultserver.model.Challenge;
 import de.sandkastenliga.resultserver.model.Match;
@@ -19,10 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -30,7 +28,7 @@ public class MatchService extends AbstractJpaDependentService {
 
     private final DateFormat df = new SimpleDateFormat("dd.MM.yyyy");
     private MatchRepository matchRepository;
-    private ChallengeRepository challengeDao;
+    private ChallengeRepository challengeRepository;
     private ChallengeService challengeService;
     private TeamService teamService;
     private TeamRepository teamRepository;
@@ -38,7 +36,7 @@ public class MatchService extends AbstractJpaDependentService {
 
     public MatchService(MatchRepository matchRepository, ChallengeRepository challengeDao, ChallengeService challengeService, TeamService teamService, TeamRepository teamRepository, Projector projector) {
         this.matchRepository = matchRepository;
-        this.challengeDao = challengeDao;
+        this.challengeRepository = challengeDao;
         this.challengeService = challengeService;
         this.teamService = teamService;
         this.teamRepository = teamRepository;
@@ -80,7 +78,7 @@ public class MatchService extends AbstractJpaDependentService {
     }
 
     public List<Match> getReadyMatches(int challengeId) throws ServiceException {
-        Challenge c = getValid(challengeId, challengeDao);
+        Challenge c = getValid(challengeId, challengeRepository);
         return matchRepository.getReadyMatches(c);
     }
 
@@ -89,12 +87,17 @@ public class MatchService extends AbstractJpaDependentService {
 
     }
 
+    public List<ChallengeDto> getAllChallengesWithOpenMatches() {
+        return matchRepository.getAllChallengesWithOpenMatches().stream().map(c -> projector.project(c, ChallengeDto.class)).collect(Collectors.toList());
+    }
+
+
     // manipulative methods
 
     @Transactional
     public int handleMatchUpdate(String region, String challenge, String challengeRankingUrl, String round,
                                  String team1, String team2, Date date, int goalsTeam1, int goalsTeam2, MatchState matchState, Date start) throws ServiceException {
-        if(!challengeService.isRelevantRegion(region))
+        if (!challengeService.isRelevantRegion(region))
             return -1;
         Challenge c = challengeService.getOrCreateChallenge(region, challenge, challengeRankingUrl, date);
         Team t1 = teamRepository.getOne(teamService.getOrCreateTeam(team1).getName());
@@ -129,6 +132,23 @@ public class MatchService extends AbstractJpaDependentService {
         Date d = df.parse(day);
         return matchRepository.findMatchesByChallenge_RegionAndChallenge_NameAndStart(country, challengeName, d).stream().map(m -> projector.project(m, MatchDto.class)).collect(Collectors.toList());
     }
+
+    public void updateTeamPositions(Integer challengeId, Map<String, Integer> ranking) throws ServiceException {
+        List<Match> allOpenMatchesForChallenge = matchRepository.getReadyMatches(getValid(challengeId, challengeRepository));
+        for (Match m : allOpenMatchesForChallenge) {
+            int team = 1;
+            for (Team t : new Team[]{m.getTeam1(), m.getTeam2()}) {
+                if (ranking.containsKey(t.getName())) {
+                    if (team == 1)
+                        m.setPosTeam1(ranking.get(t.getName()));
+                    else
+                        m.setPosTeam2(ranking.get(t.getName()));
+                }
+                team++;
+            }
+        }
+    }
+
 
     // private helpers
 

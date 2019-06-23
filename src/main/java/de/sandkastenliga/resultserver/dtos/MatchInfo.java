@@ -100,8 +100,11 @@ public class MatchInfo {
 
     @Override
     public String toString() {
-        return DateFormat.getDateTimeInstance().format(start) + " \t" + region + "/" + challenge + " \t"
-                + team1 + " - " + team2;
+        return (start != null ? DateFormat.getDateTimeInstance().format(start.getTime()) : "?")
+                + " \t"
+                + region
+                + "/" + challenge + " \t" + team1 + "-" + team2 + " " + goalsTeam1 + ":"
+                + goalsTeam2 + " (" + state + ") Round: " + round + ", URL:" + challengeRankingUrl;
     }
 
 }

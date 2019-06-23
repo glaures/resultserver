@@ -67,7 +67,7 @@ public class TeamService extends AbstractJpaDependentService {
         int r = 1;
         for (String teamName : fifaRanking) {
             Team t = getValid(teamName, teamRepository);
-            t.setMainChallengePos(r);
+            // t.setMainChallengePos(r);
             teamRepository.save(t);
             r++;
         }
