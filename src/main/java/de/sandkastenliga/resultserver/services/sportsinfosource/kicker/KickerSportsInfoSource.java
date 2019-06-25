@@ -136,6 +136,8 @@ public class KickerSportsInfoSource implements SportsInfoSource {
                             }
                         }
                     }
+                } else {
+                    logger.warn("no resultholder element for match " + team1 + " - " + team2);
                 }
                 int i = 0;
                 i++;
