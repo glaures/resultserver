@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
 @Service
 public class ChallengeService {
 
-    private final static String[] RELEVANT_REGIONS = new String[]{"Weltweit", "Deutschland", "Schweiz", "Österreich", "Europa", "(Weltweit)", "(Europa)"};
+    private final static String[] RELEVANT_REGIONS = new String[]{"Weltweit", "Deutschland", "Schweiz", "Österreich", "England", "Spanien", "Frankreich", "Italien", "Europa", "(Weltweit)", "(Europa)"};
     @Autowired
     private ChallengeRepository challengeRepository;
     @Autowired

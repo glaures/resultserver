@@ -1,0 +1,9 @@
+Adform=window.Adform||{};
+Adform.host="https://server.adform.net";
+Adform.shost="https://s1.adform.net";
+Adform.scriptBase=Adform.shost+"/banners/scripts/";
+Adform.cache="618";
+Adform.ADFBannerData={"URL":"https://server.adform.net/adfserve/?bn=30453185;click=https://d.agkn.com/pixel/4134/?che=350635&col=996048,21,4484053,,9181562,7666e99a-5809-4455-a281-0cb7cc9505b6&l0=http://insight.adsrvr.org/track/clk?imp=7666e99a-5809-4455-a281-0cb7cc9505b6&ag=545t9di&sfe=f48653b&sig=tIUq_MlZsF1-iLhaKEw36wPX4WIZibD0Vni3K44RGE4.&crid=uxe68sng&cf=894244&fq=2&td_s=www.kicker.de&rcats=&mcat=&mste=&mfld=4&mssi=None&mfsi=nhkw4wk1kf&sv=adscale&uhow=40&agsa=&rgco=Germany&rgre=Saxony&rgme=&rgci=Leipzig&rgz=04229&dt=PC&osf=OSX&os=Other&br=Chrome&svpid=17227&rlangs=en&mlang=&did=4zt42lhljw&rcxt=Other&tmpc=28.8&vrtd=&osi=&osv=&daid=&dnr=0&vpb=&c=OAE.&dur=CiEKBzQyOXl3cGUQ8a0BIhIIh7TCdRILbmV1c3Rhcl9wJmcKOAoeY2hhcmdlLWFsbEdyYXBlc2hvdEJyYW5kU2FmZXR5IhYI9v__________ARIJZ3JhcGVzaG90EPGtAQ..&crrelr=&npt=&svscid=40754&mk=Apple&mdl=Chrome%20-%20OS%20X&ipl=188873&pcm=1&ict=Unknown&said=79561e5210b1402d95ab027964acce5c&grdc=CAEQARgBIAEoAQ..&r=","CREFURL":"https%3a%2f%2fwww.kicker.de%2ffussball%2fmatchkalender%2f17-08-2018","BN":30453185};
+if(!Adform.ADFBannerParams)Adform.ADFBannerParams=[];
+Adform.ADFBannerParams.push(Adform.ADFBannerData);
+typeof Adform.ADFUtilInstance=="undefined"?document.write('<scr'+'ipt type="text/javascript" src="https://s1.adform.net/stoat/618/s1.adform.net/bootstrap.js"></scr'+'ipt>'):new Adform.ADFBanner();

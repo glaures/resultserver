@@ -103,22 +103,53 @@ public class MatchService extends AbstractJpaDependentService {
         Team t1 = teamRepository.getOne(teamService.getOrCreateTeam(team1).getName());
         Team t2 = teamRepository.getOne(teamService.getOrCreateTeam(team2).getName());
         Match m = fuzzyFindMatch(c, t1, t2, round, start);
+        boolean newlyCreatedMatch = false;
         if (m == null) {
             m = new Match();
             m.setChallenge(c);
             m.setRound(round);
+            newlyCreatedMatch = true;
         } else {
             if (MatchState.isFinishedState(m.getState()))
                 return m.getId();
         }
-        m.setStart(date);
+        if (newlyCreatedMatch || isMoreExactDate(date, m.getStart())) {
+            m.setStart(date);
+        }
         m.setTeam1(t1);
         m.setTeam2(t2);
         m.setGoalsTeam1(goalsTeam1);
         m.setGoalsTeam2(goalsTeam2);
-        m.setState(matchState);
+        if (threeHoursPassedSinceStart(m.getStart()) && goalsTeam1 >= 0 && !MatchState.isFinishedState(m.getState())) {
+            m.setState(MatchState.finished);
+        } else {
+            m.setState(matchState);
+        }
         matchRepository.save(m);
         return m.getId();
+    }
+
+    private boolean threeHoursPassedSinceStart(Date d) {
+        return new Date().getTime() - d.getTime() > 1000 * 60 * 60 * 3;
+    }
+
+    private boolean isMoreExactDate(Date newDate, Date currentDate) {
+        if (currentDate == null) {
+            return true;
+        } else if (newDate == null) {
+            return false;
+        } else {
+            Calendar newDateCal = Calendar.getInstance();
+            newDateCal.setTime(newDate);
+            Calendar currentDateCal = Calendar.getInstance();
+            currentDateCal.setTime(currentDate);
+            if (currentDateCal.get(Calendar.DATE) != newDateCal.get(Calendar.DATE)) {
+                return true;
+            } else if (currentDateCal.get(Calendar.HOUR_OF_DAY) == 0) {
+                return true;
+            }
+        }
+        return false;
     }
 
     @Transactional

@@ -31,9 +31,8 @@ import java.util.*;
 public class KickerSportsInfoSource implements SportsInfoSource {
 
     private static final String BASE_URL = "http://www.kicker.de";
-    private static final String KO_URL = "http://www.kicker.de/news/fussball/intligen/intpokale/internationale-pokale.html";
-    private static final String URL_PREFIX = "http://www.kicker.de/news/live-news/matchkalender/";
-    private static final String URL_POSTFIX = "/1/matchkalender_fussball.html";
+    private static final String URL_PREFIX = "/fussball/matchkalender";
+    private static final String URL_POSTFIX = "/1";
     private final Logger logger = LoggerFactory.getLogger(KickerSportsInfoSource.class);
     private final DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
     private FifaRankingService fifaRankingService;
@@ -60,10 +59,15 @@ public class KickerSportsInfoSource implements SportsInfoSource {
     }
 
     public List<MatchInfo> getMatchInfoForDay(Date matchDate) throws IOException {
-        List<MatchInfo> res = new ArrayList<MatchInfo>();
-        String url = URL_PREFIX + this.dateFormat.format(matchDate) + URL_POSTFIX;
-        logger.info("parsing " + url + "...");
+        String url = BASE_URL + URL_PREFIX + ("/" + this.dateFormat.format(matchDate)) + URL_POSTFIX;
         Document doc = Jsoup.parse(loadContentByHttpClient(url), "UTF-8", "");
+        List<MatchInfo> res = getMatchInfoForDayFromDoc(matchDate, doc);
+        logger.info("... done parsing " + url + ". Found " + res.size() + " matches.");
+        return res;
+    }
+
+    public List<MatchInfo> getMatchInfoForDayFromDoc(Date matchDate, Document doc) throws IOException {
+        List<MatchInfo> res = new ArrayList<MatchInfo>();
         Elements allGameLists = doc.getElementsByClass("kick__v100-gameList");
         for (Element gameList : allGameLists) {
             Calendar startOfParsedGame = null;
@@ -107,23 +111,26 @@ public class KickerSportsInfoSource implements SportsInfoSource {
                     }
                 }
                 // check if there is a result already
-                boolean determined = true;
                 int goalsTeam1 = -1;
                 int goalsTeam2 = -1;
                 Elements resultHolderElems = gameRow.getElementsByClass("kick__v100-scoreBoard__scoreHolder");
                 if (resultHolderElems.size() > 0) {
-                    Element elem = resultHolderElems.first();
-                    Elements scoreholderElems = elem.select(".kick__v100-scoreBoard__scoreHolder__score");
+                    Element resultHolderElem = resultHolderElems.first();
+                    Elements scoreholderElems = resultHolderElem.select(".kick__v100-scoreBoard__scoreHolder__score");
                     if (scoreholderElems.size() == 2) {
                         String score1Str = scoreholderElems.get(0).text().trim();
                         String score2Str = scoreholderElems.get(1).text().trim();
                         if ("-".equals(score1Str)) {
-                            goalsTeam1 = 0;
-                            goalsTeam2 = 0;
+                            matchState = MatchState.ready;
                         } else {
                             try {
                                 goalsTeam1 = (NumberFormat.getIntegerInstance().parse(score1Str).intValue());
                                 goalsTeam2 = (NumberFormat.getIntegerInstance().parse(score2Str).intValue());
+                                if(resultHolderElem.getElementsByClass("kick__v100-scoreBoard__scoreHolder--live").size() > 0){
+                                    matchState = MatchState.running;
+                                } else if(goalsTeam1 >= 0 && goalsTeam2 >= 0){
+                                    matchState = MatchState.finished;
+                                }
                             } catch (ParseException pe) {
                                 pe.printStackTrace();
                             }
@@ -147,9 +154,9 @@ public class KickerSportsInfoSource implements SportsInfoSource {
                 logger.debug(mi.toString());
             }
         }
-        logger.info("... done parsing " + url + ". Found " + res.size() + " matches.");
         return res;
     }
+
 
     /**
      * Method will try to determine the date and time of the game
@@ -160,7 +167,7 @@ public class KickerSportsInfoSource implements SportsInfoSource {
         resultCal.setTime(requestedDayCal.getTime());
         resetToStartOfDay(resultCal);
         if (isToday(requestedDayCal)) {
-            if (line2.contains("heute")) { // no result in line1 but the time
+            if (line2.contains("heute") || line2.contains(":")) { // no result in line1 but the time
                 setHourAndMinuteFromString(line1, resultCal);
                 return resultCal.getTime();
             } else {

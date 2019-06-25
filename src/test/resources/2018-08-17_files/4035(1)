@@ -1,0 +1,163 @@
+    var timp_XRDo7QAAAePbEkC_ = new Image();
+    timp_XRDo7QAAAePbEkC_.src = "https://ats.everesttech.net:443/ats/ats?cmd=IMP&impParams=zpJlFTnb3fnww%2BD3VUhurMbFzpu2Oc5b5UVcApSuIAKwaT5OqTCow%2F3hqCZGgiHyr3vheM2EsZCyHP%2Bo19Qzjz5zgiu79BmO4s8TTS5n%2F6iMaxhVxYuWPxRKZi56jXzA56WV5vbutr6OqAoYxiiY5ViuGqNDRnM%2FAPmtfedVo2Tv32p7LRKbMz1xTn6MgPpowgb%2FV8YunmTS%2FC6uu6vVUXknmVdxovF3NDuYM3m%2FpgmCTiHyf%2BVj6R4de8viZUUSGWU45hMxmRHnoFJ74nD80DvAvgrB9qXkvBlR0S4e75SXaei6JyPSRZrL7qMj%2FKzTn3OlbuotQvflrXdP400daBbAOeavu%2B%2BoWSyNFZbdOK8IiwnpHZmsVRDhjSchNVDmxY55YCmfLmE6%2Fq5agRrEfvizZoyH7bk0WSyNFZbdOK%2Bnp9%2BGiBmuUroouVkyWLE6HqwIvtsz5%2Bcc2XykE4q8%2FpQGM1RuVFtuNtQ40AqgxacZEIwmcoptXfjtQwP55QPlbdIYlaV6MlcslXbtSTvvTRMsgJXSYKEZcHrBAHgUUq7eSYPuH7rW6bHOUbJcLzLmaOPs4ljMP1wny30vCgl3Udo0nhnpPkEe6XQL9EPf%2BR8L2KCy50vsvZg9KLf6soi8TyV8YbsoLUX2nzJXe1kPCApcu2flCgMFIprZCu6V5Tn%2FTl3eGctSwASYG40KVxaDIUQ4SOMN9LKFIMEZTUeYC%2F8vt2adbx%2BuoW%2FHoDSkEXSpClXzQ4f%2BxE3NjryJ7hBTjHCWUGwWxBVFeF4apwdTukLhaO%2FY8wOrYL9LUQIUPjlCO7mMG9TmbQidfyoP%2FKmWRDyLGyraUBAjPBNOigChXE1fIyEggr5a";
+
+    if(!window.mraid){window.mraid=new Object();window.mraid.open=function(p_url){if(p_url){window.open(p_url);};};window.mraid.close=function(){};};
+
+        var amo_XRDo7QAAAePbEkC_ = new Object(); //Creating the master object.
+        amo_XRDo7QAAAePbEkC_.ad = [{gid:"US28852208",catalog:"CROCSUS",id:"US28852208",category_id:"GLASSVIEW.TUMRI_403359",display_category_name:"",price:"0.00",discount_price:"0.00",brand:"",merchant_id:"-1540",merchantlogo:"",ship_promo:"",provider:"CROCSUS",name:"I splash.|Crocband™ Flip|#EF4050",description:"",rank:"0.0",thumbnailraw:"",product_url:"https://www.crocs.de/p/crocband-flip/11033.html?cid=4DY",picture_url:"|001|001|rescaled-images/CROCSUS/current/e51232cf9fc8dd7b4756cbe34f3be9cc.png",image_width:"001",image_height:"001",cpc:"0.0",c_code:"",discount_price_currency:"",blackwhiteliststatus:"0 ",offer_type:"PRODUCT",cpo:"0.0",baseproductnumber:"US28852208",country:"",state:"",city:"",zip:"",dmacode:"",areacode:"",advertiser_category_id:"GLASSVIEW.2141552",display_advertiser_category_name:"Crocband™ Flip|#EF4050",globalid:"728x90",age:"JETZT KAUFEN",gender:"greenishblue",hhi:"#27bdbe",ms:"",bt:"",passthroughfield1:"Crocband™ Flip",passthroughfield2:"CrocbandFlip",passthroughfield3:"I splash.",passthroughfield4:"&nbsp",passthroughfield5:"",ut1:"",ut2:"",ut3:"",ut4:"",ut5:"",x2_f1:"",x2_f2:"",x2_f3:"",x2_f4:"",x2_f5:"",image_url1:"|000|000|source-images/CROCSUS/current/803664d5bdc36bc4e4d0f128bf753afe.png",image_url2:"|000|000|source-images/CROCSUS/current/c5c1ae1b11be65b1ce4bb3cd718e56af.png",image_url3:"",image_url4:"|000|000|source-images/CROCSUS/current/398300fc19bc51ce2b1b425153ffcdc4.png",image_url5:"|000|000|source-images/CROCSUS/current/7ebd1072615a68ef2ce543a6218c6508.png",slot_id:"0"}];
+        amo_XRDo7QAAAePbEkC_.camAttribs={"layoutColor":"!{hhi}","clickUrl":"!{product_url}","backgroundColor":"!{gender}","productShadowImage":"!{image_url5}","productImage":"!{image_url4}","logoImage":"https://dco-assets.everestads.net/ics-campaign//5016/c/3879/Crocs_CAYA_LOGO_3.png","ctaText":"!{age}","oddRowsImage":"!{image_url2}","language":"!{ms}","productText":"!{passthroughfield1}","evenRowsImage":"!{image_url1}","headlineText":"!{passthroughfield3}"};
+        amo_XRDo7QAAAePbEkC_.contentBase = "https://dco-assets.everestads.net/iCornerStore/";
+        amo_XRDo7QAAAePbEkC_.baseParams = {"AdType":"leaderboard","RecipeID":"84340272791552","CampaignID":"3879","AdPodID":"28177","LocationID":"118510","AdvertiserID":"4035","AdvertiserName":"CROCSUS","ExperienceID":"19637","ExternalBuyID":"22379167","ExternalPageID":"246427065","ExternalAdID":"442712226","ExternalCreativeID":"114065212","ExternalSiteID":"924171","CA1":"0","CA3":"0","CA2":"0","DG1":"04229","DG3":"Leipzig","DG4":"SN","DG5":"DE","bt":"12561412","TimeZone":"US/Eastern","UserBucket":"61","TumriMiniTag":"18281","ISN":"XRDo7QAAAePbEkC-","UserId":"XNQeyQAAAIAc0gFr","PublisherURL":"https://tpc.googlesyndication.com/safeframe/1-0-33/html/container.html?n=1",};
+        amo_XRDo7QAAAePbEkC_.atsParams = {"ClickTrackerUrl":"https://adclick.g.doubleclick.net/pcs/click?xai=AKAOjsvNC-DU6uq_kcepiuONiAGk5MZiO36MU5PLJ3OB8FXTdgRW6AG0KLr2R_uiPO72ZVeoTwflfC4jwHUmaVyBgrWvkOBplLI71shCos4kgxuOp2Ky8fGGIZQZR6bi1FaeO_vCUyo&sai=AMfl-YRs75X0YJp8VgSjOWjtXWTSL-0vUhO00em_DNGTkVYyxCUgIgulCWQXVDxh1gQZJbj28UqWlooRxF9lJ_R_V_dudzHE8asGdZqT3oDW5NdU&sig=Cg0ArKJSzFFnpLBGFbrLEAE&urlfix=1&adurl=https://adclick.g.doubleclick.net/aclk%3Fsa%3Dl%26ai%3DCbr_PPeUQXYWfDs73gAfOwo7gCd_Q1LBN3r23lq8BwI23ARABIABglYK0gsAHggEXY2EtcHViLTg4MTMzNDczNzUwMDUyNTigAdCUwPMDyAEJ4AIAqAMBqgTVAU_Qei3fky1C7WRTlfr6BwmFWtz3NQHTp3X3_stHSJeeBzldKtnEA69Qo54SnXXqGEW6cNz4FPwSeeC-Q0DnReplrqzGp6tv9JDLMnO8d0MJNONCDOCLiD91S-Mr0MibzJ5xcEYmzv2dRGnw0hJXPjH3dqW1oCmQ0suml-hSr_ySym_uUftV0ebuyd6HFgMueNTKBzPcPR9himObVgJ8M7KPo-YJseUTorEi8xMwvnii-XxRRwpGxwS2QWa9LY94-hSquRvNcNxGelzCKCtEm5LD1gLTa-AEAYAGzdy30IXh4boPoAYhqAemvhuoB9nLG6gHz8wb2AcA0ggHCICBgBAQAQ%26num%3D1%26sig%3DAOD64_32LCmLsrL-Y4SKmTAxp0YwgtOt2w%26client%3Dca-pub-8813347375005258%26adurl%3Dhttp://exch.quantserve.com/r%3Fa%3Dp-48Dmk9tYybHnI%26labels%3D_qc.clk,_click.adserver.rtb,_click.rand.8774%26rtbip%3D192.184.71.127%26rtbdata2%3DEAAaG0Nyb2NzX0luYy5fQ3JvY3NfR2VybWFueV8xOSCL1ywo2_MjMIvZYToVaHR0cHM6Ly93d3cua2lja2VyLmRlWihnVjlFMW9WWlE5cVpDVUhXalZnTmc5QmFGSUdaQkVHSGhBeTktNDRJdRgiJT-AAZ-ipfgBoAEBqAHz0J0EugEbQ0FFU0VQUlllRmVWUjBncGM1aXR2dkJtODRrwAHS8wPIAaTv_c-4LdoBFlhSRGxQUUFEajRVSzREdk9uQU9oVGflAezGcj3oAWSYAtv-KbACCLoCBMC4R3_AAgLIAgDQAuDo29OMmNPtmQHgAgDoAgD4AgCKAxYwLnB1Yi04ODEzMzQ3Mzc1MDA1MjU4mAMAqAMAsgMEVe9_AA%26gdpr%3D1%26gdpr_consent%3DBAAAAAAAAAAAAABABBktCP6AAAAmyDyAIKAJcAwIBGQBnAFtAImASoAnYCIABNgAsADSALwAGgBJgAoAIvAS-AgYA0wAmABgAAfAEEAksAuIAFwASgCoADiANEADAA8QAugHHAL6ATQAAgBSACBAAIACoANUAVQAcgDBgCJAGSAT0AUgAxAA-gFmABaAVAABQB9gB5ABbAGyAO4AVwBJwCXAAxAAgAbIAI4A2gCVgADAAyAGgAGYB7gC_AFUAPmAIsAXIAIADLgBwAKaAHwAJIASAAmAE4AOUAZMBHgBrwBygFnAFKAF4A4QAfgAeAHkAK6ARYAvQAHAARABNAQ6AI8ABwA4gD9AFTAOmAD4AK4CFwE2ABaAP-AA0AqQAwQAsADtAPOAY0AKoBBgEUgCEAKqAQkAiABrADtAERAM6AhgAyQBHQAXgBOAMMAd8ANoA4AAEgAqAP4AM0AwAA-gBbgCVAGsALgBMgAVgBHAGgAFCAFIA4gARAAwgAwACGAOMACoA1AANgCtANOAboBIAARQAxAGuAAEARwBD4ACwDPgAkAD-AB4AIIAowB7ACcAH6AMIAMoBNwAZAE1AHCAD8AHIAhgA3ADqADuAPUAFIBCAAJACfAKKAdIAToAkwBoAGKAMyAOsBB4A6AEFAEAAEAAdQAOYAjADfgGEAHOABYAzQBZQBKABRAAeAE8AAIBqAAGAA7AJ4AXUA%26redirecturl2%3D^(lp_url)","Provider":"CROCSUS","MerchantID":"CROCSUS",};
+        amo_XRDo7QAAAePbEkC_.alsParams = {};
+        amo_XRDo7QAAAePbEkC_.clickTags = {};
+        amo_XRDo7QAAAePbEkC_.bannerAdHtmlText = '<a target="_blank" href="https://ats.everesttech.net:443/ats/ats?cmd=CLICK_THRU&ISN=XRDo7QAAAePbEkC-&ProductURL=http%3A%2F%2Fwww.crocs.com&Provider=4035&MerchantID=CROCSUS&AdPosition=0&ClickType=Banner&"><img id="bannerImg" border="0" src="https://dco-assets.everestads.net/ics-campaign//5016/c/3879/b/leaderboard/1/728x90_Crocs_DefaultAd.png"></img></a>';
+        amo_XRDo7QAAAePbEkC_.pxid = '';
+        amo_XRDo7QAAAePbEkC_.ut1 = '';
+        amo_XRDo7QAAAePbEkC_.ut2 = '';
+        amo_XRDo7QAAAePbEkC_.ut3 = '';
+        amo_XRDo7QAAAePbEkC_.ut4 = '';
+        amo_XRDo7QAAAePbEkC_.ut5 = '';
+        amo_XRDo7QAAAePbEkC_.clickBeaconArr = [];
+        amo_XRDo7QAAAePbEkC_.alsLoggerBasePath = "https://ats.everesttech.net:443/als/als";
+        amo_XRDo7QAAAePbEkC_.atsLoggerBasePath = "https://ats.everesttech.net:443/ats/ats";
+        amo_XRDo7QAAAePbEkC_.engagementBeacon = "https://ats.everesttech.net:443/als/als";
+
+        function fireImpBeacon(p_url, paramsObject){
+                            	try{
+                            		if(p_url && p_url != "null" && p_url != "undefined"){
+                            			var timeStamp = new Date().getTime() + "";
+                            			var clickTime = paramsObject ? paramsObject.ClickTime: 0;
+                            			var beacon = p_url.replace("[timestamp]", timeStamp);
+                                        beacon = beacon.replace("^(SEC)", clickTime/1000);
+                            			var bImage = new Image();
+            							bImage.src = beacon;
+            						}
+            					}catch(e){
+
+            					}
+                            };
+
+        var impBeacons = [];
+        for (var i = 0; i < impBeacons.length; i++) {
+          fireImpBeacon(impBeacons[i],null);
+        }
+
+
+
+    var adLoader = function(isn,adwidth,adheight,url,cdnHTML5Url) {
+
+    	var _isn = "";
+    	var _adwidth = 0;
+    	var _adheight = 0;
+    	var _url = "";
+    	var _cdnHtml5Url="";
+
+    	var adLoader = function() {
+    		_isn = isn;
+    		_adwidth = adwidth;
+    		_adheight = adheight;
+    		_url=url;
+    		_cdnHtml5Url=cdnHTML5Url;
+    	}();
+
+    	var receiveMessage = function(event) {
+                if (event.data == 'XRDo7QAAAePbEkC_') {
+                    var iFrm = window.document.getElementById("x2_ad_x2_" + isn);
+                    var amoObj = {};
+                    amoObj["data"] = window['amo_XRDo7QAAAePbEkC_']
+                    amoObj["mainHtmlFile"] = url;
+                    amoObj["isn"] = "XRDo7QAAAePbEkC_";
+                    iFrm.contentWindow.postMessage(amoObj,"*");
+                }
+        }
+
+    	var createCDNIFrame = function() {
+                var frm = document.getElementById("x2_ad_x2_" + _isn);
+                if (!frm) {
+                    frm = document.createElement("IFRAME");
+                    frm.setAttribute("id","x2_ad_x2_" + _isn);
+                    frm.style="border:0;"
+                    frm.style.postion="relative";
+                    frm.style.top="0px";
+                    frm.style.left="0px";
+                    frm.style.width= _adwidth + "px";
+                    frm.style.height= _adheight + "px";
+                    frm.style.margin="0px";
+                    frm.setAttribute("scrolling","no");
+                    frm.setAttribute("frameborder","0");
+                    frm.style.margin = "0";
+                    var div=document.getElementById("x2_" + _isn);
+                    div.appendChild(frm);
+                    frm.src=_cdnHtml5Url + "?data=" + _isn;
+                }
+                return frm;
+            }
+
+    	this.loadAd = function() {
+    		window.addEventListener("message", receiveMessage, false);
+    		createCDNIFrame();
+    	}
+    };
+
+    var createiFrame_XRDo7QAAAePbEkC_ = function(id, styleString, parentDiv)
+    {
+        var newEle= document.createElement("iFrame");
+        newEle.setAttribute("id",id);
+        if(styleString && styleString != "" )
+        {
+            newEle.setAttribute("style", styleString);
+        }
+        if (parentDiv) {
+            parentDiv.appendChild(newEle);
+        }
+        return newEle;
+    }
+
+    var createDiv_XRDo7QAAAePbEkC_ = function(id, styleString, parentDiv)
+    {
+        var newDiv= document.createElement("div");
+        newDiv.setAttribute("id",id);
+        if(styleString && styleString != "" )
+        {
+            newDiv.setAttribute("style", styleString);
+        }
+        if (parentDiv) {
+            parentDiv.appendChild(newDiv);
+        }
+        return newDiv;
+    };
+
+    var insertDivs_XRDo7QAAAePbEkC_  = function()
+    {
+        var parent= createDiv_XRDo7QAAAePbEkC_("x2_XRDo7QAAAePbEkC_", "height:90px;width:728px;margin:0 auto;");
+        if (document.currentScript) {
+            var pn = document.currentScript.parentNode;
+            var sbn = document.currentScript.nextSibling;
+            if (sbn) {
+                pn.insertBefore(parent,sbn);
+            } else {
+                pn.appendChild(parent);
+            }
+        } else {
+            document.body.appendChild(parent);
+        }
+        createDiv_XRDo7QAAAePbEkC_("bannerHtml_XRDo7QAAAePbEkC_", "margin:0 auto;" , parent);
+        var loggingDiv = createDiv_XRDo7QAAAePbEkC_("amo_XRDo7QAAAePbEkC_","" ,parent);
+        createiFrame_XRDo7QAAAePbEkC_("clickFrame_XRDo7QAAAePbEkC_","position: absolute; visibility: hidden; top: 0px; left: 0px; width: 1px; height: 1px;", loggingDiv);
+        createiFrame_XRDo7QAAAePbEkC_("interactionFrame_XRDo7QAAAePbEkC_","position: absolute; visibility: hidden; top: 0px; left: 0px; width: 1px; height: 1px;", loggingDiv);
+    };
+
+    if(document.readyState === "complete")
+    {
+    	insertDivs_XRDo7QAAAePbEkC_();
+    } else {
+    document.write('<div id="x2_XRDo7QAAAePbEkC_" style="height:90px;width:728px;margin:0 auto;"><div id="bannerHtml_XRDo7QAAAePbEkC_" style="margin:0 auto;"></div><div id="amo_XRDo7QAAAePbEkC_"><iframe id="clickFrame_XRDo7QAAAePbEkC_" style="position: absolute; visibility: hidden; top: 0px; left: 0px; width: 1px; height: 1px;"></iframe></div></div>');
+    }
+
+    (new adLoader(
+    		"XRDo7QAAAePbEkC_","728","90",
+    		"https://dco-assets.everestads.net/ics-campaign//5016/t/6883/4/728x90.html",
+    		"https://dco-assets.everestads.net/ics-campaign/static/dco/html5-ad-script_v3.html")
+    		).loadAd();
+

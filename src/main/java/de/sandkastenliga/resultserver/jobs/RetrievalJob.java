@@ -52,13 +52,13 @@ public class RetrievalJob {
             updateSchedule();
     }
 
-    @Scheduled(fixedDelay = 1000 * 60 * 2)
+    @Scheduled(fixedDelayString = "${timing.every2Minutes}", initialDelayString = "${timing.initialDelay}")
     public void updateUnfinishedMatchesInTurboMode() throws ServiceException {
         if (isInTurbo())
             updateUnfinishedMatches();
     }
 
-    @Scheduled(fixedDelay = 1000 * 60 * 60 * 3)
+    @Scheduled(fixedDelayString = "${timing.every3hours}", initialDelayString = "${timing.initialDelay}")
     public void updateUnfinishedMatches() throws ServiceException {
         Calendar lastParsed = Calendar.getInstance();
         lastParsed.add(Calendar.DATE, 1);
@@ -101,7 +101,7 @@ public class RetrievalJob {
         cal.set(Calendar.MILLISECOND, 0);
     }
 
-    @Scheduled(fixedRate = 1000 * 60 * 60)
+    @Scheduled(fixedDelayString = "${timing.every3hours}", initialDelayString = "${timing.initialDelay}")
     public void updateSchedule() throws ServiceException {
         Calendar end = Calendar.getInstance();
         end.add(Calendar.DATE, 28);
@@ -114,7 +114,7 @@ public class RetrievalJob {
         }
     }
 
-    @Scheduled(fixedRate = 1000 * 60 * 60 * 24 * 7)
+    // @Scheduled(fixedRate = 1000 * 60 * 60 * 24 * 7)
     public void updateFifaRanking() throws IOException {
         fifaRankingService.update();
     }
@@ -127,8 +127,7 @@ public class RetrievalJob {
         }
     }
 
-    @Scheduled(fixedRate = 1000 * 60 * 60 * 24)
-    @PostConstruct
+    @Scheduled(fixedDelayString = "${timing.every3hours}", initialDelayString = "${timing.initialDelay}")
     public void updateTeamPositions() throws ServiceException, IOException, InterruptedException {
         List<ChallengeDto> allChallengesWithOpenMatches = matchService.getAllChallengesWithOpenMatches();
         for (ChallengeDto c : allChallengesWithOpenMatches) {
@@ -145,7 +144,7 @@ public class RetrievalJob {
         }
     }
 
-    @Scheduled(cron = "0 0 3 * * *") // every day morning at 3am
+    @Scheduled(cron = "${timing.everyMorningCron}") // every day morning at 3am
     public void cleanUp(){
         // delete unfinished outdated games
     }

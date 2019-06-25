@@ -1,0 +1,1 @@
+MoatBSJsonpRequest_16271018({"c": ["moat_safe", "gs_sport_soccer"], "d": 5, "g": 0.12236213684082031, "pcode": "pilotpggermanyadform245155997265", "r": 8337940416, "ct": 0})
