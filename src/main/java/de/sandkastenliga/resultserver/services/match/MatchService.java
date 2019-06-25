@@ -120,7 +120,7 @@ public class MatchService extends AbstractJpaDependentService {
         m.setTeam2(t2);
         m.setGoalsTeam1(goalsTeam1);
         m.setGoalsTeam2(goalsTeam2);
-        if (threeHoursPassedSinceStart(m.getStart()) && goalsTeam1 >= 0 && !MatchState.isFinishedState(m.getState())) {
+        if (m.getStart() != null && threeHoursPassedSinceStart(m.getStart()) && goalsTeam1 >= 0 && !MatchState.isFinishedState(m.getState())) {
             m.setState(MatchState.finished);
         } else {
             m.setState(matchState);
