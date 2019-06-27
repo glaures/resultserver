@@ -95,27 +95,28 @@ public class MatchService extends AbstractJpaDependentService {
     // manipulative methods
 
     @Transactional
-    public int handleMatchUpdate(String region, String challenge, String challengeRankingUrl, String round,
+    public int handleMatchUpdate(String correlationId, String region, String challenge, String challengeRankingUrl, String round,
                                  String team1, String team2, Date date, int goalsTeam1, int goalsTeam2, MatchState matchState, Date start) throws ServiceException {
         if (!challengeService.isRelevantRegion(region))
             return -1;
         Challenge c = challengeService.getOrCreateChallenge(region, challenge, challengeRankingUrl, date);
         Team t1 = teamRepository.getOne(teamService.getOrCreateTeam(team1).getName());
         Team t2 = teamRepository.getOne(teamService.getOrCreateTeam(team2).getName());
-        Match m = fuzzyFindMatch(c, t1, t2, round, start);
-        boolean newlyCreatedMatch = false;
-        if (m == null) {
+        Optional<Match> mOpt = matchRepository.findMatchByCorrelationId(correlationId);
+        Match m = null;
+        if (!mOpt.isPresent()) {
             m = new Match();
             m.setChallenge(c);
             m.setRound(round);
-            newlyCreatedMatch = true;
         } else {
+            m = mOpt.get();
             if (MatchState.isFinishedState(m.getState()))
                 return m.getId();
         }
-        if (newlyCreatedMatch || isMoreExactDate(date, m.getStart())) {
+        if (!mOpt.isPresent() || isMoreExactDate(date, m.getStart())) {
             m.setStart(date);
         }
+        m.setCorrelationId(correlationId);
         m.setTeam1(t1);
         m.setTeam2(t2);
         m.setGoalsTeam1(goalsTeam1);

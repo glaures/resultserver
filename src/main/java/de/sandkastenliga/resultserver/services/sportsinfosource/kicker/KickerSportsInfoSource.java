@@ -30,7 +30,7 @@ import java.util.*;
 
 public class KickerSportsInfoSource implements SportsInfoSource {
 
-    private static final String BASE_URL = "http://www.kicker.de";
+    private static final String BASE_URL = "https://www.kicker.de";
     private static final String URL_PREFIX = "/fussball/matchkalender";
     private static final String URL_POSTFIX = "/1";
     private final Logger logger = LoggerFactory.getLogger(KickerSportsInfoSource.class);
@@ -93,6 +93,7 @@ public class KickerSportsInfoSource implements SportsInfoSource {
             // start parsing games
             Elements gameRows = gameList.getElementsByClass("kick__v100-gameList__gameRow");
             for (Element gameRow : gameRows) {
+                String correlationId = getCorrelationIdFromGameRow(gameRow);
                 Elements teamNames = gameRow.getElementsByClass("kick__v100-gameCell__team__name");
                 String team1 = teamNames.get(0).text();
                 String team2 = teamNames.get(1).text();
@@ -126,9 +127,9 @@ public class KickerSportsInfoSource implements SportsInfoSource {
                             try {
                                 goalsTeam1 = (NumberFormat.getIntegerInstance().parse(score1Str).intValue());
                                 goalsTeam2 = (NumberFormat.getIntegerInstance().parse(score2Str).intValue());
-                                if(resultHolderElem.getElementsByClass("kick__v100-scoreBoard__scoreHolder--live").size() > 0){
+                                if (resultHolderElem.getElementsByClass("kick__v100-scoreBoard__scoreHolder--live").size() > 0) {
                                     matchState = MatchState.running;
-                                } else if(goalsTeam1 >= 0 && goalsTeam2 >= 0){
+                                } else if (goalsTeam1 >= 0 && goalsTeam2 >= 0) {
                                     matchState = MatchState.finished;
                                 }
                             } catch (ParseException pe) {
@@ -142,6 +143,7 @@ public class KickerSportsInfoSource implements SportsInfoSource {
                 int i = 0;
                 i++;
                 MatchInfo mi = new MatchInfo();
+                mi.setCorrelationId(correlationId);
                 mi.setChallenge(challenge);
                 mi.setRound(round);
                 mi.setRegion(region);
@@ -159,6 +161,17 @@ public class KickerSportsInfoSource implements SportsInfoSource {
         return res;
     }
 
+    private String getCorrelationIdFromGameRow(Element gameRow) {
+        // if there is anchor of class kick__v100-scoreBoard, we can use its link
+        Element anchor = gameRow.selectFirst("a.kick__v100-scoreBoard");
+        String link = anchor.attr("href");
+        if(link.startsWith(BASE_URL))
+            link = link.substring(BASE_URL.length());
+        // skip leading slash
+        if(link.startsWith("/"))
+            link = link.substring(1);
+        return link.substring(0, link.indexOf("/"));
+    }
 
     /**
      * Method will try to determine the date and time of the game

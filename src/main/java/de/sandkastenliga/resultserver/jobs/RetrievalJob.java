@@ -75,7 +75,7 @@ public class RetrievalJob {
                         if (mi.getStart().before(yesterday.getTime()) && mi.getGoalsTeam1() < 0) {
                             mi.setState(MatchState.postponed);
                         }
-                        matchService.handleMatchUpdate(mi.getRegion(), mi.getChallenge(), mi.getChallengeRankingUrl(),
+                        matchService.handleMatchUpdate(mi.getCorrelationId(), mi.getRegion(), mi.getChallenge(), mi.getChallengeRankingUrl(),
                                 mi.getRound(), mi.getTeam1(), mi.getTeam2(), mi.getStart(), mi.getGoalsTeam1(),
                                 mi.getGoalsTeam2(), mi.getState(), mi.getStart());
                     }

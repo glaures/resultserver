@@ -12,6 +12,7 @@ import org.springframework.stereotype.Repository;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface MatchRepository extends JpaRepository<Match, Integer> {
@@ -39,4 +40,6 @@ public interface MatchRepository extends JpaRepository<Match, Integer> {
 
     @Query("select distinct(m.challenge) from Match m where m.state in ('scheduled', 'ready')")
     List<Challenge> getAllChallengesWithOpenMatches();
+
+    Optional<Match> findMatchByCorrelationId(String correlationId);
 }

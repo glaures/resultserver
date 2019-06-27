@@ -6,6 +6,7 @@ import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.util.Date;
 
 @Entity
@@ -33,6 +34,8 @@ public class Match {
     private int rankTeam1 = 1;
     private int rankTeam2 = 1;
     private boolean featured = false;
+    @NotNull
+    private String correlationId;
 
     public Integer getId() {
         return id;
@@ -145,6 +148,15 @@ public class Match {
 
     public void setRankTeam2(int rankTeam2) {
         this.rankTeam2 = rankTeam2;
+    }
+
+    @Column(unique = true)
+    public String getCorrelationId() {
+        return correlationId;
+    }
+
+    public void setCorrelationId(String correlationId) {
+        this.correlationId = correlationId;
     }
 
     private void updateTendence() {

@@ -17,6 +17,7 @@ public class MatchInfo {
     private String round;
     private int goalsTeam1;
     private int goalsTeam2;
+    private String correlationId;
 
     public Date getStart() {
         return start;
@@ -96,6 +97,14 @@ public class MatchInfo {
 
     public void setRound(String round) {
         this.round = round;
+    }
+
+    public String getCorrelationId() {
+        return correlationId;
+    }
+
+    public void setCorrelationId(String correlationId) {
+        this.correlationId = correlationId;
     }
 
     @Override
