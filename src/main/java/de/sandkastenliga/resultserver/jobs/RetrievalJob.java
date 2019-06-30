@@ -13,6 +13,7 @@ import de.sandkastenliga.resultserver.services.schedule.ScheduleService;
 import de.sandkastenliga.resultserver.services.sportsinfosource.SportsInfoSource;
 import de.sandkastenliga.resultserver.services.sportsinfosource.fifaranking.FifaRankingService;
 import de.sandkastenliga.resultserver.services.team.TeamService;
+import de.sandkastenliga.resultserver.utils.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -62,10 +63,10 @@ public class RetrievalJob {
     public void updateUnfinishedMatches() throws ServiceException {
         Calendar lastParsed = Calendar.getInstance();
         lastParsed.add(Calendar.DATE, 1);
-        resestToStartOfDay(lastParsed);
+        DateUtils.resetToStartOfDay(lastParsed);
         Calendar yesterday = Calendar.getInstance();
         yesterday.add(Calendar.DATE, -1);
-        resestToStartOfDay(yesterday);
+        DateUtils.resetToStartOfDay(yesterday);
         List<MatchDto> unfinishedPastMatches = matchService.getUnfinishedMatchesBefore(lastParsed.getTime());
         for (MatchDto m : unfinishedPastMatches) {
             try {
@@ -89,16 +90,9 @@ public class RetrievalJob {
                 throw new ServiceException("error.retrieval", t);
             } finally {
                 lastParsed.setTime(m.getStart());
-                resestToStartOfDay(lastParsed);
+                DateUtils.resetToStartOfDay(lastParsed);
             }
         }
-    }
-
-    private void resestToStartOfDay(Calendar cal) {
-        cal.set(Calendar.HOUR_OF_DAY, 0);
-        cal.set(Calendar.MINUTE, 0);
-        cal.set(Calendar.SECOND, 0);
-        cal.set(Calendar.MILLISECOND, 0);
     }
 
     @Scheduled(fixedDelayString = "${timing.every3hours}", initialDelayString = "${timing.initialDelay}")

@@ -4,6 +4,7 @@ import de.sandkastenliga.resultserver.dtos.MatchDto;
 import de.sandkastenliga.resultserver.services.ServiceException;
 import de.sandkastenliga.resultserver.services.match.MatchService;
 import de.sandkastenliga.resultserver.services.schedule.ScheduleService;
+import de.sandkastenliga.resultserver.utils.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.websocket.server.PathParam;
 import java.text.ParseException;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -25,9 +27,13 @@ public class ScheduleResource {
 
     @GetMapping("/rest/schedule/{start}/{end}")
     public MatchDto[] getMatch(@PathVariable("start") Long start, @PathVariable("end") Long end) {
-        Date startTime = new Date(start);
-        Date endTime = new Date(end);
-        List<MatchDto> allMatches = matchService.getAllMatchesAtDays(startTime, endTime);
+        Calendar startCal = Calendar.getInstance();
+        startCal.setTime(new Date(start));
+        DateUtils.resetToStartOfDay(startCal);
+        Calendar endCal = Calendar.getInstance();
+        endCal.setTime(new Date(end));
+        DateUtils.resetToStartOfDay(endCal);
+        List<MatchDto> allMatches = matchService.getAllMatchesAtDays(startCal.getTime(), endCal.getTime());
         MatchDto[] res = new MatchDto[allMatches.size()];
         for (int i = 0; i < res.length; i++) {
             res[i] = allMatches.get(i);
