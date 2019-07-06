@@ -19,4 +19,10 @@ public class ApplicationResource {
         final DateFormat df = new SimpleDateFormat("HH:mm dd.MM.yyyy");
         return df.format(retrievalJob.getTurboStop());
     }
+
+    @GetMapping("/rest/application/turbo/prolong")
+    public String startTurbo() {
+        retrievalJob.prolongTurbo();
+        return "turbo prolonged";
+    }
 }
