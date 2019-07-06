@@ -36,6 +36,8 @@ public class Match {
     private boolean featured = false;
     @NotNull
     private String correlationId;
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date lastUpdated = new Date();
 
     public Integer getId() {
         return id;
@@ -157,6 +159,14 @@ public class Match {
 
     public void setCorrelationId(String correlationId) {
         this.correlationId = correlationId;
+    }
+
+    public Date getLastUpdated() {
+        return lastUpdated;
+    }
+
+    public void setLastUpdated(Date lastUpdated) {
+        this.lastUpdated = lastUpdated;
     }
 
     private void updateTendence() {

@@ -80,6 +80,9 @@ function updateUI() {
 					var col4 = $(document.createElement("td"));
 					col4.append(match.matchState);
 					row.append(col4);
+					var col5 = $(document.createElement("td"));
+					col5.append(match.lastUpdated);
+					row.append(col5);
 					matchTable.append(row);
 				}
 			}

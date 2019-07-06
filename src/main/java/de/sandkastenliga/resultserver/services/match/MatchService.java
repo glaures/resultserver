@@ -126,6 +126,7 @@ public class MatchService extends AbstractJpaDependentService {
         } else {
             m.setState(matchState);
         }
+        m.setLastUpdated(new Date());
         matchRepository.save(m);
         return m.getId();
     }

@@ -26,6 +26,7 @@ public class MatchDto {
 	private boolean featured;
 	private ChallengeMode challengeMode;
 	private MatchState matchStateEnum;
+	private Date lastUpdated;
 
 	public int getId() {
 		return id;
@@ -137,6 +138,14 @@ public class MatchDto {
 
 	public void setFeatured(boolean featured) {
 		this.featured = featured;
+	}
+
+	public Date getLastUpdated() {
+		return lastUpdated;
+	}
+
+	public void setLastUpdated(Date lastUpdated) {
+		this.lastUpdated = lastUpdated;
 	}
 
 	@JsonIgnore
