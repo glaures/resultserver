@@ -54,6 +54,7 @@ public class RetrievalJob {
     }
 
     @Scheduled(fixedDelayString = "${timing.every2Minutes}", initialDelayString = "${timing.initialDelay}")
+    // @Scheduled(fixedDelay=1000)
     public void updateUnfinishedMatchesInTurboMode() throws ServiceException {
         if (isInTurbo())
             updateUnfinishedMatches();
@@ -64,16 +65,16 @@ public class RetrievalJob {
         Calendar lastParsed = Calendar.getInstance();
         lastParsed.add(Calendar.DATE, 1);
         DateUtils.resetToStartOfDay(lastParsed);
-        Calendar yesterday = Calendar.getInstance();
-        yesterday.add(Calendar.DATE, -1);
-        DateUtils.resetToStartOfDay(yesterday);
-        List<MatchDto> unfinishedPastMatches = matchService.getUnfinishedMatchesBefore(lastParsed.getTime());
+        Calendar dayBeforeYesterday = Calendar.getInstance();
+        dayBeforeYesterday.add(Calendar.DATE, -1);
+        DateUtils.resetToStartOfDay(dayBeforeYesterday);
+        List<MatchDto> unfinishedPastMatches = matchService.getUnfinishedMatchesStartedBetween(dayBeforeYesterday.getTime(), lastParsed.getTime());
         for (MatchDto m : unfinishedPastMatches) {
             try {
                 if (m.getStart().before(lastParsed.getTime())) {
                     List<MatchInfo> mis = infoSource.getMatchInfoForDay(m.getStart());
                     for (MatchInfo mi : mis) {
-                        if (mi.getStart().before(yesterday.getTime()) && mi.getGoalsTeam1() < 0) {
+                        if (mi.getStart().before(dayBeforeYesterday.getTime()) && mi.getGoalsTeam1() < 0) {
                             mi.setState(MatchState.postponed);
                         }
                         matchService.handleMatchUpdate(mi.getCorrelationId(), mi.getRegion(), mi.getChallenge(), mi.getChallengeRankingUrl(),
@@ -82,7 +83,7 @@ public class RetrievalJob {
                     }
                 }
                 MatchDto mDto = matchService.getMatch(m.getId());
-                if (mDto.getStart().before(yesterday.getTime())
+                if (mDto.getStart().before(dayBeforeYesterday.getTime())
                         && !(MatchState.isFinishedState(MatchState.values()[mDto.getMatchState()]))) {
                     matchService.markMatchAsCanceled(m.getId());
                 }

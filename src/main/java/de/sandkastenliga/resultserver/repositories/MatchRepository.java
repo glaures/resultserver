@@ -25,7 +25,9 @@ public interface MatchRepository extends JpaRepository<Match, Integer> {
 
 
     @Query("select m from Match m where m.state in ('scheduled', 'ready', 'running') and m.start<:startDate order by start desc")
-    List<Match> getUnfinishedMatchesBefore(@Param("startDate") Date startDate);
+    List<Match> getUnfinishedMatchesStartedBefore(@Param("startDate") Date startDate);
+
+    List<Match> findMatchesByStartAfterAndStartBeforeAndStateInOrderByStartDesc(Date start, Date end, MatchState[] states);
 
     @Query("select m from Match m where m.challenge=:c and m.state=1 order by start asc")
     List<Match> getReadyMatches(@Param("c") Challenge c);

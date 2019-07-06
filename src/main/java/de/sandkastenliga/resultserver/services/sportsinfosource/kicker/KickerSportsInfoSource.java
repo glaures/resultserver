@@ -70,7 +70,8 @@ public class KickerSportsInfoSource implements SportsInfoSource {
         List<MatchInfo> res = new ArrayList<MatchInfo>();
         Elements allGameLists = doc.getElementsByClass("kick__v100-gameList");
         for (Element gameList : allGameLists) {
-            Calendar startOfParsedGame = null;
+            Calendar startOfParsedGame = Calendar.getInstance();
+            resetToStartOfDay(startOfParsedGame);
             MatchState matchState = MatchState.scheduled;
             // determine challenge
             Element gameListHeader = gameList.getElementsByClass("kick__v100-gameList__header").first();
@@ -106,7 +107,6 @@ public class KickerSportsInfoSource implements SportsInfoSource {
                     // second row carries time info
                     Date exactTime = parseDateFromResultFieldOnKIckerPage(dateHolderElem.get(0).text().trim(), dateHolderElem.get(1).text().trim(), matchDateCal);
                     if (exactTime != null) {
-                        startOfParsedGame = Calendar.getInstance();
                         startOfParsedGame.setTime(exactTime);
                         matchState = MatchState.ready;
                     }
@@ -138,7 +138,7 @@ public class KickerSportsInfoSource implements SportsInfoSource {
                         }
                     }
                 } else {
-                    logger.warn("no resultholder element for match " + team1 + " - " + team2);
+                    logger.debug("no resultholder element for match " + team1 + " - " + team2);
                 }
                 int i = 0;
                 i++;

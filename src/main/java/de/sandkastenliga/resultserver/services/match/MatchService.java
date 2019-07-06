@@ -2,6 +2,7 @@ package de.sandkastenliga.resultserver.services.match;
 
 import de.sandkastenliga.resultserver.dtos.ChallengeDto;
 import de.sandkastenliga.resultserver.dtos.MatchDto;
+import de.sandkastenliga.resultserver.dtos.MatchInfo;
 import de.sandkastenliga.resultserver.model.Challenge;
 import de.sandkastenliga.resultserver.model.Match;
 import de.sandkastenliga.resultserver.model.MatchState;
@@ -73,8 +74,10 @@ public class MatchService extends AbstractJpaDependentService {
         return projector.project(getValid(matchId, matchRepository), MatchDto.class);
     }
 
-    public List<MatchDto> getUnfinishedMatchesBefore(Date date) {
-        return matchRepository.getUnfinishedMatchesBefore(date).stream().map(m -> projector.project(m, MatchDto.class)).collect(Collectors.toList());
+    public List<MatchDto> getUnfinishedMatchesStartedBetween(Date start, Date end) {
+        // return matchRepository.getUnfinishedMatchesStartedBefore(date).stream().map(m -> projector.project(m, MatchDto.class)).collect(Collectors.toList());
+        List<Match> matches = matchRepository.findMatchesByStartAfterAndStartBeforeAndStateInOrderByStartDesc(start, end, MatchState.getUnfinishedStates());
+        return matches.stream().map(m -> projector.project(m, MatchDto.class)).collect(Collectors.toList());
     }
 
     public List<Match> getReadyMatches(int challengeId) throws ServiceException {
