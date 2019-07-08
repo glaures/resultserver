@@ -40,7 +40,7 @@ public class ScheduleService extends AbstractJpaDependentService {
             matchService.handleMatchUpdate(mi.getCorrelationId(), miFinal.getRegion(), miFinal.getChallenge(),
                     miFinal.getChallengeRankingUrl(), miFinal.getRound(), miFinal.getTeam1(), miFinal.getTeam2(),
                     miFinal.getStart(), miFinal.getGoalsTeam1(), miFinal.getGoalsTeam2(),
-                    miFinal.getState(), date);
+                    miFinal.getState(), date, mi.isExactTime());
         }
     }
 

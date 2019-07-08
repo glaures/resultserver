@@ -99,7 +99,7 @@ public class MatchService extends AbstractJpaDependentService {
 
     @Transactional
     public int handleMatchUpdate(String correlationId, String region, String challenge, String challengeRankingUrl, String round,
-                                 String team1, String team2, Date date, int goalsTeam1, int goalsTeam2, MatchState matchState, Date start) throws ServiceException {
+                                 String team1, String team2, Date date, int goalsTeam1, int goalsTeam2, MatchState matchState, Date start, boolean exactTime) throws ServiceException {
         if (!challengeService.isRelevantRegion(region))
             return -1;
         Challenge c = challengeService.getOrCreateChallenge(region, challenge, challengeRankingUrl, date);
@@ -116,7 +116,7 @@ public class MatchService extends AbstractJpaDependentService {
             if (MatchState.isFinishedState(m.getState()))
                 return m.getId();
         }
-        if (!mOpt.isPresent() || isMoreExactDate(date, m.getStart())) {
+        if (!mOpt.isPresent() || exactTime) {
             m.setStart(date);
         }
         m.setCorrelationId(correlationId);
@@ -138,6 +138,7 @@ public class MatchService extends AbstractJpaDependentService {
         return new Date().getTime() - d.getTime() > 1000 * 60 * 60 * 3;
     }
 
+    /*
     private boolean isMoreExactDate(Date newDate, Date currentDate) {
         if (currentDate == null) {
             return true;
@@ -156,6 +157,7 @@ public class MatchService extends AbstractJpaDependentService {
         }
         return false;
     }
+    */
 
     @Transactional
     public void markMatchAsCanceled(Integer matchId) throws ServiceException {

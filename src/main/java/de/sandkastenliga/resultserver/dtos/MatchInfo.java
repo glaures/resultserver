@@ -18,6 +18,7 @@ public class MatchInfo {
     private int goalsTeam1;
     private int goalsTeam2;
     private String correlationId;
+    private boolean exactTime;
 
     public Date getStart() {
         return start;
@@ -105,6 +106,14 @@ public class MatchInfo {
 
     public void setCorrelationId(String correlationId) {
         this.correlationId = correlationId;
+    }
+
+    public boolean isExactTime() {
+        return exactTime;
+    }
+
+    public void setExactTime(boolean exactTime) {
+        this.exactTime = exactTime;
     }
 
     @Override

@@ -70,8 +70,9 @@ public class KickerSportsInfoSource implements SportsInfoSource {
         List<MatchInfo> res = new ArrayList<MatchInfo>();
         Elements allGameLists = doc.getElementsByClass("kick__v100-gameList");
         for (Element gameList : allGameLists) {
-            Calendar startOfParsedGame = Calendar.getInstance();
-            resetToStartOfDay(startOfParsedGame);
+            // Calendar startOfParsedGame = Calendar.getInstance();
+            // startOfParsedGame.setTime(matchDate);
+            // resetToStartOfDay(startOfParsedGame);
             MatchState matchState = MatchState.scheduled;
             // determine challenge
             Element gameListHeader = gameList.getElementsByClass("kick__v100-gameList__header").first();
@@ -99,16 +100,19 @@ public class KickerSportsInfoSource implements SportsInfoSource {
                 String team1 = teamNames.get(0).text();
                 String team2 = teamNames.get(1).text();
                 // parse date if applicable
-                Calendar matchDateCal = Calendar.getInstance();
+                Calendar matchDateCal = null;
+                matchDateCal = Calendar.getInstance();
                 matchDateCal.setTime(matchDate);
                 resetToStartOfDay(matchDateCal);
+                boolean isExactTime = false;
                 Elements dateHolderElem = gameRow.getElementsByClass("kick__v100-scoreBoard__dateHolder");
                 if (dateHolderElem.size() > 1) {
                     // second row carries time info
                     Date exactTime = parseDateFromResultFieldOnKIckerPage(dateHolderElem.get(0).text().trim(), dateHolderElem.get(1).text().trim(), matchDateCal);
                     if (exactTime != null) {
-                        startOfParsedGame.setTime(exactTime);
+                        matchDateCal.setTime(exactTime);
                         matchState = MatchState.ready;
+                        isExactTime = true;
                     }
                 }
                 // check if there is a result already
@@ -152,10 +156,11 @@ public class KickerSportsInfoSource implements SportsInfoSource {
                 mi.setTeam1(team1);
                 mi.setTeam2(team2);
                 mi.setChallengeRankingUrl(challengeRankingUrl);
-                mi.setStart(startOfParsedGame != null ? startOfParsedGame.getTime() : null);
+                mi.setExactTime(isExactTime);
+                mi.setStart(matchDateCal != null ? matchDateCal.getTime() : null);
                 mi.setState(matchState);
                 res.add(mi);
-                logger.debug(mi.toString());
+                logger.info(mi.toString());
             }
         }
         return res;

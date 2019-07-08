@@ -74,16 +74,16 @@ public class RetrievalJob {
                 if (m.getStart().before(lastParsed.getTime())) {
                     List<MatchInfo> mis = infoSource.getMatchInfoForDay(m.getStart());
                     for (MatchInfo mi : mis) {
-                        if (mi.getStart().before(dayBeforeYesterday.getTime()) && mi.getGoalsTeam1() < 0) {
+                        if (mi.getStart() != null && mi.getStart().before(dayBeforeYesterday.getTime()) && mi.getGoalsTeam1() < 0) {
                             mi.setState(MatchState.postponed);
                         }
                         matchService.handleMatchUpdate(mi.getCorrelationId(), mi.getRegion(), mi.getChallenge(), mi.getChallengeRankingUrl(),
                                 mi.getRound(), mi.getTeam1(), mi.getTeam2(), mi.getStart(), mi.getGoalsTeam1(),
-                                mi.getGoalsTeam2(), mi.getState(), mi.getStart());
+                                mi.getGoalsTeam2(), mi.getState(), mi.getStart(), mi.isExactTime());
                     }
                 }
                 MatchDto mDto = matchService.getMatch(m.getId());
-                if (mDto.getStart().before(dayBeforeYesterday.getTime())
+                if (mDto.getStart() != null && mDto.getStart().before(dayBeforeYesterday.getTime())
                         && !(MatchState.isFinishedState(MatchState.values()[mDto.getMatchState()]))) {
                     matchService.markMatchAsCanceled(m.getId());
                 }
