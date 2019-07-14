@@ -15,12 +15,10 @@ import org.springframework.scheduling.concurrent.ConcurrentTaskScheduler;
 
 import javax.annotation.PostConstruct;
 import java.io.IOException;
-import java.sql.Time;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.TimeZone;
 import java.util.concurrent.Executor;
-import java.util.logging.Logger;
 
 @Configuration
 @EnableScheduling

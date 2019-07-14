@@ -1,8 +1,6 @@
 package de.sandkastenliga.resultserver.services.sportsinfosource.kicker;
 
-import de.sandkastenliga.resultserver.dtos.MatchInfo;
 import de.sandkastenliga.resultserver.model.MatchState;
-import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.List;

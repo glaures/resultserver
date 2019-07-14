@@ -2,8 +2,6 @@ package de.sandkastenliga.resultserver.services.sportsinfosource.kicker;
 
 import de.sandkastenliga.resultserver.model.MatchState;
 
-import java.util.Calendar;
-
 public class MatchInfoStruct {
 
     public String challenge;

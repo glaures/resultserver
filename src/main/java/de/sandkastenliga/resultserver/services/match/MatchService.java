@@ -2,7 +2,6 @@ package de.sandkastenliga.resultserver.services.match;
 
 import de.sandkastenliga.resultserver.dtos.ChallengeDto;
 import de.sandkastenliga.resultserver.dtos.MatchDto;
-import de.sandkastenliga.resultserver.dtos.MatchInfo;
 import de.sandkastenliga.resultserver.model.Challenge;
 import de.sandkastenliga.resultserver.model.Match;
 import de.sandkastenliga.resultserver.model.MatchState;
