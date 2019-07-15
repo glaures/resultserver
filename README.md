@@ -17,7 +17,7 @@ You will need a local MySQL database "resultserver" to test the application loca
   
 * Start resultserver
   * `docker build --tag sandkastenliga/resultserver:1.0 .`
-  * `docker run --name sandkastenliga-resultserver -d -p 8082:8082 --net sklnet sandkastenliga/resultserver:1.0`
+  * `docker run --name sandkastenliga-resultserver -d -p 80:80 --net sklnet sandkastenliga/resultserver:1.0`
   
 * Test the installation
   * http://127.0.0.1:8082/
