@@ -1,6 +1,7 @@
 package de.sandkastenliga.resultserver.dtos;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import de.sandkastenliga.resultserver.model.ChallengeMode;
 import de.sandkastenliga.resultserver.model.MatchState;
 import de.sandkastenliga.tools.projector.core.Projection;
@@ -140,6 +141,7 @@ public class MatchDto {
 		this.featured = featured;
 	}
 
+	@JsonIgnoreProperties(ignoreUnknown = true)
 	public Date getLastUpdated() {
 		return lastUpdated;
 	}
