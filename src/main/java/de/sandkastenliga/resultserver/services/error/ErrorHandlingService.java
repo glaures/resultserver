@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 public class ErrorHandlingService {
 
     public void handleError(final Throwable t, final String... errCode) {
+        // TODO: handle error correctly
         t.printStackTrace();
     }
 
