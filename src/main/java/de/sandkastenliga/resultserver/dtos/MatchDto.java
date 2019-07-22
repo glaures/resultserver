@@ -1,7 +1,5 @@
 package de.sandkastenliga.resultserver.dtos;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import de.sandkastenliga.resultserver.model.ChallengeMode;
 import de.sandkastenliga.resultserver.model.MatchState;
 import de.sandkastenliga.tools.projector.core.Projection;
@@ -141,7 +139,6 @@ public class MatchDto {
 		this.featured = featured;
 	}
 
-	@JsonIgnoreProperties(ignoreUnknown = true)
 	public Date getLastUpdated() {
 		return lastUpdated;
 	}
@@ -150,7 +147,6 @@ public class MatchDto {
 		this.lastUpdated = lastUpdated;
 	}
 
-	@JsonIgnore
 	public ChallengeMode getChallengeMode() {
 		return challengeMode;
 	}
@@ -158,5 +154,24 @@ public class MatchDto {
 	@Projection(value = ProjectionType.property, propertyName = "challenge", referencePropertyName = "challengeMode")
 	public void setChallengeMode(ChallengeMode challengeMode) {
 		this.challengeMode = challengeMode;
+	}
+
+	@Projection(value = ProjectionType.none)
+	public void setKo(boolean ko) {
+		this.ko = ko;
+	}
+
+	@Projection(value = ProjectionType.none)
+	public void setMatchState(int matchState) {
+		this.matchState = matchState;
+	}
+
+	public MatchState getMatchStateEnum() {
+		return matchStateEnum;
+	}
+
+	@Projection(value = ProjectionType.none)
+	public void setMatchStateEnum(MatchState matchStateEnum) {
+		this.matchStateEnum = matchStateEnum;
 	}
 }
