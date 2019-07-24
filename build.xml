@@ -4,7 +4,12 @@
     <property name="version" value="1.0" />
     <property name="dir.classes" value="target/lib-classes" />
 
-    <target name="compile">
+    <target name="clean">
+        <delete dir="${dir.classes}"/>
+        <delete file="target/resultserver-client.jar"/>
+    </target>
+
+    <target name="compile" depends="clean">
         <mkdir dir="${dir.classes}"/>
         <javac source="1.6" target="1.6" srcdir="./src/main/java" destdir="${dir.classes}" classpath="/Users/guido/.m2/repository/de/sandkastenliga/modelprojector/1.0.0/modelprojector-1.0.0.jar">
             <include name="de/sandkastenliga/resultserver/dtos/*"/>

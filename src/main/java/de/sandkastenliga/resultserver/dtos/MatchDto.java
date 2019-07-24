@@ -1,6 +1,5 @@
 package de.sandkastenliga.resultserver.dtos;
 
-import de.sandkastenliga.resultserver.model.ChallengeMode;
 import de.sandkastenliga.tools.projector.core.Projection;
 import de.sandkastenliga.tools.projector.core.ProjectionType;
 
@@ -94,7 +93,7 @@ public class MatchDto {
     }
 
     public boolean isKo() {
-        return this.challengeModeEnum == ChallengeMode.ko.ordinal();
+        return this.challengeModeEnum == 1;
     }
 
     public int getPosTeam1() {
@@ -142,7 +141,7 @@ public class MatchDto {
     }
 
     @Projection(value = ProjectionType.property, propertyName = "challengeMode", referencePropertyName = "intValue")
-    public void setChallengeMode(int challengeMode) {
+    public void setChallengeModeEnum(int challengeMode) {
         this.challengeModeEnum = challengeMode;
     }
 

@@ -1,6 +1,7 @@
 package de.sandkastenliga.resultserver.dtos;
 
-import de.sandkastenliga.resultserver.model.ChallengeMode;
+import de.sandkastenliga.tools.projector.core.Projection;
+import de.sandkastenliga.tools.projector.core.ProjectionType;
 
 import java.util.Date;
 
@@ -11,7 +12,7 @@ public class ChallengeDto {
     private String name;
     private String rankUrl;
     private Date rankUrlDate;
-    private ChallengeMode challengeMode = ChallengeMode.points;
+    private int challengeModeEnum;
 
     public Integer getId() {
         return id;
@@ -53,11 +54,12 @@ public class ChallengeDto {
         this.rankUrlDate = rankUrlDate;
     }
 
-    public ChallengeMode getChallengeMode() {
-        return challengeMode;
+    public int getChallengeModeEnum() {
+        return challengeModeEnum;
     }
 
-    public void setChallengeMode(ChallengeMode challengeMode) {
-        this.challengeMode = challengeMode;
+    @Projection(value = ProjectionType.property, propertyName = "challengeMode", referencePropertyName = "intValue")
+    public void setChallengeMode(int challengeMode) {
+        this.challengeModeEnum = challengeMode;
     }
 }

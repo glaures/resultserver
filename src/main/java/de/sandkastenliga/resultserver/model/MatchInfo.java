@@ -1,4 +1,4 @@
-package de.sandkastenliga.resultserver.dtos;
+package de.sandkastenliga.resultserver.model;
 
 import de.sandkastenliga.resultserver.model.MatchState;
 

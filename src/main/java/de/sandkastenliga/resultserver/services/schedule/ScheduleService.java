@@ -1,6 +1,6 @@
 package de.sandkastenliga.resultserver.services.schedule;
 
-import de.sandkastenliga.resultserver.dtos.MatchInfo;
+import de.sandkastenliga.resultserver.model.MatchInfo;
 import de.sandkastenliga.resultserver.services.AbstractJpaDependentService;
 import de.sandkastenliga.resultserver.services.ServiceException;
 import de.sandkastenliga.resultserver.services.match.MatchService;

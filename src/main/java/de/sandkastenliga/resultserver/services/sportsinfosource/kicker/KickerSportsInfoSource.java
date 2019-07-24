@@ -1,6 +1,6 @@
 package de.sandkastenliga.resultserver.services.sportsinfosource.kicker;
 
-import de.sandkastenliga.resultserver.dtos.MatchInfo;
+import de.sandkastenliga.resultserver.model.MatchInfo;
 import de.sandkastenliga.resultserver.model.MatchState;
 import de.sandkastenliga.resultserver.services.sportsinfosource.SportsInfoSource;
 import de.sandkastenliga.resultserver.services.sportsinfosource.fifaranking.FifaRankingService;
