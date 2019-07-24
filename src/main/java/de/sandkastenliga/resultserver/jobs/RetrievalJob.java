@@ -84,7 +84,7 @@ public class RetrievalJob {
                 }
                 MatchDto mDto = matchService.getMatch(m.getId());
                 if (mDto.getStart() != null && mDto.getStart().before(dayBeforeYesterday.getTime())
-                        && !(MatchState.isFinishedState(MatchState.values()[mDto.getMatchState()]))) {
+                        && !(MatchState.isFinishedState(MatchState.values()[mDto.getMatchStateEnum()]))) {
                     matchService.markMatchAsCanceled(m.getId());
                 }
             } catch (Throwable t) {
@@ -140,7 +140,7 @@ public class RetrievalJob {
     }
 
     @Scheduled(cron = "${timing.everyMorningCron}") // every day morning at 3am
-    public void cleanUp(){
+    public void cleanUp() {
         // delete unfinished outdated games
     }
 

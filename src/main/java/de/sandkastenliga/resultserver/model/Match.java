@@ -161,6 +161,10 @@ public class Match {
         this.correlationId = correlationId;
     }
 
+    public ChallengeMode getChallengeMode(){
+        return this.challenge.getChallengeMode();
+    }
+
     public Date getLastUpdated() {
         return lastUpdated;
     }
