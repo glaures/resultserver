@@ -13,7 +13,7 @@ You will need a local MySQL database "resultserver" to test the application loca
   * `docker network create sklnet`
 
 * Start mysql Docker container
-  * `docker run --name resultserver-db -v /Users/guido/mysql/5.6/:/var/lib/mysql -e MYSQL_ROOT_PASSWORD=pw --net sklnet -d mysql:5.6`
+  * `docker run --name resultserver-db -e TZ=Europe/Berlin -v /Users/guido/mysql/5.6/:/var/lib/mysql -e MYSQL_ROOT_PASSWORD=pw --net sklnet -d mysql:5.6`
   * Make sure the DB has a database `resultserver` defined. If not: `docker exec -it resultserver-db bash`
   
 * Start resultserver
