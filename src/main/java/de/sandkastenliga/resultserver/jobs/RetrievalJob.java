@@ -123,10 +123,10 @@ public class RetrievalJob {
     }
 
     @Scheduled(fixedDelayString = "${timing.every3hours}", initialDelayString = "${timing.initialDelay}")
+    @PostConstruct
     public void updateTeamPositions() throws ServiceException, IOException, InterruptedException {
         List<ChallengeDto> allChallengesWithOpenMatches = matchService.getAllChallengesWithOpenMatches();
         for (ChallengeDto c : allChallengesWithOpenMatches) {
-
             try {
                 if (c.getRankUrl() != null && readyMatchesInChallenge(c)) {
                     Map<String, Integer> ranking;

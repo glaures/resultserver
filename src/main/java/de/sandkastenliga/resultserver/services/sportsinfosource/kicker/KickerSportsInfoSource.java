@@ -283,10 +283,11 @@ public class KickerSportsInfoSource implements SportsInfoSource {
         logger.info("Parsing team ranking at " + urlStr);
         Map<String, Integer> res = new HashMap<String, Integer>();
         Document doc = Jsoup.connect(BASE_URL + urlStr).get();
-        Element tableElem = doc.selectFirst("table.kick__table--ranking");
-        if (tableElem == null)
+        Elements tableElems = doc.getElementsByClass("kick__table");
+        if (tableElems.size() == 0)
             return res;
         int currentRank = 1;
+        Element tableElem = tableElems.first();
         for (Element tableRow : tableElem.getElementsByTag("tr")) {
             int rank = currentRank;
             String team = null;

@@ -72,7 +72,7 @@ function updateUI() {
 					col1.append(match.team1 + " (" + match.posTeam1 + ")");
 					row.append(col1);
 					var col2 = $(document.createElement("td"));
-					col2.append(match.team2 + " (" + match.posTeam2 + ")");
+					col2.append(match.team2 + " (" + match.posTeam2+ ")");
 					row.append(col2);
 					var col3 = $(document.createElement("td"));
 					col3.append(match.goalsTeam1 + ":" + match.goalsTeam2);
