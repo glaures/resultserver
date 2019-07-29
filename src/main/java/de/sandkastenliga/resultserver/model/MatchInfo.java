@@ -9,7 +9,9 @@ public class MatchInfo {
 
     private Date start;
     private MatchState state;
+    private String team1Id;
     private String team1;
+    private String team2Id;
     private String team2;
     private String challenge;
     private String challengeRankingUrl;
@@ -116,12 +118,28 @@ public class MatchInfo {
         this.exactTime = exactTime;
     }
 
+    public String getTeam1Id() {
+        return team1Id;
+    }
+
+    public void setTeam1Id(String team1Id) {
+        this.team1Id = team1Id;
+    }
+
+    public String getTeam2Id() {
+        return team2Id;
+    }
+
+    public void setTeam2Id(String team2Id) {
+        this.team2Id = team2Id;
+    }
+
     @Override
     public String toString() {
         return (start != null ? DateFormat.getDateTimeInstance().format(start.getTime()) : "?")
                 + " \t"
                 + region
-                + "/" + challenge + " \t" + team1 + "-" + team2 + " " + goalsTeam1 + ":"
+                + "/" + challenge + " \t[" + team1Id + "]" + team1 + "-" + " [" + team2Id + "]" + team2 + " " + goalsTeam1 + ":"
                 + goalsTeam2 + " (" + state + ") Round: " + round + ", URL:" + challengeRankingUrl;
     }
 

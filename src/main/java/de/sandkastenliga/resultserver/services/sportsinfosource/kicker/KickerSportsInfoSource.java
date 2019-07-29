@@ -96,9 +96,12 @@ public class KickerSportsInfoSource implements SportsInfoSource {
             Elements gameRows = gameList.getElementsByClass("kick__v100-gameList__gameRow");
             for (Element gameRow : gameRows) {
                 String correlationId = getCorrelationIdFromGameRow(gameRow);
-                Elements teamNames = gameRow.getElementsByClass("kick__v100-gameCell__team__name");
-                String team1 = teamNames.get(0).text();
-                String team2 = teamNames.get(1).text();
+                Elements teamNameElements = gameRow.getElementsByClass("kick__v100-gameCell__team__name");
+                String team1 = teamNameElements.get(0).text();
+                String team2 = teamNameElements.get(1).text();
+                Elements teamGameCells = gameRow.getElementsByClass("kick__v100-gameCell__team");
+                String team1Id = findTeamIdInTeamGameCell(teamGameCells.get(0), team1);
+                String team2Id = findTeamIdInTeamGameCell(teamGameCells.get(1), team2);
                 // parse date if applicable
                 Calendar matchDateCal = null;
                 matchDateCal = Calendar.getInstance();
@@ -153,7 +156,9 @@ public class KickerSportsInfoSource implements SportsInfoSource {
                 mi.setRegion(region);
                 mi.setGoalsTeam1(goalsTeam1);
                 mi.setGoalsTeam2(goalsTeam2);
+                mi.setTeam1Id(team1Id);
                 mi.setTeam1(team1);
+                mi.setTeam2Id(team2Id);
                 mi.setTeam2(team2);
                 mi.setChallengeRankingUrl(challengeRankingUrl);
                 mi.setExactTime(isExactTime);
@@ -166,14 +171,19 @@ public class KickerSportsInfoSource implements SportsInfoSource {
         return res;
     }
 
+    private String makeId(String team1) {
+        String res = team1.replace(" ", "-");
+        return res.toLowerCase();
+    }
+
     private String getCorrelationIdFromGameRow(Element gameRow) {
         // if there is anchor of class kick__v100-scoreBoard, we can use its link
         Element anchor = gameRow.selectFirst("a.kick__v100-scoreBoard");
         String link = anchor.attr("href");
-        if(link.startsWith(BASE_URL))
+        if (link.startsWith(BASE_URL))
             link = link.substring(BASE_URL.length());
         // skip leading slash
-        if(link.startsWith("/"))
+        if (link.startsWith("/"))
             link = link.substring(1);
         return link.substring(0, link.indexOf("/"));
     }
@@ -290,7 +300,7 @@ public class KickerSportsInfoSource implements SportsInfoSource {
         Element tableElem = tableElems.first();
         for (Element tableRow : tableElem.getElementsByTag("tr")) {
             int rank = currentRank;
-            String team = null;
+            String teamId = null;
             for (Element rowCell : tableRow.getElementsByTag("td")) {
                 if (rowCell.hasClass("kick__table--ranking__rank")) {
                     String rankStr = rowCell.text().trim();
@@ -303,13 +313,27 @@ public class KickerSportsInfoSource implements SportsInfoSource {
                         }
                     }
                 } else if (rowCell.hasClass("kick__table--ranking__teamname")) {
-                    team = removeSuffixes(rowCell.getElementsByClass("kick__table--show-desktop").first().text().trim());
+                    String teamName = removeSuffixes(rowCell.text());
+                    teamId = findTeamIdInTeamGameCell(rowCell, teamName);
                 }
-                if (team != null)
-                    res.put(team, rank);
+                if (teamId != null)
+                    res.put(teamId, rank);
             }
         }
         return res;
+    }
+
+    private String findTeamIdInTeamGameCell(Element teamGameCell, String teamName) {
+        Elements anchors = teamGameCell.getElementsByTag("a");
+        if (anchors.size() == 1) {
+            String link = anchors.get(0).attr("href");
+            // the id is the number before the second slash
+            StringTokenizer tok = new StringTokenizer(link, "/", false);
+            if (tok.hasMoreTokens()) {
+                return tok.nextToken();
+            }
+        }
+        return makeId(teamName);
     }
 
     private String removeSuffixes(String t) {

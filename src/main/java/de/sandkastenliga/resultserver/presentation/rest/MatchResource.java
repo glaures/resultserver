@@ -56,7 +56,7 @@ public class MatchResource {
     @GetMapping("/rest/match/ranking/update")
     public String updateRanking() {
         try {
-            retrievalJob.updateTeamPositions();
+            retrievalJob.updateTeamStrengthsAndPositions();
         } catch (Throwable t) {
             return t.getMessage();
         }

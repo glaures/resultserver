@@ -98,12 +98,15 @@ public class MatchService extends AbstractJpaDependentService {
 
     @Transactional
     public int handleMatchUpdate(String correlationId, String region, String challenge, String challengeRankingUrl, String round,
-                                 String team1, String team2, Date date, int goalsTeam1, int goalsTeam2, MatchState matchState, Date start, boolean exactTime) throws ServiceException {
+                                 String team1Id, String team1Name, String team2Id, String team2Name, Date date, int goalsTeam1, int goalsTeam2, MatchState matchState, Date start, boolean exactTime) throws ServiceException {
         if (!challengeService.isRelevantRegion(region))
             return -1;
+        // create teams if they do not exists in the DB yet
+        teamService.getOrCreateTeam(team1Id, team1Name);
+        teamService.getOrCreateTeam(team2Id, team2Name);
         Challenge c = challengeService.getOrCreateChallenge(region, challenge, challengeRankingUrl, date);
-        Team t1 = teamRepository.getOne(teamService.getOrCreateTeam(team1).getName());
-        Team t2 = teamRepository.getOne(teamService.getOrCreateTeam(team2).getName());
+        Team t1 = teamRepository.getOne(team1Id);
+        Team t2 = teamRepository.getOne(team2Id);
         Optional<Match> mOpt = matchRepository.findMatchByCorrelationId(correlationId);
         Match m = null;
         if (!mOpt.isPresent()) {
@@ -171,16 +174,19 @@ public class MatchService extends AbstractJpaDependentService {
     }
 
     @Transactional
-    public void updateTeamPositions(Integer challengeId, Map<String, Integer> ranking) throws ServiceException {
+    public void updateTeamStrengthsAndPositions(Integer challengeId, Map<String, Integer> ranking) throws ServiceException {
         List<Match> allOpenMatchesForChallenge = matchRepository.getReadyMatches(getValid(challengeId, challengeRepository));
         for (Match m : allOpenMatchesForChallenge) {
             int team = 1;
             for (Team t : new Team[]{m.getTeam1(), m.getTeam2()}) {
-                if (ranking.containsKey(t.getName())) {
-                    if (team == 1)
-                        m.setPosTeam1(ranking.get(t.getName()));
-                    else
-                        m.setPosTeam2(ranking.get(t.getName()));
+                if (ranking.containsKey(t.getId())) {
+                    if (team == 1) {
+                        m.setPosTeam1(ranking.get(t.getId()));
+                        m.setStrengthTeam1(t.getCurrentStrength());
+                    } else {
+                        m.setPosTeam2(ranking.get(t.getId()));
+                        m.setStrengthTeam2(t.getCurrentStrength());
+                    }
                 }
                 team++;
             }

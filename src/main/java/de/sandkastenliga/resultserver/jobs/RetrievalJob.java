@@ -78,7 +78,7 @@ public class RetrievalJob {
                             mi.setState(MatchState.postponed);
                         }
                         matchService.handleMatchUpdate(mi.getCorrelationId(), mi.getRegion(), mi.getChallenge(), mi.getChallengeRankingUrl(),
-                                mi.getRound(), mi.getTeam1(), mi.getTeam2(), mi.getStart(), mi.getGoalsTeam1(),
+                                mi.getRound(), mi.getTeam1Id(), mi.getTeam1(), mi.getTeam2Id(), mi.getTeam2(), mi.getStart(), mi.getGoalsTeam1(),
                                 mi.getGoalsTeam2(), mi.getState(), mi.getStart(), mi.isExactTime());
                     }
                 }
@@ -124,14 +124,16 @@ public class RetrievalJob {
 
     @Scheduled(fixedDelayString = "${timing.every3hours}", initialDelayString = "${timing.initialDelay}")
     // @PostConstruct
-    public void updateTeamPositions() throws ServiceException, IOException, InterruptedException {
+    public void updateTeamStrengthsAndPositions() throws ServiceException, IOException, InterruptedException {
         List<ChallengeDto> allChallengesWithOpenMatches = matchService.getAllChallengesWithOpenMatches();
         for (ChallengeDto c : allChallengesWithOpenMatches) {
             try {
+                Map<String, Integer> ranking;
                 if (c.getRankUrl() != null && readyMatchesInChallenge(c)) {
-                    Map<String, Integer> ranking;
                     ranking = infoSource.getTeamRankings(c.getRankUrl());
-                    matchService.updateTeamPositions(c.getId(), ranking);
+                    matchService.updateTeamStrengthsAndPositions(c.getId(), ranking);
+                    if(ranking.size() > 0)
+                        teamService.updateTeamStrengths(c.getId(), ranking);
                 }
             } catch (Throwable t) {
                 t.printStackTrace();

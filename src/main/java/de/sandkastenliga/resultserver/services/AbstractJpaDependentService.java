@@ -25,10 +25,10 @@ public abstract class AbstractJpaDependentService {
         return res.get();
     }
 
-    protected Team getValid(String name, TeamRepository teamRepository) throws ServiceException {
-        Optional<Team> res = teamRepository.findById(name);
+    protected Team getValid(String id, TeamRepository teamRepository) throws ServiceException {
+        Optional<Team> res = teamRepository.findById(id);
         if (!res.isPresent())
-            throw new ServiceException("error.noSuchObject", "team", "" + name);
+            throw new ServiceException("error.noSuchObject", "team", "" + id);
         return res.get();
     }
 

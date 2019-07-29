@@ -63,8 +63,8 @@ public class KickerSportsInfoSourceTest {
         String[] urls = new String[]{"https://www.kicker.de/1-bundesliga/tabelle/2018-19/2", "https://www.kicker.de/canadian-premier-league-fb-1/tabelle/2018-19/9"};
         for (String url : urls) {
             Map<String, Integer> res = kickerSportsInfoSource.getTeamRankings(url);
-            for (String team : res.keySet()) {
-                logger.info(res.get(team) + ". \t" + team);
+            for (String teamId : res.keySet()) {
+                logger.info(res.get(teamId) + ". \t" + teamId);
             }
         }
     }

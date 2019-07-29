@@ -31,8 +31,8 @@ public class Match {
     private int posTeam1 = -1;
     private int posTeam2 = -1;
     private int tendence = -1;
-    private int rankTeam1 = 1;
-    private int rankTeam2 = 1;
+    private int strengthTeam1 = 1;
+    private int strengthTeam2 = 1;
     private boolean featured = false;
     @NotNull
     private String correlationId;
@@ -144,12 +144,20 @@ public class Match {
         this.featured = featured;
     }
 
-    public int getRankTeam2() {
-        return rankTeam2;
+    public int getStrengthTeam1() {
+        return strengthTeam1;
     }
 
-    public void setRankTeam2(int rankTeam2) {
-        this.rankTeam2 = rankTeam2;
+    public void setStrengthTeam1(int strengthTeam1) {
+        this.strengthTeam1 = strengthTeam1;
+    }
+
+    public int getStrengthTeam2() {
+        return strengthTeam2;
+    }
+
+    public void setStrengthTeam2(int strengthTeam2) {
+        this.strengthTeam2 = strengthTeam2;
     }
 
     @Column(unique = true)

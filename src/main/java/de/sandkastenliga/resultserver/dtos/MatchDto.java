@@ -19,6 +19,8 @@ public class MatchDto {
     private int goalsTeam2;
     private int posTeam1;
     private int posTeam2;
+    private int strengthTeam1;
+    private int strengthTeam2;
     private int matchStateEnum;
     private boolean featured;
     private int challengeModeEnum;
@@ -164,6 +166,22 @@ public class MatchDto {
 
     public int getMatchStateEnum() {
         return matchStateEnum;
+    }
+
+    public int getStrengthTeam1() {
+        return strengthTeam1;
+    }
+
+    public void setStrengthTeam1(int strengthTeam1) {
+        this.strengthTeam1 = strengthTeam1;
+    }
+
+    public int getStrengthTeam2() {
+        return strengthTeam2;
+    }
+
+    public void setStrengthTeam2(int strengthTeam2) {
+        this.strengthTeam2 = strengthTeam2;
     }
 
     @Projection(value = ProjectionType.property, propertyName = "state", referencePropertyName = "intValue")
