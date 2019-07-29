@@ -170,6 +170,7 @@ public class MatchService extends AbstractJpaDependentService {
         return matchRepository.findMatchesByChallenge_RegionAndChallenge_NameAndStart(country, challengeName, d).stream().map(m -> projector.project(m, MatchDto.class)).collect(Collectors.toList());
     }
 
+    @Transactional
     public void updateTeamPositions(Integer challengeId, Map<String, Integer> ranking) throws ServiceException {
         List<Match> allOpenMatchesForChallenge = matchRepository.getReadyMatches(getValid(challengeId, challengeRepository));
         for (Match m : allOpenMatchesForChallenge) {

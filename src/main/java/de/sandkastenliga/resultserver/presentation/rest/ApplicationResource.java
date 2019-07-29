@@ -1,10 +1,12 @@
 package de.sandkastenliga.resultserver.presentation.rest;
 
 import de.sandkastenliga.resultserver.jobs.RetrievalJob;
+import de.sandkastenliga.resultserver.services.ServiceException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 
@@ -24,5 +26,11 @@ public class ApplicationResource {
     public String startTurbo() {
         retrievalJob.prolongTurbo();
         return "turbo prolonged";
+    }
+
+    @GetMapping("/rest/application/update-rankings")
+    public String updateRankings() throws InterruptedException, IOException, ServiceException {
+        retrievalJob.updateTeamPositions();
+        return "done without error";
     }
 }
