@@ -22,10 +22,6 @@ public interface MatchRepository extends JpaRepository<Match, Integer> {
     @Query("select m from Match m where m.team1.name like :t1 and m.team2.name like :t2 order by m.start desc")
     List<Match> findClosestMatchesByTeams(@Param("t1") String team1Name, @Param("t2") String team2Name);
 
-
-    @Query("select m from Match m where m.state in ('scheduled', 'ready', 'running') and m.start<:startDate order by start desc")
-    List<Match> getUnfinishedMatchesStartedBefore(@Param("startDate") Date startDate);
-
     List<Match> findMatchesByStartAfterAndStartBeforeAndStateInOrderByStartDesc(Date start, Date end, MatchState[] states);
 
     @Query("select m from Match m where m.challenge=:c and m.state=1 order by start asc")
@@ -39,8 +35,8 @@ public interface MatchRepository extends JpaRepository<Match, Integer> {
 
     List<Match> findMatchesByChallenge_RegionAndChallenge_NameAndStart(String country, String challengeName, Date date);
 
-    @Query("select distinct(m.challenge) from Match m where m.state in ('scheduled', 'ready')")
-    List<Challenge> getAllChallengesWithOpenMatches();
+    @Query("select distinct(m.challenge) from Match m where m.state in (:matchStateList)")
+    List<Challenge> getAllChallengesWithOpenMatches(@Param("matchStateList") MatchState[] unfinishedMatchSates);
 
     Optional<Match> findMatchByCorrelationId(String correlationId);
 }

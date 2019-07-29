@@ -90,7 +90,7 @@ public class MatchService extends AbstractJpaDependentService {
     }
 
     public List<ChallengeDto> getAllChallengesWithOpenMatches() {
-        return matchRepository.getAllChallengesWithOpenMatches().stream().map(c -> projector.project(c, ChallengeDto.class)).collect(Collectors.toList());
+        return matchRepository.getAllChallengesWithOpenMatches(MatchState.getUnfinishedStates()).stream().map(c -> projector.project(c, ChallengeDto.class)).collect(Collectors.toList());
     }
 
 
