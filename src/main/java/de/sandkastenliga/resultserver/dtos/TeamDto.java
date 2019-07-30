@@ -3,6 +3,7 @@ package de.sandkastenliga.resultserver.dtos;
 public class TeamDto {
 
     private String name;
+    private int currentStrength;
 
     public String getName() {
         return name;
@@ -12,4 +13,11 @@ public class TeamDto {
         this.name = name;
     }
 
+    public int getCurrentStrength() {
+        return currentStrength;
+    }
+
+    public void setCurrentStrength(int currentStrength) {
+        this.currentStrength = currentStrength;
+    }
 }
