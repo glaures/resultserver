@@ -8,7 +8,7 @@ import java.util.List;
 
 public class ExtendedTeamDto extends TeamDto {
 
-    List<StrengthSnapshotDto> strengthSnapshots = new ArrayList<>();
+    List<StrengthSnapshotDto> strengthSnapshots = new ArrayList<StrengthSnapshotDto>();
 
     public List<StrengthSnapshotDto> getStrengthSnapshots() {
         return strengthSnapshots;
