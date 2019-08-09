@@ -49,15 +49,6 @@ public class TeamService extends AbstractJpaDependentService {
         this.projector = projector;
     }
 
-    public TeamDto findTeamByName(String name) {
-        Optional<Team> tOpt = teamRepository.findTeamByName(name);
-        if (tOpt.isPresent()) {
-            return projector.project(tOpt.get(), TeamDto.class);
-        } else {
-            return null;
-        }
-    }
-
     @Transactional
     public ExtendedTeamDto getExtendedTeamDto(String id) throws ServiceException {
         Team t = getValid(id, teamRepository);
@@ -143,8 +134,20 @@ public class TeamService extends AbstractJpaDependentService {
                     generateStrengthSnapshot(t);
                 }
             } else {
-                log.warn("can not update strength for team " + teamid + " not foudn in combination with provided ranking");
+                log.warn("can not update strength for team " + teamid + " not found in combination with provided ranking");
             }
+        }
+    }
+
+    @Transactional
+    public void setTeamStrength(String name, int strength) throws ServiceException {
+        List<Team> teams = teamRepository.findTeamsByName(name);
+        if(teams.size() == 0)
+            throw new ServiceException("no such team: " + name);
+        for(Team t : teams) {
+            t.setCurrentStrength(strength);
+            teamRepository.save(t);
+            generateStrengthSnapshot(t);
         }
     }
 

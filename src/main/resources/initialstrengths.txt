@@ -1,0 +1,56 @@
+15;1. FC Köln    
+13;FC Augsburg
+37;Werder Bremen 
+88;Borussia Dortmund
+18;Fortuna Düsseldorf 
+99;Bayern München
+42;Eintracht Frankfurt   
+48;Bor. Mönchengladbach
+30;Hertha BSC     
+50;TSG Hoffenheim
+63;Bayer 04 Leverkusen
+18;1. FSV Mainz 05   
+6;SC Paderborn 07  
+74;RasenBallsport Leipzig    
+13;SC Freiburg   
+37;FC Schalke 04  
+6;1. FC Union Berlin  
+44;VfL Wolfsburg                                                                             
+94;VfB Stuttgart  
+89;Hamburger SV   
+82;Hannover 96   
+82;1. FC Nürnberg
+69;Holstein Kiel 
+66;FC St. Pauli  
+69;1. FC Heidenheim   
+66;Arminia Bielefeld  
+65;SV Darmstadt 98 
+62;VfL Bochum  
+57;Dynamo Dresden
+47;Karlsruher SC   
+49;Jahn Regensburg   
+43;VfL Osnabrück 
+39;SV Sandhausen 
+43;SpVgg Greuther Fürth
+28;Erzgebirge Aue 
+21;SV Wehen Wiesbaden   
+90;FC Ingolstadt 04
+89;Eintracht Braunschweig
+84;MSV Duisburg    
+82;1. FC Magdeburg
+80;1. FC Kaiserslautern
+78;Hallescher FC 
+76;Hansa Rostock 
+78;KFC Uerdingen 05 
+70;Würzburger Kickers  
+55;Waldhof Mannheim  
+59;SpVgg Unterhaching 
+59;FSV Zwickau  
+58;Preußen Münster 
+57;1860 München  
+50;SV Meppen 
+51;FC Viktoria Köln
+45;Carl Zeiss Jena 
+35;Chemnitzer FC
+27;Bayern München II
+15;SG Sonnenhof Großaspach
