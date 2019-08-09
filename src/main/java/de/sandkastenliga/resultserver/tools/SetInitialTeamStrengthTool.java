@@ -25,7 +25,7 @@ public class SetInitialTeamStrengthTool {
     @Autowired
     private TeamService teamService;
 
-    @PostConstruct
+    // @PostConstruct
     public void setInitialTeamStrengths() throws IOException {
         Resource initialStrengthResource = new ClassPathResource("/initialstrengths.txt");
         BufferedReader br = new BufferedReader(new InputStreamReader(initialStrengthResource.getInputStream()));
