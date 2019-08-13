@@ -69,10 +69,10 @@ function updateUI() {
 					colCh.append(match.region + ", " + match.challenge + ", " + match.round);
 					row.append(colCh);
 					var col1 = $(document.createElement("td"));
-					col1.append(match.team1 + " (" + match.posTeam1 + ")");
+					col1.append(match.team1 + " (" + match.posTeam1 + ", " + match.strengthTeam1 + ")");
 					row.append(col1);
 					var col2 = $(document.createElement("td"));
-					col2.append(match.team2 + " (" + match.posTeam2+ ")");
+					col2.append(match.team2 + " (" + match.posTeam2 + ", " + match.strengthTeam2 + ")");
 					row.append(col2);
 					var col3 = $(document.createElement("td"));
 					col3.append(match.goalsTeam1 + ":" + match.goalsTeam2);
