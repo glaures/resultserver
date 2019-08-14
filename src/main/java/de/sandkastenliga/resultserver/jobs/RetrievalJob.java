@@ -109,7 +109,7 @@ public class RetrievalJob {
         }
     }
 
-    // @Scheduled(fixedRate = 1000 * 60 * 60 * 24 * 7)
+    @Scheduled(fixedDelayString = "${timing.every3hours}", initialDelayString = "${timing.initialDelay}")
     public void updateFifaRanking() throws IOException {
         fifaRankingService.update();
     }
@@ -134,6 +134,9 @@ public class RetrievalJob {
                     matchService.updateTeamStrengthsAndPositions(c.getId(), ranking);
                     if(ranking.size() > 0)
                         teamService.updateTeamStrengths(c.getId(), ranking);
+                } else {
+                    // national teams?
+                    matchService.updateTeamStrengthsForTeamsWithoutRanking(c.getId());
                 }
             } catch (Throwable t) {
                 t.printStackTrace();

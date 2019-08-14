@@ -30,6 +30,7 @@ public class ApplicationResource {
 
     @GetMapping("/rest/application/update-rankings")
     public String updateRankings() throws InterruptedException, IOException, ServiceException {
+        retrievalJob.updateFifaRanking();
         retrievalJob.updateTeamStrengthsAndPositions();
         return "done without error";
     }

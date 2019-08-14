@@ -193,6 +193,16 @@ public class MatchService extends AbstractJpaDependentService {
         }
     }
 
+    @Transactional
+    public void updateTeamStrengthsForTeamsWithoutRanking(Integer challengeId) throws ServiceException {
+        List<Match> allOpenMatchesForChallenge = matchRepository.getReadyMatches(getValid(challengeId, challengeRepository));
+        for (Match m : allOpenMatchesForChallenge) {
+            m.setStrengthTeam1(m.getTeam1().getCurrentStrength());
+            m.setStrengthTeam2(m.getTeam2().getCurrentStrength());
+            matchRepository.save(m);
+        }
+    }
+
 
     // private helpers
 
