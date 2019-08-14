@@ -53,14 +53,4 @@ public class MatchResource {
         return res;
     }
 
-    @GetMapping("/rest/match/ranking/update")
-    public String updateRanking() {
-        try {
-            retrievalJob.updateTeamStrengthsAndPositions();
-        } catch (Throwable t) {
-            return t.getMessage();
-        }
-        return "OK";
-    }
-
 }

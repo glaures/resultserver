@@ -3,7 +3,6 @@ package de.sandkastenliga.resultserver.services.team;
 import de.sandkastenliga.resultserver.dtos.ExtendedTeamDto;
 import de.sandkastenliga.resultserver.dtos.StrengthSnapshotDto;
 import de.sandkastenliga.resultserver.dtos.TeamDto;
-import de.sandkastenliga.resultserver.model.Challenge;
 import de.sandkastenliga.resultserver.model.Match;
 import de.sandkastenliga.resultserver.model.Team;
 import de.sandkastenliga.resultserver.model.TeamStrengthSnapshot;
@@ -13,7 +12,6 @@ import de.sandkastenliga.resultserver.repositories.TeamRepository;
 import de.sandkastenliga.resultserver.repositories.TeamStrengthSnapshotRepository;
 import de.sandkastenliga.resultserver.services.AbstractJpaDependentService;
 import de.sandkastenliga.resultserver.services.ServiceException;
-import de.sandkastenliga.resultserver.services.sportsinfosource.fifaranking.FifaRankingService;
 import de.sandkastenliga.tools.projector.core.Projector;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -23,7 +21,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
-import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 @Service
@@ -36,16 +33,17 @@ public class TeamService extends AbstractJpaDependentService {
     private final ChallengeRepository challengeRepository;
     private final TeamStrengthSnapshotRepository teamStrengthSnapshotRepository;
     private MatchRepository matchRepository;
-    private FifaRankingService fifaRankingService;
     private Projector projector;
 
     @Autowired
-    public TeamService(TeamRepository teamRepository, ChallengeRepository challengeRepository, MatchRepository matchRepository, FifaRankingService fifaRankingService, TeamStrengthSnapshotRepository teamStrengthSnapshotRepository, Projector projector) {
+    public TeamService(TeamRepository teamRepository, ChallengeRepository challengeRepository,
+                       MatchRepository matchRepository,
+                       TeamStrengthSnapshotRepository teamStrengthSnapshotRepository,
+                       Projector projector) {
         this.teamRepository = teamRepository;
         this.challengeRepository = challengeRepository;
         this.matchRepository = matchRepository;
         this.teamStrengthSnapshotRepository = teamStrengthSnapshotRepository;
-        this.fifaRankingService = fifaRankingService;
         this.projector = projector;
     }
 
@@ -99,24 +97,10 @@ public class TeamService extends AbstractJpaDependentService {
     }
 
     @Transactional
-    public void updateFifaTeamPositions() throws ServiceException {
-        // update Fifa positions
-        /*
-        List<String> fifaRanking = fifaRankingService.getRanking();
-        int r = 1;
-        for (String teamName : fifaRanking) {
-            Team t = getValid(teamName, teamRepository);
-            // t.setMainChallengePos(r);
-            teamRepository.save(t);
-            r++;
-        }
-        */
-    }
-
-    @Transactional
-    public void updateTeamStrengths(int challengeId, Map<String, Integer> currentRanking) {
+    public void updateTeamStrengths(Map<String, Integer> currentRanking) {
+        if (currentRanking.size() == 0)
+            return;
         // do nothing
-        Challenge c = challengeRepository.getOne(challengeId);
         int maxRank = currentRanking.values().stream().max(Comparator.comparingInt(Integer::intValue)).get();
         int minRank = currentRanking.values().stream().min(Comparator.comparingInt(Integer::intValue)).get();
         if (maxRank == minRank)
@@ -126,9 +110,12 @@ public class TeamService extends AbstractJpaDependentService {
             Optional<Team> tOpt = teamRepository.findById(teamid);
             if (tOpt.isPresent()) {
                 Team t = tOpt.get();
-                int currentStrength = (int) (100f - (((float) (currentRanking.get(teamid) - minRank) / (maxRank - minRank)) * 100f));
-                int newStrength =  (int)(((float)(t.getCurrentStrength() * (strengthAverageSpan - 1)) + currentStrength) / strengthAverageSpan);
-                if(newStrength != t.getCurrentStrength()) {
+                int recentAverageStrength = getRecentAverageStrength(t);
+                int strengthBasedOnCurrentRanking =
+                        (int) (100f - (((float) (currentRanking.get(teamid) - minRank) / (maxRank - minRank)) * 100f));
+                int newStrength =
+                        (int) ((recentAverageStrength * (strengthAverageSpan - 1) + strengthBasedOnCurrentRanking) / strengthAverageSpan);
+                if (newStrength != t.getCurrentStrength()) {
                     t.setCurrentStrength(newStrength);
                     teamRepository.save(t);
                     generateStrengthSnapshot(t);
@@ -139,12 +126,33 @@ public class TeamService extends AbstractJpaDependentService {
         }
     }
 
+    /**
+     * Diese Methode schaut sich die letzten <pre>strengthAverageSpan-1</pre>
+     * StrengthSnapshots eines Teams an und gibt den Mittelwert zurück.
+     * Wird benötigt zur Berechnung der neuen Stärke.
+     */
+    private int getRecentAverageStrength(Team t) {
+        List<TeamStrengthSnapshot> strengthSnapshots =
+                teamStrengthSnapshotRepository.findAllByTeamOrderBySnapshotDateDesc(t);
+        if (strengthSnapshots.size() == 0)
+            return t.getCurrentStrength(); // vordefinierte Stärke wird wiederverwendet
+        int strengthSum = 0;
+        int snapshotsConsidered = 0;
+        for (TeamStrengthSnapshot tss : strengthSnapshots) {
+            strengthSum += tss.getStrength();
+            snapshotsConsidered++;
+            if (snapshotsConsidered == strengthAverageSpan - 1)
+                break;
+        }
+        return (int) (strengthSum / snapshotsConsidered);
+    }
+
     @Transactional
     public void setTeamStrength(String name, int strength) throws ServiceException {
         List<Team> teams = teamRepository.findTeamsByName(name);
-        if(teams.size() == 0)
+        if (teams.size() == 0)
             throw new ServiceException("no such team: " + name);
-        for(Team t : teams) {
+        for (Team t : teams) {
             t.setCurrentStrength(strength);
             teamRepository.save(t);
             generateStrengthSnapshot(t);

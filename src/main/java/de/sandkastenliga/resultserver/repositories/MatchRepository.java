@@ -39,4 +39,5 @@ public interface MatchRepository extends JpaRepository<Match, Integer> {
     List<Challenge> getAllChallengesWithOpenMatches(@Param("matchStateList") MatchState[] unfinishedMatchSates);
 
     Optional<Match> findMatchByCorrelationId(String correlationId);
+
 }

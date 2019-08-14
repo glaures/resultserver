@@ -3,6 +3,7 @@ package de.sandkastenliga.resultserver.services.schedule;
 import de.sandkastenliga.resultserver.model.MatchInfo;
 import de.sandkastenliga.resultserver.services.AbstractJpaDependentService;
 import de.sandkastenliga.resultserver.services.ServiceException;
+import de.sandkastenliga.resultserver.services.challenge.ChallengeService;
 import de.sandkastenliga.resultserver.services.match.MatchService;
 import de.sandkastenliga.resultserver.services.sportsinfosource.SportsInfoSource;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +21,8 @@ public class ScheduleService extends AbstractJpaDependentService {
     private SportsInfoSource sportsInfoSource;
     @Autowired
     private MatchService matchService;
+    @Autowired
+    private ChallengeService challengeService;
 
     @Autowired
     public ScheduleService(SportsInfoSource sportsInfoSource, MatchService matchService) {
@@ -36,13 +39,15 @@ public class ScheduleService extends AbstractJpaDependentService {
             throw new ServiceException("error.retrievalError", t);
         }
         for (MatchInfo mi : mis) {
-            final MatchInfo miFinal = mi;
-            matchService.handleMatchUpdate(mi.getCorrelationId(), miFinal.getRegion(), miFinal.getChallenge(),
-                    miFinal.getChallengeRankingUrl(), miFinal.getRound(),
-                    miFinal.getTeam1Id(), miFinal.getTeam1(), miFinal.getTeam2Id(), miFinal.getTeam2(),
-                    miFinal.getStart(), miFinal.getGoalsTeam1(), miFinal.getGoalsTeam2(),
-                    miFinal.getState(), date, mi.isExactTime());
+            if(challengeService.isRelevantRegion(mi.getRegion())) {
+                matchService.handleMatchUpdate(mi.getCorrelationId(), mi.getRegion(), mi.getChallenge(),
+                        mi.getChallengeRankingUrl(), mi.getRound(),
+                        mi.getTeam1Id(), mi.getTeam1(), mi.getTeam2Id(), mi.getTeam2(),
+                        mi.getStart(), mi.getGoalsTeam1(), mi.getGoalsTeam2(),
+                        mi.getState(), date, mi.isExactTime());
+            }
         }
+
     }
 
 }

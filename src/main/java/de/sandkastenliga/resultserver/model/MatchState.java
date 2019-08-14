@@ -8,6 +8,10 @@ public enum MatchState {
 		return new MatchState[] { scheduled, ready, running };
 	}
 
+	public static MatchState[] getFinishedStates() {
+		return new MatchState[] { finished, canceled, postponed };
+	}
+
 	public static boolean isFinishedState(MatchState matchState) {
 		for(MatchState ms : getUnfinishedStates()){
 			if(ms == matchState)

@@ -122,24 +122,26 @@ public class RetrievalJob {
         }
     }
 
-    @Scheduled(fixedDelayString = "${timing.every3hours}", initialDelayString = "${timing.initialDelay}")
+    @Scheduled(cron = "${timing.everyMondayNightCron}")
     // @PostConstruct
     public void updateTeamStrengthsAndPositions() throws ServiceException, IOException, InterruptedException {
         List<ChallengeDto> allChallengesWithOpenMatches = matchService.getAllChallengesWithOpenMatches();
         for (ChallengeDto c : allChallengesWithOpenMatches) {
-            try {
-                Map<String, Integer> ranking;
-                if (c.getRankUrl() != null && readyMatchesInChallenge(c)) {
-                    ranking = infoSource.getTeamRankings(c.getRankUrl());
-                    matchService.updateTeamStrengthsAndPositions(c.getId(), ranking);
-                    if(ranking.size() > 0)
-                        teamService.updateTeamStrengths(c.getId(), ranking);
-                } else {
-                    // national teams?
-                    matchService.updateTeamStrengthsForTeamsWithoutRanking(c.getId());
+            if (challengeService.isRelevantRegion(c.getRegion())) {
+                try {
+                    Map<String, Integer> ranking;
+                    if (c.getRankUrl() != null && readyMatchesInChallenge(c)) {
+                        ranking = infoSource.getTeamRankings(c.getRankUrl());
+                        matchService.updateTeamStrengthsAndPositions(c.getId(), ranking);
+                        if (ranking.size() > 0)
+                            teamService.updateTeamStrengths(ranking);
+                    } else {
+                        // national teams?
+                        matchService.updateTeamStrengthsForTeamsWithoutRanking(c.getId());
+                    }
+                } catch (Throwable t) {
+                    t.printStackTrace();
                 }
-            } catch (Throwable t) {
-                t.printStackTrace();
             }
         }
     }

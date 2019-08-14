@@ -140,27 +140,6 @@ public class MatchService extends AbstractJpaDependentService {
         return new Date().getTime() - d.getTime() > 1000 * 60 * 60 * 3;
     }
 
-    /*
-    private boolean isMoreExactDate(Date newDate, Date currentDate) {
-        if (currentDate == null) {
-            return true;
-        } else if (newDate == null) {
-            return false;
-        } else {
-            Calendar newDateCal = Calendar.getInstance();
-            newDateCal.setTime(newDate);
-            Calendar currentDateCal = Calendar.getInstance();
-            currentDateCal.setTime(currentDate);
-            if (currentDateCal.get(Calendar.DATE) != newDateCal.get(Calendar.DATE)) {
-                return true;
-            } else if (currentDateCal.get(Calendar.HOUR_OF_DAY) == 0) {
-                return true;
-            }
-        }
-        return false;
-    }
-    */
-
     @Transactional
     public void markMatchAsCanceled(Integer matchId) throws ServiceException {
         Match m = getValid(matchId, matchRepository);
