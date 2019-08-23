@@ -1,7 +1,7 @@
 package de.sandkastenliga.resultserver.services.team;
 
 import de.sandkastenliga.resultserver.dtos.ExtendedTeamDto;
-import de.sandkastenliga.resultserver.dtos.StrengthSnapshotDto;
+import de.sandkastenliga.resultserver.dtos.TeamStrengthSnapshotDto;
 import de.sandkastenliga.resultserver.dtos.TeamDto;
 import de.sandkastenliga.resultserver.model.Match;
 import de.sandkastenliga.resultserver.model.Team;
@@ -17,9 +17,14 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -52,7 +57,7 @@ public class TeamService extends AbstractJpaDependentService {
         Team t = getValid(id, teamRepository);
         ExtendedTeamDto res = projector.project(teamRepository.getOne(id), ExtendedTeamDto.class);
         List<TeamStrengthSnapshot> snapshots = teamStrengthSnapshotRepository.findAllByTeamOrderBySnapshotDateDesc(t);
-        res.setStrengthSnapshots(snapshots.stream().map(ss -> projector.project(ss, StrengthSnapshotDto.class)).collect(Collectors.toList()));
+        res.setTeamStrengthSnapshots(snapshots.stream().map(ss -> projector.project(ss, TeamStrengthSnapshotDto.class)).collect(Collectors.toList()));
         return res;
     }
 
@@ -92,6 +97,23 @@ public class TeamService extends AbstractJpaDependentService {
                     m.setPos(t, ranking.get(t.getName()));
                     matchRepository.save(m);
                 }
+            }
+        }
+    }
+
+    public void setInitialTeamStrengths() throws IOException {
+        Resource initialStrengthResource = new ClassPathResource("/initialstrengths.txt");
+        BufferedReader br = new BufferedReader(new InputStreamReader(initialStrengthResource.getInputStream()));
+        String line = null;
+        while ((line = br.readLine()) != null) {
+            StringTokenizer tok = new StringTokenizer(line, ";", false);
+            int strength = Integer.parseInt(tok.nextToken());
+            String teamName = tok.nextToken().trim();
+            try {
+                System.out.println("setting team strength of " + teamName + " to " + strength);
+                setTeamStrength(teamName, strength);
+            } catch (ServiceException se) {
+                System.out.println(se.getMessage());
             }
         }
     }
@@ -159,5 +181,15 @@ public class TeamService extends AbstractJpaDependentService {
         }
     }
 
-
+    @Transactional
+    public void cleanUpStrengthSnapshots() {
+        List<Team> allTeams = teamRepository.findAll();
+        for(Team t : allTeams){
+            List<TeamStrengthSnapshot> allTss = teamStrengthSnapshotRepository.findAllByTeamOrderBySnapshotDateDesc(t);
+            if(allTss.size() > 1){
+                allTss.remove(0);
+                teamStrengthSnapshotRepository.deleteAll(allTss);
+            }
+        }
+    }
 }

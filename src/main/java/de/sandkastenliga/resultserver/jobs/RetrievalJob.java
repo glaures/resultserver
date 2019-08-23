@@ -6,12 +6,14 @@ import de.sandkastenliga.resultserver.model.MatchInfo;
 import de.sandkastenliga.resultserver.model.MatchState;
 import de.sandkastenliga.resultserver.repositories.ChallengeRepository;
 import de.sandkastenliga.resultserver.repositories.MatchRepository;
+import de.sandkastenliga.resultserver.repositories.TeamStrengthSnapshotRepository;
 import de.sandkastenliga.resultserver.services.ServiceException;
 import de.sandkastenliga.resultserver.services.challenge.ChallengeService;
+import de.sandkastenliga.resultserver.services.error.ErrorHandlingService;
 import de.sandkastenliga.resultserver.services.match.MatchService;
 import de.sandkastenliga.resultserver.services.schedule.ScheduleService;
-import de.sandkastenliga.resultserver.services.sportsinfosource.SportsInfoSource;
-import de.sandkastenliga.resultserver.services.sportsinfosource.fifaranking.FifaRankingService;
+import de.sandkastenliga.resultserver.services.sportsinfosource.FifaRankingService;
+import de.sandkastenliga.resultserver.services.sportsinfosource.KickerSportsInfoSource;
 import de.sandkastenliga.resultserver.services.team.TeamService;
 import de.sandkastenliga.resultserver.utils.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,7 +37,7 @@ public class RetrievalJob {
     @Autowired
     private ScheduleService scheduleService;
     @Autowired
-    private SportsInfoSource infoSource;
+    private KickerSportsInfoSource infoSource;
     @Autowired
     private FifaRankingService fifaRankingService;
     @Autowired
@@ -43,25 +45,31 @@ public class RetrievalJob {
     @Autowired
     private ChallengeRepository challengeRepository;
     @Autowired
+    private TeamStrengthSnapshotRepository teamStrengthSnapshotRepository;
+    @Autowired
     private TeamService teamService;
+    @Autowired
+    private ErrorHandlingService errorHandlingService;
 
     private Date turboStop = new Date();
 
-    // @PostConstruct
-    public void initIfEmptyDB() throws ServiceException {
+    @PostConstruct
+    public void initIfEmptyDB() throws IOException {
         if (challengeService.getAllChallenges().size() == 0)
             updateSchedule();
+        if(teamStrengthSnapshotRepository.findAll().size() == 0){
+            teamService.setInitialTeamStrengths();
+        }
     }
 
     @Scheduled(fixedDelayString = "${timing.every2Minutes}", initialDelayString = "${timing.initialDelay}")
-    // @Scheduled(fixedDelay=1000)
-    public void updateUnfinishedMatchesInTurboMode() throws ServiceException {
+    public void updateUnfinishedMatchesInTurboMode() {
         if (isInTurbo())
             updateUnfinishedMatches();
     }
 
     @Scheduled(fixedDelayString = "${timing.every3hours}", initialDelayString = "${timing.initialDelay}")
-    public void updateUnfinishedMatches() throws ServiceException {
+    public void updateUnfinishedMatches() {
         Calendar lastParsed = Calendar.getInstance();
         lastParsed.add(Calendar.DATE, 1);
         DateUtils.resetToStartOfDay(lastParsed);
@@ -88,7 +96,7 @@ public class RetrievalJob {
                     matchService.markMatchAsCanceled(m.getId());
                 }
             } catch (Throwable t) {
-                throw new ServiceException("error.retrieval", t);
+                errorHandlingService.handleError(t);
             } finally {
                 lastParsed.setTime(m.getStart());
                 DateUtils.resetToStartOfDay(lastParsed);
@@ -97,7 +105,7 @@ public class RetrievalJob {
     }
 
     @Scheduled(fixedDelayString = "${timing.every3hours}", initialDelayString = "${timing.initialDelay}")
-    public void updateSchedule() throws ServiceException {
+    public void updateSchedule() {
         Calendar end = Calendar.getInstance();
         end.add(Calendar.DATE, 28);
         Calendar cal = Calendar.getInstance();
@@ -109,11 +117,6 @@ public class RetrievalJob {
         }
     }
 
-    @Scheduled(fixedDelayString = "${timing.every3hours}", initialDelayString = "${timing.initialDelay}")
-    public void updateFifaRanking() throws IOException {
-        fifaRankingService.update();
-    }
-
     @PostConstruct
     public void updateKoChallengeInfo() throws IOException {
         List<String[]> koChallenges = koChallenges = infoSource.getAllKoChallenges();
@@ -122,9 +125,11 @@ public class RetrievalJob {
         }
     }
 
-    @Scheduled(cron = "${timing.everyMondayNightCron}")
+    // not used at the moment
+    // @Scheduled(cron = "${timing.everyMondayNightCron}")
     // @PostConstruct
-    public void updateTeamStrengthsAndPositions() throws ServiceException, IOException, InterruptedException {
+    public void updateTeamStrengthsAndPositions() {
+        fifaRankingService.update();
         List<ChallengeDto> allChallengesWithOpenMatches = matchService.getAllChallengesWithOpenMatches();
         for (ChallengeDto c : allChallengesWithOpenMatches) {
             if (challengeService.isRelevantRegion(c.getRegion())) {

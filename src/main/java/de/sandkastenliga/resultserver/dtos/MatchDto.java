@@ -11,6 +11,8 @@ public class MatchDto {
     private Date start;
     private String team1;
     private String team2;
+    private String team1EmblemUrl;
+    private String team2EmblemUrl;
     private String challenge;
     private boolean ko;
     private String region;
@@ -187,5 +189,21 @@ public class MatchDto {
     @Projection(value = ProjectionType.property, propertyName = "state", referencePropertyName = "intValue")
     public void setMatchStateEnum(int matchStateEnum) {
         this.matchStateEnum = matchStateEnum;
+    }
+
+    public String getTeam1EmblemUrl() {
+        return team1EmblemUrl;
+    }
+
+    public void setTeam1EmblemUrl(String team1EmblemUrl) {
+        this.team1EmblemUrl = team1EmblemUrl;
+    }
+
+    public String getTeam2EmblemUrl() {
+        return team2EmblemUrl;
+    }
+
+    public void setTeam2EmblemUrl(String team2EmblemUrl) {
+        this.team2EmblemUrl = team2EmblemUrl;
     }
 }

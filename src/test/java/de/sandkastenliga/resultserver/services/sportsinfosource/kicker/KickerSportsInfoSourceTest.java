@@ -1,7 +1,8 @@
 package de.sandkastenliga.resultserver.services.sportsinfosource.kicker;
 
 import de.sandkastenliga.resultserver.model.MatchInfo;
-import de.sandkastenliga.resultserver.services.sportsinfosource.fifaranking.FifaRankingService;
+import de.sandkastenliga.resultserver.services.sportsinfosource.FifaRankingService;
+import de.sandkastenliga.resultserver.services.sportsinfosource.KickerSportsInfoSource;
 import org.junit.Before;
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -21,7 +22,7 @@ public class KickerSportsInfoSourceTest {
     @Before
     public void setup() throws IOException {
         FifaRankingService frs = new FifaRankingService();
-        this.kickerSportsInfoSource = new KickerSportsInfoSource(frs);
+        this.kickerSportsInfoSource = new KickerSportsInfoSource();
     }
 
 

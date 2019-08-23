@@ -1,8 +1,7 @@
 package de.sandkastenliga.resultserver.config;
 
-import de.sandkastenliga.resultserver.services.sportsinfosource.SportsInfoSource;
-import de.sandkastenliga.resultserver.services.sportsinfosource.fifaranking.FifaRankingService;
-import de.sandkastenliga.resultserver.services.sportsinfosource.kicker.KickerSportsInfoSource;
+import de.sandkastenliga.resultserver.services.sportsinfosource.FifaRankingService;
+import de.sandkastenliga.resultserver.services.sportsinfosource.KickerSportsInfoSource;
 import de.sandkastenliga.tools.projector.core.Projector;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -30,11 +29,6 @@ public class ResultServerConfiguration {
     @Bean
     public Projector projector() {
         return this.projector;
-    }
-
-    @Bean
-    public SportsInfoSource sportsInfoSource() throws IOException {
-        return new KickerSportsInfoSource(new FifaRankingService());
     }
 
     @Bean

@@ -3,6 +3,7 @@ $(document).ready(function() {
 		cache : false
 	});
 	updateUI();
+
 });
 
 var selectedDate = new Date();

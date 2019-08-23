@@ -2,10 +2,10 @@ package de.sandkastenliga.resultserver.services.schedule;
 
 import de.sandkastenliga.resultserver.model.MatchInfo;
 import de.sandkastenliga.resultserver.services.AbstractJpaDependentService;
-import de.sandkastenliga.resultserver.services.ServiceException;
 import de.sandkastenliga.resultserver.services.challenge.ChallengeService;
+import de.sandkastenliga.resultserver.services.error.ErrorHandlingService;
 import de.sandkastenliga.resultserver.services.match.MatchService;
-import de.sandkastenliga.resultserver.services.sportsinfosource.SportsInfoSource;
+import de.sandkastenliga.resultserver.services.sportsinfosource.KickerSportsInfoSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,29 +17,30 @@ import java.util.List;
 @Service
 public class ScheduleService extends AbstractJpaDependentService {
 
-    @Autowired
-    private SportsInfoSource sportsInfoSource;
-    @Autowired
+    private KickerSportsInfoSource sportsInfoSource;
     private MatchService matchService;
-    @Autowired
     private ChallengeService challengeService;
+    private ErrorHandlingService errorHandlingService;
 
     @Autowired
-    public ScheduleService(SportsInfoSource sportsInfoSource, MatchService matchService) {
+    public ScheduleService(KickerSportsInfoSource sportsInfoSource, MatchService matchService,
+                           ChallengeService challengeService, ErrorHandlingService errorHandlingService) {
         this.sportsInfoSource = sportsInfoSource;
         this.matchService = matchService;
+        this.challengeService = challengeService;
+        this.errorHandlingService = errorHandlingService;
     }
 
     @Transactional
-    public void updateSchedule(final Date date) throws ServiceException {
-        List<MatchInfo> mis = new ArrayList<MatchInfo>();
+    public void updateSchedule(final Date date) {
+        List<MatchInfo> mis = new ArrayList<>();
         try {
             mis = sportsInfoSource.getMatchInfoForDay(date);
         } catch (Throwable t) {
-            throw new ServiceException("error.retrievalError", t);
+            errorHandlingService.handleError(t);
         }
         for (MatchInfo mi : mis) {
-            if(challengeService.isRelevantRegion(mi.getRegion())) {
+            if (challengeService.isRelevantRegion(mi.getRegion())) {
                 matchService.handleMatchUpdate(mi.getCorrelationId(), mi.getRegion(), mi.getChallenge(),
                         mi.getChallengeRankingUrl(), mi.getRound(),
                         mi.getTeam1Id(), mi.getTeam1(), mi.getTeam2Id(), mi.getTeam2(),

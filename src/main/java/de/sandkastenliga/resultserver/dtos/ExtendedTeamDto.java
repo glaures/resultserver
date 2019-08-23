@@ -8,14 +8,14 @@ import java.util.List;
 
 public class ExtendedTeamDto extends TeamDto {
 
-    List<StrengthSnapshotDto> strengthSnapshots = new ArrayList<StrengthSnapshotDto>();
+    private List<TeamStrengthSnapshotDto> strengthSnapshots = new ArrayList<TeamStrengthSnapshotDto>();
 
-    public List<StrengthSnapshotDto> getStrengthSnapshots() {
+    public List<TeamStrengthSnapshotDto> getTeamStrengthSnapshots() {
         return strengthSnapshots;
     }
 
     @Projection(value = ProjectionType.none)
-    public void setStrengthSnapshots(List<StrengthSnapshotDto> strengthSnapshots) {
+    public void setTeamStrengthSnapshots(List<TeamStrengthSnapshotDto> strengthSnapshots) {
         this.strengthSnapshots = strengthSnapshots;
     }
 }

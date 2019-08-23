@@ -1,9 +1,7 @@
-package de.sandkastenliga.resultserver.services.sportsinfosource.kicker;
+package de.sandkastenliga.resultserver.services.sportsinfosource;
 
 import de.sandkastenliga.resultserver.model.MatchInfo;
 import de.sandkastenliga.resultserver.model.MatchState;
-import de.sandkastenliga.resultserver.services.sportsinfosource.SportsInfoSource;
-import de.sandkastenliga.resultserver.services.sportsinfosource.fifaranking.FifaRankingService;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
@@ -15,8 +13,9 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -28,25 +27,20 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
-public class KickerSportsInfoSource implements SportsInfoSource {
+@Service
+public class KickerSportsInfoSource {
 
     private static final String BASE_URL = "https://www.kicker.de";
     private static final String URL_PREFIX = "/fussball/matchkalender";
     private static final String URL_POSTFIX = "/1";
     private final Logger logger = LoggerFactory.getLogger(KickerSportsInfoSource.class);
     private final DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
-    private FifaRankingService fifaRankingService;
 
     @Value("${resultserver.ko-challenges.file}")
     private String koChallengesFileName;
 
-    @Autowired
-    public KickerSportsInfoSource(FifaRankingService fifaRankingService) {
-        this.fifaRankingService = fifaRankingService;
-    }
-
     public List<String[]> getAllKoChallenges() throws IOException {
-        List<String[]> res = new ArrayList<String[]>();
+        List<String[]> res = new ArrayList<>();
         BufferedReader br = new BufferedReader(new InputStreamReader(getClass().getClassLoader().getResourceAsStream(koChallengesFileName)));
         String line = null;
         while ((line = br.readLine()) != null) {
@@ -66,8 +60,8 @@ public class KickerSportsInfoSource implements SportsInfoSource {
         return res;
     }
 
-    public List<MatchInfo> getMatchInfoForDayFromDoc(Date matchDate, Document doc) throws IOException {
-        List<MatchInfo> res = new ArrayList<MatchInfo>();
+    public List<MatchInfo> getMatchInfoForDayFromDoc(Date matchDate, Document doc) {
+        List<MatchInfo> res = new ArrayList<>();
         Elements allGameLists = doc.getElementsByClass("kick__v100-gameList");
         for (Element gameList : allGameLists) {
             // Calendar startOfParsedGame = Calendar.getInstance();
@@ -171,11 +165,6 @@ public class KickerSportsInfoSource implements SportsInfoSource {
         return res;
     }
 
-    private String makeId(String team1) {
-        String res = team1.replace(" ", "-");
-        return res.toLowerCase();
-    }
-
     private String getCorrelationIdFromGameRow(Element gameRow) {
         // if there is anchor of class kick__v100-scoreBoard, we can use its link
         Element anchor = gameRow.selectFirst("a.kick__v100-scoreBoard");
@@ -246,49 +235,6 @@ public class KickerSportsInfoSource implements SportsInfoSource {
         return day.getTime().after(new Date());
     }
 
-    public boolean isRunning(String score, Date matchStart, boolean koChallenge, int[] res) {
-        if (res[0] == res[1] && koChallenge)
-            return true;
-        if (score.contains("font")) {
-            return true;
-        }
-        if (score.contains("-")) {
-            for (char c : score.toCharArray()) {
-                if (Character.isDigit(c)) {
-                    return true;
-                }
-            }
-        }
-        // no red scores, no '-' in score
-        Calendar matchFinish = Calendar.getInstance();
-        matchFinish.setTime(matchStart);
-        matchFinish.add(Calendar.MINUTE, 90 + 15);
-        if (koChallenge) {
-            matchFinish.add(Calendar.MINUTE, 15);
-        }
-        Date now = new Date();
-        if (matchStart.before(now) && now.before(matchFinish.getTime())) {
-            return true;
-        }
-        return false;
-    }
-
-    private int findFirstDigitFromColonPos(String text, int colonPos) {
-        int res = colonPos;
-        do {
-            res--;
-        } while (res >= 0 && Character.isDigit(text.charAt(res)));
-        return res + 1;
-    }
-
-    private boolean isCanceled(String s) {
-        return "abgesagt".equalsIgnoreCase(s) || "annulliert".equalsIgnoreCase(s) || "abgebrochen".equalsIgnoreCase(s);
-    }
-
-    private boolean isPostponed(String s) {
-        return "verlegt".equalsIgnoreCase(s);
-    }
-
     public Map<String, Integer> getTeamRankings(String urlStr) throws IOException {
         logger.info("Parsing team ranking at " + urlStr);
         Map<String, Integer> res = new HashMap<String, Integer>();
@@ -333,7 +279,8 @@ public class KickerSportsInfoSource implements SportsInfoSource {
                 return tok.nextToken();
             }
         }
-        return makeId(teamName);
+        String res = teamName.replace(" ", "-");
+        return res.toLowerCase();
     }
 
     private String removeSuffixes(String t) {

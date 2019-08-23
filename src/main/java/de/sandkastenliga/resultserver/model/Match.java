@@ -1,5 +1,6 @@
 package de.sandkastenliga.resultserver.model;
 
+import de.sandkastenliga.resultserver.utils.StringNormalizer;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Fetch;
@@ -187,6 +188,19 @@ public class Match {
         } else {
             tendence = goalsTeam1 == goalsTeam2 ? 0 : (goalsTeam1 > goalsTeam2 ? 1 : 2);
         }
+    }
+    @Transient
+    public String getTeam1EmblemUrl() {
+        return getTeamEmblemUrl(team1.getName());
+    }
+
+    @Transient
+    public String getTeam2EmblemUrl() {
+        return getTeamEmblemUrl(team2.getName());
+    }
+
+    private String getTeamEmblemUrl(String teamName){
+        return "https://sandkastenliga.de/img/realteams/" + StringNormalizer.normalize(teamName) + ".png";
     }
 
     @Transient

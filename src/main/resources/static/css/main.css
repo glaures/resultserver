@@ -1,0 +1,274 @@
+.page-title {
+    padding-bottom: 1em;
+    padding-top: 1em;
+}
+
+.team-name {
+    font-size: medium;
+    font-weight: bolder;
+}
+
+.bet-row{
+    padding-top: 1em;
+    border-bottom: solid 1px lightgray;
+}
+.bet-goal {
+    padding: 0px 5px 0px 5px;
+    vertical-align: center;
+    horiz-align: center;
+    font-weight: bolder;
+}
+
+.game-goal {
+    padding: 0px 10px 0px 5px;
+    font-size: x-large;
+    vertical-align: center;
+    horiz-align: center;
+    font-weight: bolder;
+}
+
+.bet-button {
+    font-size: larger;
+    font-weight: bolder;
+    vertical-align: center;
+    height: 30px;
+    width: 30px;
+    border-radius: 50%;
+    border-color: black;
+    background-color: white;
+    display: inline-block;
+}
+
+@font-face {
+    font-family: oswald;
+    src: url('/fontawesome/webfonts/Oswald.ttf.woff');
+}
+
+div {
+    font-family: oswald;
+}
+
+/* https://stackoverflow.com/questions/19070463/using-bootstrap-but-text-not-responsive */
+/* xs < 768 */
+@media screen and (max-width: 767px) {
+    body {
+        font-size: 0.8em;
+    }
+
+    h1 {
+        font-size: 1.6em;
+        padding-top: 0.8em;
+    }
+
+    h2 {
+        font-size: 1.3em;
+        padding-top: 0.64em;
+    }
+
+    h3 {
+        font-size: 1.2em;
+        padding-top: 0.64em;
+    }
+}
+
+/* sm */
+@media screen and (min-width: 768px) {
+    body {
+        font-size: 1em;
+    }
+
+    h1 {
+        font-size: 1.7em;
+        padding-top: 0.5em;
+    }
+
+    h2 {
+        font-size: 1.45em;
+        padding-top: 0.4em;
+    }
+
+    h3 {
+        font-size: 1.3em;
+        padding-top: 0.64em;
+    }
+}
+
+/* md */
+@media screen and (min-width: 992px) {
+    body {
+        font-size: 1.2em;
+    }
+
+    h1 {
+        font-size: 1.8em;
+        padding-top: 0.5em;
+    }
+
+    h2 {
+        font-size: 1.6em;
+        padding-top: 0.4em;
+    }
+
+    h3 {
+        font-size: 1.35em;
+        padding-top: 0.64em;
+    }
+
+    .right-panel {
+        border-left: 1px dotted rgba(0, 0, 0, 0.25);
+    }
+}
+
+/* lg */
+@media screen and (min-width: 1200px) {
+    body {
+        font-size: 1.3em;
+    }
+
+    h1 {
+        font-size: 1.9em;
+        padding-top: 0.5em;
+    }
+
+    h2 {
+        font-size: 1.7em;
+        padding-top: 0.4em;
+    }
+}
+
+/* https://stackoverflow.com/questions/18954117/input-group-two-inputs-close-to-each-other */
+.input-group-addon {
+    border-left-width: 0;
+    border-right-width: 0;
+}
+
+.input-group-addon:first-child {
+    border-left-width: 1px;
+}
+
+.input-group-addon:last-child {
+    border-right-width: 1px;
+}
+
+.btn-space {
+    margin-left: 12pt;
+}
+
+.cb-row {
+    cursor: pointer;
+}
+
+.invite-link {
+    cursor: pointer;
+}
+
+.help {
+    padding-bottom: 1em;
+}
+
+.info {
+    position: fixed;
+    padding: 0px 5px 5px 5px;
+    margin-bottom: 0;
+    bottom: 0.1em;
+}
+
+.result {
+    font-weight: bolder;
+}
+
+.odds {
+    cursor: pointer;
+    background-color: white;
+    margin-left: 0.1em;
+    margin-right: 0.1em;
+}
+
+.odds-empty {
+    border-bottom: 1px dotted rgba(0, 0, 0, 0.25);
+}
+
+.game-row {
+    padding-bottom: 1em;
+    margin-bottom: 1em;
+    border-bottom: 1px dotted rgba(0, 0, 0, 0.25);
+    border-left: 1px dotted rgba(0, 0, 0, 0.25);
+    border-right: 1px dotted rgba(0, 0, 0, 0.25);
+}
+
+.odd-game-row {
+    background-color: rgba(0, 0, 0, 0.03);;
+}
+
+.game-result {
+    font-size: larger;
+    font-weight: bolder;
+    text-align: center;
+    /*
+    border-bottom: 1px dotted rgba(0, 0, 0, 0.25);
+    */
+}
+
+
+
+.team2-name {
+    text-align: left;
+    font-size: larger;
+    font-weight: bolder;
+    /*
+    border-bottom: 1px dotted rgba(0, 0, 0, 0.25);
+    border-right: 1px dotted rgba(0, 0, 0, 0.25);
+    */
+}
+
+.odd-team1, .odd-draw, .odd-team2 {
+    border: 1px dotted rgba(0, 0, 0, 0.25);
+    font-size: smaller;
+    font-weight: lighter;
+    color: dimgray;
+}
+
+.odd-correct {
+    text-decoration: underline;
+}
+
+.game-teams-row {
+    border-top: 1px dotted rgba(0, 0, 0, 0.25);
+}
+
+.footer {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    /* Set the fixed height of the footer here */
+    height: 30px;
+    line-height: 14px; /* Vertically center the text there */
+    background-color: #ddd;
+    font-size: 0.7em;
+}
+
+.nowrap {
+    white-space: nowrap;
+}
+
+.game-meta {
+    color: grey;
+    font-weight: lighter;
+    font-size: small;
+}
+
+.read-more {
+    margin-left: 1em;
+    font-weight: lighter;
+    font-size: small;
+}
+
+.footer-links {
+    font-weight: lighter;
+    font-size: small;
+}
+
+.table-border-left {
+    border-left: 1px solid #DDD;
+}
+

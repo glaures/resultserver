@@ -2,7 +2,7 @@ package de.sandkastenliga.resultserver.dtos;
 
 import java.util.Date;
 
-public class StrengthSnapshotDto {
+public class TeamStrengthSnapshotDto {
 
     private Date snapshotDate;
     private int strength;

@@ -2,7 +2,7 @@ package de.sandkastenliga.resultserver.services.sportsinfosource.kicker;
 
 import de.sandkastenliga.resultserver.model.MatchInfo;
 import de.sandkastenliga.resultserver.model.MatchState;
-import de.sandkastenliga.resultserver.services.sportsinfosource.fifaranking.FifaRankingService;
+import de.sandkastenliga.resultserver.services.sportsinfosource.KickerSportsInfoSource;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.junit.Assert;
@@ -31,8 +31,7 @@ public abstract class AbstractTestCase {
 
     @Before
     public void setup() throws IOException {
-        FifaRankingService frs = new FifaRankingService();
-        this.kickerSportsInfoSource = new KickerSportsInfoSource(frs);
+        this.kickerSportsInfoSource = new KickerSportsInfoSource();
     }
 
     public abstract int getYear();
@@ -75,7 +74,7 @@ public abstract class AbstractTestCase {
                         Assert.assertEquals("result is wrong " + mi, goalsTeam1, mi.getGoalsTeam1());
                         Assert.assertEquals("result is wrong " + mi, goalsTeam2, mi.getGoalsTeam2());
                         Assert.assertEquals(state, mi.getState());
-                        if (timeString != null){
+                        if (timeString != null) {
                             Assert.assertEquals(timeString, timeFormat.format(mi.getStart()));
                         }
                         return;

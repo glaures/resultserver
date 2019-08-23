@@ -18,4 +18,9 @@ public class TeamResource {
     public ExtendedTeamDto getTeam(@PathVariable("id") String id) throws ServiceException {
         return teamService.getExtendedTeamDto(id);
     }
+
+    @GetMapping("/rest/cleanup-strength-snapshots")
+    public void cleanUpStrengthSnapshots() throws ServiceException {
+        teamService.cleanUpStrengthSnapshots();
+    }
 }
