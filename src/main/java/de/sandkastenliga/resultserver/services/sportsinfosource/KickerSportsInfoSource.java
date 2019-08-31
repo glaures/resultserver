@@ -128,7 +128,8 @@ public class KickerSportsInfoSource {
                             try {
                                 goalsTeam1 = (NumberFormat.getIntegerInstance().parse(score1Str).intValue());
                                 goalsTeam2 = (NumberFormat.getIntegerInstance().parse(score2Str).intValue());
-                                if (resultHolderElem.getElementsByClass("kick__v100-scoreBoard__scoreHolder--live").size() > 0) {
+                                if (resultHolderElem.getElementsByClass("kick__v100-scoreBoard__scoreHolder--live").size() > 0
+                                        && new Date().after(matchDate)) {
                                     matchState = MatchState.running;
                                 } else if (goalsTeam1 >= 0 && goalsTeam2 >= 0) {
                                     matchState = MatchState.finished;
