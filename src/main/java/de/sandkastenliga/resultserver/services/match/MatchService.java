@@ -98,7 +98,7 @@ public class MatchService extends AbstractJpaDependentService {
 
     @Transactional
     public int handleMatchUpdate(String correlationId, String region, String challenge, String challengeRankingUrl, String round,
-                                 String team1Id, String team1Name, String team2Id, String team2Name, Date date, int goalsTeam1, int goalsTeam2, MatchState matchState, Date start, boolean exactTime){
+                                 String team1Id, String team1Name, String team2Id, String team2Name, Date date, int goalsTeam1, int goalsTeam2, MatchState matchState, Date start, boolean exactTime) {
         if (!challengeService.isRelevantRegion(region))
             return -1;
         // create teams if they do not exists in the DB yet
@@ -130,6 +130,10 @@ public class MatchService extends AbstractJpaDependentService {
             m.setState(MatchState.finished);
         } else {
             m.setState(matchState);
+            if ((m.getState() == MatchState.running || m.getState() == MatchState.finished)
+                    && new Date().after(m.getStart()))
+                // das Spiel kann noch garnicht laufen
+                m.setState(MatchState.ready);
         }
         m.setLastUpdated(new Date());
         matchRepository.save(m);
