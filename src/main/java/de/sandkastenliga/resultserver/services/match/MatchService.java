@@ -113,28 +113,18 @@ public class MatchService extends AbstractJpaDependentService {
             m = new Match();
             m.setChallenge(c);
             m.setRound(round);
+            m.setCorrelationId(correlationId);
         } else {
             m = mOpt.get();
-            if (MatchState.isFinishedState(m.getState()))
-                return m.getId();
         }
         if (!mOpt.isPresent() || exactTime) {
             m.setStart(date);
         }
-        m.setCorrelationId(correlationId);
         m.setTeam1(t1);
         m.setTeam2(t2);
         m.setGoalsTeam1(goalsTeam1);
         m.setGoalsTeam2(goalsTeam2);
-        if (m.getStart() != null && threeHoursPassedSinceStart(m.getStart()) && goalsTeam1 >= 0 && !MatchState.isFinishedState(m.getState())) {
-            m.setState(MatchState.finished);
-        } else {
-            m.setState(matchState);
-            if ((m.getState() == MatchState.running || m.getState() == MatchState.finished)
-                    && new Date().after(m.getStart()))
-                // das Spiel kann noch garnicht laufen
-                m.setState(MatchState.ready);
-        }
+        m.setState(matchState);
         m.setLastUpdated(new Date());
         matchRepository.save(m);
         return m.getId();

@@ -79,7 +79,7 @@ function updateUI() {
 					col3.append(match.goalsTeam1 + ":" + match.goalsTeam2);
 					row.append(col3);
 					var col4 = $(document.createElement("td"));
-					col4.append(match.matchState);
+					col4.append(match.matchStateEnum);
 					row.append(col4);
 					var col5 = $(document.createElement("td"));
 					col5.append(toDateString(new Date(match.lastUpdated)));
