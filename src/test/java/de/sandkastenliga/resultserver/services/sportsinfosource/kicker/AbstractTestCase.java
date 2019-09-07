@@ -50,11 +50,19 @@ public abstract class AbstractTestCase {
         cal.set(Calendar.YEAR, getYear());
         cal.set(Calendar.MONTH, getMonth() - 1);
         cal.set(Calendar.DATE, getDate());
-        Resource resource = new ClassPathResource(getYear() + "-" + numberFormat.format(getMonth()) + "-" + numberFormat.format(getDate()) + ".htm");
+        Resource resource = new ClassPathResource(getTestFilename());
         InputStream is = resource.getInputStream();
         Document doc = Jsoup.parse(is, "UTF-8", "");
         List<MatchInfo> res = kickerSportsInfoSource.getMatchInfoForDayFromDoc(cal.getTime(), doc);
         checkResultList(res);
+    }
+
+    protected String getTestFilename(){
+        Calendar cal = Calendar.getInstance();
+        cal.set(Calendar.YEAR, getYear());
+        cal.set(Calendar.MONTH, getMonth() - 1);
+        cal.set(Calendar.DATE, getDate());
+        return getYear() + "-" + numberFormat.format(getMonth()) + "-" + numberFormat.format(getDate()) + ".htm";
     }
 
     private void checkResultList(List<MatchInfo> matchList) {

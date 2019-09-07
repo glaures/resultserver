@@ -2,6 +2,7 @@ package de.sandkastenliga.resultserver.services.sportsinfosource;
 
 import de.sandkastenliga.resultserver.model.MatchInfo;
 import de.sandkastenliga.resultserver.model.MatchState;
+import de.sandkastenliga.resultserver.utils.DateUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
@@ -61,13 +62,13 @@ public class KickerSportsInfoSource {
     }
 
     public List<MatchInfo> getMatchInfoForDayFromDoc(Date matchDate, Document doc) {
+        matchDate = DateUtils.resetToStartOfDay(matchDate);
         List<MatchInfo> res = new ArrayList<>();
         Elements allGameLists = doc.getElementsByClass("kick__v100-gameList");
         for (Element gameList : allGameLists) {
             // Calendar startOfParsedGame = Calendar.getInstance();
             // startOfParsedGame.setTime(matchDate);
             // resetToStartOfDay(startOfParsedGame);
-            MatchState matchState = MatchState.scheduled;
             // determine challenge
             Element gameListHeader = gameList.getElementsByClass("kick__v100-gameList__header").first();
             String challengeString = gameListHeader.text().trim();
@@ -89,6 +90,7 @@ public class KickerSportsInfoSource {
             // start parsing games
             Elements gameRows = gameList.getElementsByClass("kick__v100-gameList__gameRow");
             for (Element gameRow : gameRows) {
+                MatchState matchState = MatchState.scheduled;
                 String correlationId = getCorrelationIdFromGameRow(gameRow);
                 Elements teamNameElements = gameRow.getElementsByClass("kick__v100-gameCell__team__name");
                 String team1 = teamNameElements.get(0).text();
@@ -119,7 +121,10 @@ public class KickerSportsInfoSource {
                 if (resultHolderElems.size() > 0) {
                     Element resultHolderElem = resultHolderElems.first();
                     Elements scoreholderElems = resultHolderElem.select(".kick__v100-scoreBoard__scoreHolder__score");
-                    if (scoreholderElems.size() == 2) {
+                    if(resultHolderElem.hasClass("kick__v100-scoreBoard__scoreHolder--prelive")){
+                        // countdown 1h vor dem Spiel --> ready
+                        matchState = MatchState.ready;
+                    } else if (scoreholderElems.size() == 2) {
                         String score1Str = scoreholderElems.get(0).text().trim();
                         String score2Str = scoreholderElems.get(1).text().trim();
                         if ("-".equals(score1Str)) {
@@ -128,8 +133,7 @@ public class KickerSportsInfoSource {
                             try {
                                 goalsTeam1 = (NumberFormat.getIntegerInstance().parse(score1Str).intValue());
                                 goalsTeam2 = (NumberFormat.getIntegerInstance().parse(score2Str).intValue());
-                                if (resultHolderElem.getElementsByClass("kick__v100-scoreBoard__scoreHolder--live").size() > 0
-                                        && new Date().after(matchDate)) {
+                                if (resultHolderElem.getElementsByClass("kick__v100-scoreBoard__scoreHolder--live").size() > 0) {
                                     matchState = MatchState.running;
                                 } else if (goalsTeam1 >= 0 && goalsTeam2 >= 0) {
                                     matchState = MatchState.finished;

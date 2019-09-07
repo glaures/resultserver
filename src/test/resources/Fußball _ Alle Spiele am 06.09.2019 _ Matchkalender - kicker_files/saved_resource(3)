@@ -1,0 +1,9 @@
+Adform=window.Adform||{};
+Adform.host="https://track.adform.net";
+Adform.shost="https://s1.adform.net";
+Adform.scriptBase=Adform.shost+"/banners/scripts/";
+Adform.cache="619";
+Adform.ADFBannerData={"URL":"https://track.adform.net/adfserve/?bn=32110574;click=https://adclick.g.doubleclick.net/pcs/click?xai=AKAOjss0k4tPkyDbMg2cSwE3JDDStPckor_NDjxW-5vAHdqVkWIk3Kzqwaymiv30--SrB-iC6JvepTThDtetCaSzgVl2plzL-uNfh3gZGT_xYgRufChPje0YOahtsGMW-wjOM6op7irtzAdbs50RsBmOcszOYA9cRfJgdVG_hKqjyuFErszq_Rr7kEW7DbYsHHSO3LSQNEVrwhJmLWpsNlxbHROawHBDhCoA-k66ZNhVE7MMo6xfv8lkv9Z3Ni9gvPYppg76OP-e5lEy4Y3sorLh30DSgeIcgMjrDrj_5I_cTyZhabFN_Q&sig=Cg0ArKJSzEnBDyaqZrznEAE&urlfix=1&adurl=","CREFURL":"https%3a%2f%2fwww.kicker.de%2ffussball%2fmatchkalender","BN":32110574};
+if(!Adform.ADFBannerParams)Adform.ADFBannerParams=[];
+Adform.ADFBannerParams.push(Adform.ADFBannerData);
+typeof Adform.ADFUtilInstance=="undefined"?document.write('<scr'+'ipt type="text/javascript" src="https://s1.adform.net/stoat/619/s1.adform.net/bootstrap.js"></scr'+'ipt>'):new Adform.ADFBanner();
