@@ -128,7 +128,6 @@ public class RetrievalJob {
     }
 
     @Scheduled(cron = "${timing.everyMondayNightCron}")
-    @PostConstruct
     public void updateTeamStrengthsAndPositions() {
         fifaRankingService.update();
         List<ChallengeDto> allChallengesWithOpenMatches = matchService.getAllChallengesWithOpenMatches();
