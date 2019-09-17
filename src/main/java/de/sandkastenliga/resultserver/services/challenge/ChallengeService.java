@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -17,7 +16,6 @@ import java.util.stream.Collectors;
 @Service
 public class ChallengeService {
 
-    private final static String[] RELEVANT_REGIONS = new String[]{"Weltweit", "Deutschland", "Schweiz", "Österreich", "England", "Spanien", "Frankreich", "Italien", "Europa", "(Weltweit)", "(Europa)"};
     @Autowired
     private ChallengeRepository challengeRepository;
     @Autowired
@@ -54,10 +52,6 @@ public class ChallengeService {
     public void markKoChallenge(String region, String challengeName) {
         Challenge c = getOrCreateChallenge(region, challengeName, null, null);
         c.setChallengeMode(ChallengeMode.ko);
-    }
-
-    public boolean isRelevantRegion(String region) {
-        return Arrays.asList(RELEVANT_REGIONS).contains(region);
     }
 
 }

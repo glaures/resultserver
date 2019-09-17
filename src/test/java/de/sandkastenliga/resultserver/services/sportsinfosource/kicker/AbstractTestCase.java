@@ -2,6 +2,7 @@ package de.sandkastenliga.resultserver.services.sportsinfosource.kicker;
 
 import de.sandkastenliga.resultserver.model.MatchInfo;
 import de.sandkastenliga.resultserver.model.MatchState;
+import de.sandkastenliga.resultserver.services.challenge.RegionRelevanceProviderImpl;
 import de.sandkastenliga.resultserver.services.sportsinfosource.KickerSportsInfoSource;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -31,7 +32,7 @@ public abstract class AbstractTestCase {
 
     @Before
     public void setup() throws IOException {
-        this.kickerSportsInfoSource = new KickerSportsInfoSource();
+        this.kickerSportsInfoSource = new KickerSportsInfoSource(new RegionRelevanceProviderImpl());
     }
 
     public abstract int getYear();

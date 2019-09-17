@@ -6,6 +6,7 @@ import de.sandkastenliga.resultserver.services.challenge.ChallengeService;
 import de.sandkastenliga.resultserver.services.error.ErrorHandlingService;
 import de.sandkastenliga.resultserver.services.match.MatchService;
 import de.sandkastenliga.resultserver.services.sportsinfosource.KickerSportsInfoSource;
+import de.sandkastenliga.resultserver.services.sportsinfosource.RegionRelevanceProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,14 +22,18 @@ public class ScheduleService extends AbstractJpaDependentService {
     private MatchService matchService;
     private ChallengeService challengeService;
     private ErrorHandlingService errorHandlingService;
+    private RegionRelevanceProvider regionRelevanceProvider;
 
     @Autowired
     public ScheduleService(KickerSportsInfoSource sportsInfoSource, MatchService matchService,
-                           ChallengeService challengeService, ErrorHandlingService errorHandlingService) {
+                           ChallengeService challengeService,
+                           RegionRelevanceProvider regionRelevanceProvider,
+                           ErrorHandlingService errorHandlingService) {
         this.sportsInfoSource = sportsInfoSource;
         this.matchService = matchService;
         this.challengeService = challengeService;
         this.errorHandlingService = errorHandlingService;
+        this.regionRelevanceProvider = regionRelevanceProvider;
     }
 
     @Transactional
@@ -40,7 +45,7 @@ public class ScheduleService extends AbstractJpaDependentService {
             errorHandlingService.handleError(t);
         }
         for (MatchInfo mi : mis) {
-            if (challengeService.isRelevantRegion(mi.getRegion())) {
+            if (regionRelevanceProvider.isRelevantRegion(mi.getRegion())) {
                 matchService.handleMatchUpdate(mi.getCorrelationId(), mi.getRegion(), mi.getChallenge(),
                         mi.getChallengeRankingUrl(), mi.getRound(),
                         mi.getTeam1Id(), mi.getTeam1(), mi.getTeam2Id(), mi.getTeam2(),

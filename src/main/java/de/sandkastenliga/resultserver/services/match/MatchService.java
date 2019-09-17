@@ -12,6 +12,7 @@ import de.sandkastenliga.resultserver.repositories.TeamRepository;
 import de.sandkastenliga.resultserver.services.AbstractJpaDependentService;
 import de.sandkastenliga.resultserver.services.ServiceException;
 import de.sandkastenliga.resultserver.services.challenge.ChallengeService;
+import de.sandkastenliga.resultserver.services.sportsinfosource.RegionRelevanceProvider;
 import de.sandkastenliga.resultserver.services.team.TeamService;
 import de.sandkastenliga.tools.projector.core.Projector;
 import org.springframework.stereotype.Service;
@@ -30,14 +31,22 @@ public class MatchService extends AbstractJpaDependentService {
     private MatchRepository matchRepository;
     private ChallengeRepository challengeRepository;
     private ChallengeService challengeService;
+    private RegionRelevanceProvider regionRelevanceProvider;
     private TeamService teamService;
     private TeamRepository teamRepository;
     private Projector projector;
 
-    public MatchService(MatchRepository matchRepository, ChallengeRepository challengeDao, ChallengeService challengeService, TeamService teamService, TeamRepository teamRepository, Projector projector) {
+    public MatchService(MatchRepository matchRepository,
+                        ChallengeRepository challengeDao,
+                        ChallengeService challengeService,
+                        RegionRelevanceProvider regionRelevanceProvider,
+                        TeamService teamService,
+                        TeamRepository teamRepository,
+                        Projector projector) {
         this.matchRepository = matchRepository;
         this.challengeRepository = challengeDao;
         this.challengeService = challengeService;
+        this.regionRelevanceProvider = regionRelevanceProvider;
         this.teamService = teamService;
         this.teamRepository = teamRepository;
         this.projector = projector;
@@ -99,7 +108,7 @@ public class MatchService extends AbstractJpaDependentService {
     @Transactional
     public int handleMatchUpdate(String correlationId, String region, String challenge, String challengeRankingUrl, String round,
                                  String team1Id, String team1Name, String team2Id, String team2Name, Date date, int goalsTeam1, int goalsTeam2, MatchState matchState, Date start, boolean exactTime) {
-        if (!challengeService.isRelevantRegion(region))
+        if (!regionRelevanceProvider.isRelevantRegion(region))
             return -1;
         // create teams if they do not exists in the DB yet
         teamService.getOrCreateTeam(team1Id, team1Name);

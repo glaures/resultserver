@@ -14,8 +14,8 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import java.io.BufferedReader;
@@ -36,6 +36,12 @@ public class KickerSportsInfoSource {
     private static final String URL_POSTFIX = "/1";
     private final Logger logger = LoggerFactory.getLogger(KickerSportsInfoSource.class);
     private final DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
+    private RegionRelevanceProvider regionRelevanceProvider;
+
+    @Autowired
+    public KickerSportsInfoSource(RegionRelevanceProvider regionRelevanceProvider) {
+        this.regionRelevanceProvider = regionRelevanceProvider;
+    }
 
     @Value("${resultserver.ko-challenges.file}")
     private String koChallengesFileName;
@@ -48,7 +54,8 @@ public class KickerSportsInfoSource {
             StringTokenizer tok = new StringTokenizer(line, ",", false);
             String challenge = tok.nextToken();
             String region = tok.nextToken();
-            res.add(new String[]{region, challenge});
+            if (regionRelevanceProvider.isRelevantRegion(region))
+                res.add(new String[]{region, challenge});
         }
         return res;
     }
@@ -74,97 +81,99 @@ public class KickerSportsInfoSource {
             String challengeString = gameListHeader.text().trim();
             StringTokenizer tok = new StringTokenizer(challengeString.trim(), "(,)", false);
             String region = tok.nextToken().trim();
-            String challenge = tok.nextToken().trim();
-            String round = "0";
-            String challengeRankingUrl = null;
-            if (tok.hasMoreTokens()) {
-                String roundStr = tok.nextToken();
-                if (roundStr.contains(".") && roundStr.indexOf(".") < 3) {
-                    round = roundStr.substring(0, roundStr.indexOf(".")).trim();
-                    // if the round is set, there must be a ranking URL
-                    Element flagLink = gameListHeader.select("a.kick__flag-link").first();
-                    challengeRankingUrl = flagLink.attr("href").replace("spieltag", "tabelle");
-                }
-            }
-            boolean koMode = false;
-            // start parsing games
-            Elements gameRows = gameList.getElementsByClass("kick__v100-gameList__gameRow");
-            for (Element gameRow : gameRows) {
-                MatchState matchState = MatchState.scheduled;
-                String correlationId = getCorrelationIdFromGameRow(gameRow);
-                Elements teamNameElements = gameRow.getElementsByClass("kick__v100-gameCell__team__name");
-                String team1 = teamNameElements.get(0).text();
-                String team2 = teamNameElements.get(1).text();
-                Elements teamGameCells = gameRow.getElementsByClass("kick__v100-gameCell__team");
-                String team1Id = findTeamIdInTeamGameCell(teamGameCells.get(0), team1);
-                String team2Id = findTeamIdInTeamGameCell(teamGameCells.get(1), team2);
-                // parse date if applicable
-                Calendar matchDateCal = null;
-                matchDateCal = Calendar.getInstance();
-                matchDateCal.setTime(matchDate);
-                resetToStartOfDay(matchDateCal);
-                boolean isExactTime = false;
-                Elements dateHolderElem = gameRow.getElementsByClass("kick__v100-scoreBoard__dateHolder");
-                if (dateHolderElem.size() > 1) {
-                    // second row carries time info
-                    Date exactTime = parseDateFromResultFieldOnKIckerPage(dateHolderElem.get(0).text().trim(), dateHolderElem.get(1).text().trim(), matchDateCal);
-                    if (exactTime != null) {
-                        matchDateCal.setTime(exactTime);
-                        matchState = MatchState.ready;
-                        isExactTime = true;
+            if(regionRelevanceProvider.isRelevantRegion(region)) {
+                String challenge = tok.nextToken().trim();
+                String round = "0";
+                String challengeRankingUrl = null;
+                if (tok.hasMoreTokens()) {
+                    String roundStr = tok.nextToken();
+                    if (roundStr.contains(".") && roundStr.indexOf(".") < 3) {
+                        round = roundStr.substring(0, roundStr.indexOf(".")).trim();
+                        // if the round is set, there must be a ranking URL
+                        Element flagLink = gameListHeader.select("a.kick__flag-link").first();
+                        challengeRankingUrl = flagLink.attr("href").replace("spieltag", "tabelle");
                     }
                 }
-                // check if there is a result already
-                int goalsTeam1 = -1;
-                int goalsTeam2 = -1;
-                Elements resultHolderElems = gameRow.getElementsByClass("kick__v100-scoreBoard__scoreHolder");
-                if (resultHolderElems.size() > 0) {
-                    Element resultHolderElem = resultHolderElems.first();
-                    Elements scoreholderElems = resultHolderElem.select(".kick__v100-scoreBoard__scoreHolder__score");
-                    if(resultHolderElem.hasClass("kick__v100-scoreBoard__scoreHolder--prelive")){
-                        // countdown 1h vor dem Spiel --> ready
-                        matchState = MatchState.ready;
-                    } else if (scoreholderElems.size() == 2) {
-                        String score1Str = scoreholderElems.get(0).text().trim();
-                        String score2Str = scoreholderElems.get(1).text().trim();
-                        if ("-".equals(score1Str)) {
+                boolean koMode = false;
+                // start parsing games
+                Elements gameRows = gameList.getElementsByClass("kick__v100-gameList__gameRow");
+                for (Element gameRow : gameRows) {
+                    MatchState matchState = MatchState.scheduled;
+                    String correlationId = getCorrelationIdFromGameRow(gameRow);
+                    Elements teamNameElements = gameRow.getElementsByClass("kick__v100-gameCell__team__name");
+                    String team1 = teamNameElements.get(0).text();
+                    String team2 = teamNameElements.get(1).text();
+                    Elements teamGameCells = gameRow.getElementsByClass("kick__v100-gameCell__team");
+                    String team1Id = findTeamIdInTeamGameCell(teamGameCells.get(0), team1);
+                    String team2Id = findTeamIdInTeamGameCell(teamGameCells.get(1), team2);
+                    // parse date if applicable
+                    Calendar matchDateCal = null;
+                    matchDateCal = Calendar.getInstance();
+                    matchDateCal.setTime(matchDate);
+                    resetToStartOfDay(matchDateCal);
+                    boolean isExactTime = false;
+                    Elements dateHolderElem = gameRow.getElementsByClass("kick__v100-scoreBoard__dateHolder");
+                    if (dateHolderElem.size() > 1) {
+                        // second row carries time info
+                        Date exactTime = parseDateFromResultFieldOnKIckerPage(dateHolderElem.get(0).text().trim(), dateHolderElem.get(1).text().trim(), matchDateCal);
+                        if (exactTime != null) {
+                            matchDateCal.setTime(exactTime);
                             matchState = MatchState.ready;
-                        } else {
-                            try {
-                                goalsTeam1 = (NumberFormat.getIntegerInstance().parse(score1Str).intValue());
-                                goalsTeam2 = (NumberFormat.getIntegerInstance().parse(score2Str).intValue());
-                                if (resultHolderElem.getElementsByClass("kick__v100-scoreBoard__scoreHolder--live").size() > 0) {
-                                    matchState = MatchState.running;
-                                } else if (goalsTeam1 >= 0 && goalsTeam2 >= 0) {
-                                    matchState = MatchState.finished;
-                                }
-                            } catch (ParseException pe) {
-                                pe.printStackTrace();
-                            }
+                            isExactTime = true;
                         }
                     }
-                } else {
-                    logger.debug("no resultholder element for match " + team1 + " - " + team2);
+                    // check if there is a result already
+                    int goalsTeam1 = -1;
+                    int goalsTeam2 = -1;
+                    Elements resultHolderElems = gameRow.getElementsByClass("kick__v100-scoreBoard__scoreHolder");
+                    if (resultHolderElems.size() > 0) {
+                        Element resultHolderElem = resultHolderElems.first();
+                        Elements scoreholderElems = resultHolderElem.select(".kick__v100-scoreBoard__scoreHolder__score");
+                        if (resultHolderElem.hasClass("kick__v100-scoreBoard__scoreHolder--prelive")) {
+                            // countdown 1h vor dem Spiel --> ready
+                            matchState = MatchState.ready;
+                        } else if (scoreholderElems.size() == 2) {
+                            String score1Str = scoreholderElems.get(0).text().trim();
+                            String score2Str = scoreholderElems.get(1).text().trim();
+                            if ("-".equals(score1Str)) {
+                                matchState = MatchState.ready;
+                            } else {
+                                try {
+                                    goalsTeam1 = (NumberFormat.getIntegerInstance().parse(score1Str).intValue());
+                                    goalsTeam2 = (NumberFormat.getIntegerInstance().parse(score2Str).intValue());
+                                    if (resultHolderElem.getElementsByClass("kick__v100-scoreBoard__scoreHolder--live").size() > 0) {
+                                        matchState = MatchState.running;
+                                    } else if (goalsTeam1 >= 0 && goalsTeam2 >= 0) {
+                                        matchState = MatchState.finished;
+                                    }
+                                } catch (ParseException pe) {
+                                    pe.printStackTrace();
+                                }
+                            }
+                        }
+                    } else {
+                        logger.debug("no resultholder element for match " + team1 + " - " + team2);
+                    }
+                    int i = 0;
+                    i++;
+                    MatchInfo mi = new MatchInfo();
+                    mi.setCorrelationId(correlationId);
+                    mi.setChallenge(challenge);
+                    mi.setRound(round);
+                    mi.setRegion(region);
+                    mi.setGoalsTeam1(goalsTeam1);
+                    mi.setGoalsTeam2(goalsTeam2);
+                    mi.setTeam1Id(team1Id);
+                    mi.setTeam1(team1);
+                    mi.setTeam2Id(team2Id);
+                    mi.setTeam2(team2);
+                    mi.setChallengeRankingUrl(challengeRankingUrl);
+                    mi.setExactTime(isExactTime);
+                    mi.setStart(matchDateCal != null ? matchDateCal.getTime() : null);
+                    mi.setState(matchState);
+                    res.add(mi);
+                    logger.info(mi.toString());
                 }
-                int i = 0;
-                i++;
-                MatchInfo mi = new MatchInfo();
-                mi.setCorrelationId(correlationId);
-                mi.setChallenge(challenge);
-                mi.setRound(round);
-                mi.setRegion(region);
-                mi.setGoalsTeam1(goalsTeam1);
-                mi.setGoalsTeam2(goalsTeam2);
-                mi.setTeam1Id(team1Id);
-                mi.setTeam1(team1);
-                mi.setTeam2Id(team2Id);
-                mi.setTeam2(team2);
-                mi.setChallengeRankingUrl(challengeRankingUrl);
-                mi.setExactTime(isExactTime);
-                mi.setStart(matchDateCal != null ? matchDateCal.getTime() : null);
-                mi.setState(matchState);
-                res.add(mi);
-                logger.info(mi.toString());
             }
         }
         return res;

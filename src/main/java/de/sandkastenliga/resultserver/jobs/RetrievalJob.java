@@ -7,13 +7,13 @@ import de.sandkastenliga.resultserver.model.MatchState;
 import de.sandkastenliga.resultserver.repositories.ChallengeRepository;
 import de.sandkastenliga.resultserver.repositories.MatchRepository;
 import de.sandkastenliga.resultserver.repositories.TeamStrengthSnapshotRepository;
-import de.sandkastenliga.resultserver.services.ServiceException;
 import de.sandkastenliga.resultserver.services.challenge.ChallengeService;
 import de.sandkastenliga.resultserver.services.error.ErrorHandlingService;
 import de.sandkastenliga.resultserver.services.match.MatchService;
 import de.sandkastenliga.resultserver.services.schedule.ScheduleService;
 import de.sandkastenliga.resultserver.services.sportsinfosource.FifaRankingService;
 import de.sandkastenliga.resultserver.services.sportsinfosource.KickerSportsInfoSource;
+import de.sandkastenliga.resultserver.services.sportsinfosource.RegionRelevanceProvider;
 import de.sandkastenliga.resultserver.services.team.TeamService;
 import de.sandkastenliga.resultserver.utils.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,6 +49,8 @@ public class RetrievalJob {
     @Autowired
     private TeamService teamService;
     @Autowired
+    private RegionRelevanceProvider regionRelevanceProvider;
+    @Autowired
     private ErrorHandlingService errorHandlingService;
 
     private Date turboStop = new Date();
@@ -57,7 +59,7 @@ public class RetrievalJob {
     public void initIfEmptyDB() throws IOException {
         if (challengeService.getAllChallenges().size() == 0)
             updateSchedule();
-        if(teamStrengthSnapshotRepository.findAll().size() == 0){
+        if (teamStrengthSnapshotRepository.findAll().size() == 0) {
             teamService.setInitialTeamStrengths();
         }
     }
@@ -125,27 +127,21 @@ public class RetrievalJob {
         }
     }
 
-    // not used at the moment
-    // @Scheduled(cron = "${timing.everyMondayNightCron}")
-    // @PostConstruct
+    @Scheduled(cron = "${timing.everyMondayNightCron}")
+    @PostConstruct
     public void updateTeamStrengthsAndPositions() {
         fifaRankingService.update();
         List<ChallengeDto> allChallengesWithOpenMatches = matchService.getAllChallengesWithOpenMatches();
         for (ChallengeDto c : allChallengesWithOpenMatches) {
-            if (challengeService.isRelevantRegion(c.getRegion())) {
+            if (regionRelevanceProvider.isRelevantRegion(c.getRegion())) {
                 try {
                     Map<String, Integer> ranking;
                     if (c.getRankUrl() != null && readyMatchesInChallenge(c)) {
                         ranking = infoSource.getTeamRankings(c.getRankUrl());
                         matchService.updateTeamStrengthsAndPositions(c.getId(), ranking);
-                        if (ranking.size() > 0)
-                            teamService.updateTeamStrengths(ranking);
-                    } else {
-                        // national teams?
-                        matchService.updateTeamStrengthsForTeamsWithoutRanking(c.getId());
                     }
                 } catch (Throwable t) {
-                    t.printStackTrace();
+                    errorHandlingService.handleError(t);
                 }
             }
         }

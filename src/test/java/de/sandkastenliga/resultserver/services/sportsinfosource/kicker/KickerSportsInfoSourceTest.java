@@ -1,8 +1,10 @@
 package de.sandkastenliga.resultserver.services.sportsinfosource.kicker;
 
 import de.sandkastenliga.resultserver.model.MatchInfo;
+import de.sandkastenliga.resultserver.services.challenge.RegionRelevanceProviderImpl;
 import de.sandkastenliga.resultserver.services.sportsinfosource.FifaRankingService;
 import de.sandkastenliga.resultserver.services.sportsinfosource.KickerSportsInfoSource;
+import de.sandkastenliga.resultserver.services.sportsinfosource.RegionRelevanceProvider;
 import org.junit.Before;
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -22,7 +24,7 @@ public class KickerSportsInfoSourceTest {
     @Before
     public void setup() throws IOException {
         FifaRankingService frs = new FifaRankingService();
-        this.kickerSportsInfoSource = new KickerSportsInfoSource();
+        this.kickerSportsInfoSource = new KickerSportsInfoSource(new RegionRelevanceProviderImpl());
     }
 
 
@@ -61,7 +63,7 @@ public class KickerSportsInfoSourceTest {
 
     @Test
     public void testGetTeamRankings() throws Throwable {
-        String[] urls = new String[]{"https://www.kicker.de/1-bundesliga/tabelle/2018-19/2", "https://www.kicker.de/canadian-premier-league-fb-1/tabelle/2018-19/9"};
+        String[] urls = new String[]{"/1-bundesliga/tabelle/2018-19/2", "/canadian-premier-league-fb-1/tabelle/2018-19/9"};
         for (String url : urls) {
             Map<String, Integer> res = kickerSportsInfoSource.getTeamRankings(url);
             for (String teamId : res.keySet()) {
