@@ -38,13 +38,12 @@ public class ChallengeService {
         Date now = new Date();
         if (challengeRankingUrl != null && challengeRankingUrlDate != null) {
             if (c.getRankUrlDate() == null
-                    || (challengeRankingUrlDate.after(now) && (c.getRankUrlDate().before(now) || challengeRankingUrlDate
-                    .before(c.getRankUrlDate())))) {
+                    || (c.getRankUrlDate().before(challengeRankingUrlDate))) {
                 c.setRankUrl(challengeRankingUrl);
                 c.setRankUrlDate(challengeRankingUrlDate);
             }
         }
-        challengeRepository.save(c);
+        challengeRepository.saveAndFlush(c);
         return c;
     }
 

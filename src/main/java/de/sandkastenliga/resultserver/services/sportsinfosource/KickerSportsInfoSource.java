@@ -86,7 +86,7 @@ public class KickerSportsInfoSource {
                 String round = "0";
                 String challengeRankingUrl = null;
                 if (tok.hasMoreTokens()) {
-                    String roundStr = tok.nextToken();
+                    String roundStr = tok.nextToken().trim();
                     if (roundStr.contains(".") && roundStr.indexOf(".") < 3) {
                         round = roundStr.substring(0, roundStr.indexOf(".")).trim();
                         // if the round is set, there must be a ranking URL
