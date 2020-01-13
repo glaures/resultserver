@@ -113,7 +113,7 @@ public class MatchService extends AbstractJpaDependentService {
         // create teams if they do not exists in the DB yet
         teamService.getOrCreateTeam(team1Id, team1Name);
         teamService.getOrCreateTeam(team2Id, team2Name);
-        Challenge c = challengeService.getOrCreateChallenge(region, challenge, challengeRankingUrl, date);
+        Challenge c = challengeService.getOrCreateChallenge(region, challenge, challengeRankingUrl, new Date());
         Team t1 = teamRepository.getOne(team1Id);
         Team t2 = teamRepository.getOne(team2Id);
         Optional<Match> mOpt = matchRepository.findMatchByCorrelationId(correlationId);

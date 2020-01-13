@@ -87,7 +87,8 @@ public class RetrievalJob {
                         if (mi.getStart() != null && mi.getStart().before(dayBeforeYesterday.getTime()) && mi.getGoalsTeam1() < 0) {
                             mi.setState(MatchState.postponed);
                         }
-                        matchService.handleMatchUpdate(mi.getCorrelationId(), mi.getRegion(), mi.getChallenge(), mi.getChallengeRankingUrl(),
+                        matchService.handleMatchUpdate(mi.getCorrelationId(), mi.getRegion(), mi.getChallenge(),
+                                mi.getChallengeRankingUrl(),
                                 mi.getRound(), mi.getTeam1Id(), mi.getTeam1(), mi.getTeam2Id(), mi.getTeam2(), mi.getStart(), mi.getGoalsTeam1(),
                                 mi.getGoalsTeam2(), mi.getState(), mi.getStart(), mi.isExactTime());
                     }
