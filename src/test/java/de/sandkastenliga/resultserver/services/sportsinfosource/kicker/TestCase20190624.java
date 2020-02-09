@@ -20,13 +20,12 @@ public class TestCase20190624 extends AbstractTestCase {
     }
 
     public int getMatchCount() {
-        return 21;
+        return 4;
     }
 
     @Override
     public List<MatchInfoStruct> getMatchInfoStructs() {
         List<MatchInfoStruct> res = new ArrayList<>();
-        res.add(new MatchInfoStruct(null, null, "Elfenbeinküste", "Südafrika", MatchState.running, 0, 0));
         res.add(new MatchInfoStruct(null, null, "Spanien", "USA", MatchState.ready, -1, -1));
         return res;
     }

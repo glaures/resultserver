@@ -81,7 +81,7 @@ public class KickerSportsInfoSource {
             String challengeString = gameListHeader.text().trim();
             StringTokenizer tok = new StringTokenizer(challengeString.trim(), "(,)", false);
             String region = tok.nextToken().trim();
-            if(regionRelevanceProvider.isRelevantRegion(region)) {
+            if (regionRelevanceProvider.isRelevantRegion(region)) {
                 String challenge = tok.nextToken().trim();
                 String round = "0";
                 String challengeRankingUrl = null;
@@ -113,13 +113,19 @@ public class KickerSportsInfoSource {
                     resetToStartOfDay(matchDateCal);
                     boolean isExactTime = false;
                     Elements dateHolderElem = gameRow.getElementsByClass("kick__v100-scoreBoard__dateHolder");
-                    if (dateHolderElem.size() > 1) {
-                        // second row carries time info
-                        Date exactTime = parseDateFromResultFieldOnKIckerPage(dateHolderElem.get(0).text().trim(), dateHolderElem.get(1).text().trim(), matchDateCal);
-                        if (exactTime != null) {
-                            matchDateCal.setTime(exactTime);
-                            matchState = MatchState.ready;
-                            isExactTime = true;
+                    // test is match has been canceled
+                    String dateHolderElemText = dateHolderElem.text();
+                    if (dateHolderElemText.contains("abges")) {
+                        matchState = MatchState.canceled;
+                    } else {
+                        if (dateHolderElem.size() > 1) {
+                            // second row carries time info
+                            Date exactTime = parseDateFromResultFieldOnKIckerPage(dateHolderElem.get(0).text().trim(), dateHolderElem.get(1).text().trim(), matchDateCal);
+                            if (exactTime != null) {
+                                matchDateCal.setTime(exactTime);
+                                matchState = MatchState.ready;
+                                isExactTime = true;
+                            }
                         }
                     }
                     // check if there is a result already

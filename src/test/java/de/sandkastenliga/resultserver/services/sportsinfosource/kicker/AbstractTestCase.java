@@ -63,7 +63,7 @@ public abstract class AbstractTestCase {
         cal.set(Calendar.YEAR, getYear());
         cal.set(Calendar.MONTH, getMonth() - 1);
         cal.set(Calendar.DATE, getDate());
-        return getYear() + "-" + numberFormat.format(getMonth()) + "-" + numberFormat.format(getDate()) + ".htm";
+        return getYear() + "-" + numberFormat.format(getMonth()) + "-" + numberFormat.format(getDate()) + ".html";
     }
 
     private void checkResultList(List<MatchInfo> matchList) {

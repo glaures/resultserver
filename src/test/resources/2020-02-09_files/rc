@@ -1,0 +1,29 @@
+
+    (new Image).src='https://ih.adscale.de/nuggad?/nvars/d7=1&d10=2&d2=5&d4=3&d11=0&d8=1&d9=2&d12=4&d1=1&d3=1';
+    var NUGGjson={"n127":"0","n121":"2","n116":"0","n104":"0","n15":"3","n155":"0","n135":"2","n106":"1","n153":"0","n27":"1","n11":"1","n120":"6","n154":"0","n13":"1","n125":"0","n8":"2","n2":"5","n137":"0","n101":"0","n108":"1","n54":"0","n110":"1","n87":"1","n149":"1","n76":"0","n66":"0","n139":"0","n160":"0","n107":"0","n51":"1","n117":"3","n86":"1","n147":"1","n64":"1","n119":"5","n22":"1","n18":"1","n161":"0","n126":"0","n92":"3","n77":"0","n83":"0","n102":"0","n105":"0","n159":"0","n80":"0","n12":"3","n141":"0","n157":"0","n26":"1","n99":"0","n128":"1","n118":"3","n85":"1","n9":"0","n23":"1","n6":"1","n63":"1","n138":"0","n140":"0","n94":"2","n111":"0","n136":"0","n79":"0","n93":"2","n90":"0","n142":"0","n7":"2","n103":"0","n158":"0","n124":"0","n75":"1","n91":"0","n114":"1","n69":"0","n10":"4","n3":"1","n50":"1","n82":"0","n59":"1","n84":"1","n5":"1","n109":"0","n122":"2","n67":"0","n115":"1","n89":"2","n123":"1","n17":"1","n78":"0","n81":"0","n88":"0","n156":"1","n148":"0","n132":"3","n133":"1"};
+    function aplauncherExec() {
+apsrc='https://sak.userreport.com/sdm/launcher.js';
+var nSrc = document.createElement('script');
+nSrc.setAttribute('src',apsrc);
+nSrc.setAttribute('defer','');
+nSrc.id='userreport-launcher-script';
+nSrc.setAttribute('type','text/javascript');
+var s = document.getElementsByTagName('script')[0];
+s.parentNode.insertBefore(nSrc, s);
+}
+
+
+function aplauncher() {
+    setTimeout(function() {
+        aplauncherExec();
+    }, 200);
+}
+if (document.readyState == 'complete') {
+    aplauncher();
+} else {
+    document.onreadystatechange = function () {
+        if (document.readyState === 'complete') {
+            aplauncher();
+        }
+    }
+}

@@ -20,7 +20,7 @@ public class TestCase20190906 extends AbstractTestCase {
     }
 
     public int getMatchCount() {
-        return 98;
+        return 77;
     }
 
     @Override
@@ -37,6 +37,6 @@ public class TestCase20190906 extends AbstractTestCase {
 
     @Override
     protected String getTestFilename() {
-        return "Fußball _ Alle Spiele am 06.09.2019 _ Matchkalender - kicker.html";
+        return "2019-09-06.html";
     }
 }

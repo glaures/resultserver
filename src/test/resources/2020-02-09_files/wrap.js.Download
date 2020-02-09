@@ -1,0 +1,250 @@
+function confiantTryToGetConfig(t){var n,r,i,c,e=document.currentScript?document.currentScript.getAttribute("id"):function(){try{throw new Error}catch(t){for(var n=(o=t).sourceURL?o.sourceURL:o.fileName?o.fileName:o.stack.split("\n").filter(function(t){return 0<=t.indexOf("http")})[0],r=document.querySelectorAll("script"),i=[],c=0,e=r.length;c<e;++c)r[c].src&&0<=n.indexOf(r[c].src)&&i.push(r[c]);return 1===i.length?i[0].getAttribute("id"):null}var o}(),o=window.confiant;if(o&&(c=e,r=(i=o)&&c&&i[c]?o[e].settings:o.settings),r){if(!r.callback)try{n=window.top.confiant,r.callback=n.settings.callback}catch(t){}return r}if(window._clrm&&window._clrm[t])return window._clrm[t];throw new Error("Confiant failed to init: no configuration is provided. Please contact us at support@confiant.com")}
+(function () {
+  'Copyright © 2013-2019 Confiant Inc. All rights reserved.';
+  'v3.202001101133';
+  function confiantWrap(d,s,e,c,o,u,p){var n=s.adserverTargeting,t=s.bidder,w=null,r=s.size,f=d.parentWindow||d.defaultView,v=f.JSON,l=f.btoa,h=f.encodeURIComponent;if(!v||!l)return!1;var b="script",g="src",i="replace",m="error",_="stringify",y="wr"+"i"+"t"+"e";e.indexOf("http")<0&&(e="https://"+e);var z,E=e+"/?wrapper="+h(c)+"&tpid=";function a(e){for(var t in n)if(t===e&&n[t])return n[t];return null}z=a("oz_winner")||"ozone"===t?{k:{hb_bidder:[a("oz_winner")],hb_size:[r]}}:{k:{hb_bidder:[t],hb_size:[r]}};var F=!1;function x(e){return e=function(e){if("string"!=typeof e)return e;var t=e.match(/[^\u0000-\u024F\u1E00-\u1EFF\u2C60-\u2C7F\uA720-\uA7FF]/g);if(!t)return e;for(var n=0;n<t.length;n++)e=e.replace(t[n],encodeURIComponent(t[n]));return e}(e),(l(e)||"")[i]("/","_")[i]("+","-")}return window._clrm||window.confiant||function(){function t(e){var t="cb";if("string"==typeof e.data&&-1<e.data.indexOf(t)){var n=e.data.substr(t.length+c.length),r=atob(n),i=window.JSON.parse(r);o.apply(this,i)}}if(window.addEventListener)try{window.top.addEventListener("message",t,!1)}catch(e){window.addEventListener("message",t,!1)}else window.top.attachEvent("onmessage",t)}(),function(){try{var t={wh:w=x(c+"/"+z.k.hb_bidder[0]+":"+z.k.hb_size[0]),wd:v.parse(v[_](z)),wr:0};2===p&&(t.cb=1e3*Math.random());var e={prebid:{adId:s.adId,cpm:s.cpm}},n=!1;try{n=!!f.frameElement.getAttribute("data-forced-sandbox")}catch(e){}var r={d:t,t:escape(s.ad),isE:!0,cb:o,id:e,isFSb:n,devMode:p};!function(e,t,n){var r=E+h(e)+"&d="+t,i="err__"+1*new Date;f[i]=function(){d[y](s.ad)};var a="<"+b+' type="text/java'+b+'">window["'+c+'"]={};'+'window["'+c+'"]["tpid"]="'+e+'";'+'window["'+c+'"]["'+e+'"]='+v.stringify(n)+";"+"</"+b+">",o="<"+b+" on"+m+'="void('+i+'())" '+g+'="'+r+'" type="text/java'+b+'" ></'+b+">";u&&(o="<"+b+" on"+m+'="void('+i+'())" '+'" type="text/java'+b+'" >'+unescape(u)+"</"+b+">"),d[y](a+o)}(w,x(v[_](t)),r)}catch(e){F=!0;var i="https://protected-by.clarium.io/werror",a=(t={property_id:c,uh:w||"wt_not_established",url:window.location.href||window.top.location.href||document.url||"url not found",label:"confiantWrap_initialize",msg:e.message},new XMLHttpRequest);a.open("POST",i,!0),a.send(l(v.stringify(t)))}}(),d.close(),!F}
+  var Caspr=function(u,e,l,f,t){this.CONSTANTS={MATCHING_STYLE_1:1,MATCHING_STYLE_2:2,MATCHING_STYLE_3:3,MATCHING_STYLE_4:4},this.log_sample=void 0===u.ls||u.ls,this.rules=("string"==typeof u&&u.length&&(u=JSON.parse(atob(u))),u&&u.m?u.m:[]),this.masterReset=!0,"rs"in u&&(this.masterReset=u.rs),this.frames=[],this.cajsPresent=!1,this.tagSource=e||"",this.trackers=["iframe","object","a"],this.hasBeenUndone=!1,this.adserverDomain="/* @echo DOMAIN */",this.submitEndpoint="/log",this.targetId=null,this.prefixedTpid=l&&""!==l?l:null,this.submitted=!1,this.doneWithSandbox=!1,this.version=u.v?u.v:0,this.window=window,this.replaceWithHTML=null,this.isDfpOnPageIntegration=!1,this.isForcedSandboxing=!1,this.inAppSuccessCallback=null,this.devMode=0,this.supportLandingPageBlocking=!1,this.isAst=!1,this.isIEorEdgeorFF=window.navigator.userAgent.match(/(Trident\/7.0)|(edge|Firefox)/i),this.isLoadEventFired=!1;var y=this.shouldMonitorAllNestedFrames=!1,n=.0025,o=.05,c=[],p=!1,g=!0;t&&(this.adserverDomain=t),this.wrapperArg=f,this.wrapper=f,this.errors=[],this.blockingData=null,this.do_undo=void 0===u.du||!!u.du,this.replace=void 0!==u.re?unescape(u.re):"",this.backupFunctions={},this.targetId=f&&f.uniqueHash&&0<f.uniqueHash.length?f.uniqueHash:l,this.dom={findings:[],parentHTML:"",getRootElement:function(e){return g?document.body:document.getElementById(e.targetId)},walkTheDOM:function(e,t){for(t(e),e=e.firstChild;e;)this.walkTheDOM(e,t),e=e.nextSibling;return this.parentHTML},traverseAd:function(e){if(e){var i=this;return this.parentHTML=e.outerHTML,this.walkTheDOM(e,function(e){if(1==e.nodeType){if(e.contentWindow)try{var t=e.contentWindow.document.getElementsByTagName("html")[0].innerHTML;i.parentHTML=i.parentHTML.replace(e.outerHTML,"<head></head><body></body>"==t?e.outerHTML:e.outerHTML.replace("</iframe>",t+"</iframe>"))}catch(e){T(e)||x(e,{label:"traverseAd"})}}else if(3===e.nodeType)e.data.trim();else try{e.outerHTML&&-1<e.outerHTML.indexOf("Caspr")&&(this.parentHTML=this.parentHTML.replace(e.outerHTML,""))}catch(e){x(e,{label:"traverseAd_2"})}})}}},this.getTopFrameParent=function(){var o=function(e,t){try{for(var i=e.contentWindow.document.getElementsByTagName("iframe"),r=0;r<i.length;r++){var n=i[r];if(n==t)return!0;if(o(n,t))return!0}return!1}catch(e){return x(e,{label:"getIframes"}),!1}};try{if(frameElement){for(var e=window.top.document.getElementsByTagName("iframe"),t=0;t<e.length;t++){if(e[t]==frameElement)return e[t];if(o(e[t],frameElement))return e[t]}return!1}return!1}catch(e){return x(e,{label:"getTopFrameParent"}),!1}},this.findContextForTpid=function(i,e){var t,r=function(){var e=0<Object.keys(window[i]).length?Object.keys(window[i]):null;if(!e)return null;for(var t=0;t<e.length;t++)if("tpid"!=e[t])return e[t];return null}(window);if(!r)throw Error("Unable to find confiant context object. Please contact support@confiant.com.");return t=window[i][r],window[i][e]=t},this.wrapper={PAYLOAD_KEY:"d",TAG_KEY:"t",_data:{},augmentRequest:function(e){return(e=e||{}).wr=this._data.wr,e.wh=this._data.wh,e.wd=this._data.wd,e},init:function(e){var t=e.findContextForTpid(l,"%%TP_IDENTIFIER%%");t.u=1*new Date,this._data=t[this.PAYLOAD_KEY],e.tagSource=t[this.TAG_KEY],t.isE&&(e.tagSource=unescape(e.tagSource),e.isDfpOnPageIntegration=!0),this._tag=e.tagSource,e.isSafeFrame=t.isSfrm,e.isSandboxedSafeframe=t.isSfrm&&t.isSb,e.isForcedSandboxing=t.isFSb,e.inAppSuccessCallback=t.successCallback,e.devMode=t.devMode||0}},this.creativeWrapper={init:function(e){var t=e.findContextForTpid(f.uniqueHash,f.tpIdentifier);t.u=1*new Date,e.tagSource=t.t,t.isE&&(e.tagSource=unescape(e.tagSource),e.isDfpOnPageIntegration=!0);var i=f.uniqueHash;"function"!=typeof t.cb&&(t.cb=null),e.cb=t.cb?t.cb:function(){try{window.top.postMessage("cb"+i+btoa(JSON.stringify(Array.prototype.slice.call(arguments))),"*")}catch(e){window.parent.postMessage("cb"+i+btoa(JSON.stringify(Array.prototype.slice.call(arguments))),"*")}},e.id=t.id?t.id:null,e.isSafeFrame=t.isSfrm,e.isSandboxedSafeframe=t.isSfrm&&t.isSb,e.isForcedSandboxing=t.isFSb,e.inAppSuccessCallback=t.successCallback,e.devMode=t.devMode||0,e.shouldSupportLandingPageBlocking=t.isAST||2==t.devMode,e.isAst=t.isAST}};var i,r,s=["aW1nLnR1cm5jZG4uY29t","cG0tbm90aWZpY2F0aW9ucy5jb20=","c3RvcmFnZS5nb29nbGVhcGlzLmNvbQ==","ZS1wbGFubmluZy5uZXQ=","Y29uZmlhbnRfdGVzdF8xMjMxMDE=","aW5kZXhPZg=="];i=s,r=378,function(e){for(;--e;)i["push"](i["shift"]())}(++r);var a=function(e){var t=s[e-=0];void 0===a["initialized"]&&(function(){var t;try{t=Function("return (function() "+'{}.constructor("return this")( )'+");")()}catch(e){t=window}var a="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";t["atob"]||(t["atob"]=function(e){for(var t,i,r=(e+"")["replace"](/=+$/,""),n=0,o=0,s="";i=r["charAt"](o++);~i&&(t=n%4?64*t+i:i,n++%4)?s+=String["fromCharCode"](255&t>>(-2*n&6)):0)i=a["indexOf"](i);return s})}(),a["base64DecodeUnicode"]=function(e){for(var t=atob(e),i=[],r=0,n=t["length"];r<n;r++)i+="%"+("00"+t["charCodeAt"](r)["toString"](16))["slice"](-2);return decodeURIComponent(i)},a["data"]={},a["initialized"]=!0);var i=a["data"][e];return void 0===i?(t=a["base64DecodeUnicode"](t),a["data"][e]=t):t=i,t},d={},h=a("0x0"),m=a("0x1"),w=a("0x2"),v=a("0x3"),b=a("0x4");function S(){var e,t="undefined"!=typeof InstallTrigger;return(/constructor/i.test(window.HTMLElement)||""+(!window["safari"]||"undefined"!=typeof safari&&safari.pushNotification)=="[object SafariRemoteNotification]")&&(e="safari"),t&&(e="firefox"),!(!window.chrome||!window.chrome.webstore&&!window.chrome.runtime)&&(e="chrome"),e||(-1<navigator.userAgent.indexOf("Safari")&&(e="safari"),-1<navigator.userAgent.indexOf("FireFox")&&(e="firefox"),-1<navigator.userAgent.indexOf("Chrome")&&-1==navigator.userAgent.indexOf("Edge")&&(e="chrome")),e}function T(e){return e.message&&!!e.message.match(/(Blocked a frame)|(Permission denied)|(Access is denied)|(Acceso denegado)|(Acesso negado)(Autorizzazione negata)|(Zugriff verweigert)/i)}function _(e,t){return e.test(t)}d[h]=.05,d[m]=.05,d[w]=.05,d[v]=.05,d[b]=1,this.prebidIeAndEdgeFix=function(){try{var d=document,h=this;d.open=(c=document.open,function(e,t){var i,r,n;try{n=h.findContextForTpid(i=f.uniqueHash,r=f.tpIdentifier)}catch(e){x(e,{label:"prebidIeAndEdgeFixTest"})}var o=c.call(this,e,t);try{if(delete d.write,delete d.open,i&&r&&n){n.t="\x3c!-- tag --\x3e";var s="var Caspr = "+Caspr+";\n",a="new Caspr("+JSON.stringify(u)+', null, "'+l+'",'+'{"uniqueHash":"'+i+'","tpIdentifier":"'+r+'"},'+'"'+h.adserverDomain+'")';o.defaultView[i]={},o.defaultView[i]["tpid"]=r,o.defaultView[i][r]=JSON.parse(JSON.stringify(n)),o.defaultView.eval(s),o.defaultView.eval(a)}}catch(e){x(e,{label:"prebidIeAndEdgeFixTest_2"})}return o})}catch(e){x(e,{label:"prebidIeAndEdgeFixTest_3"})}var c},this.init=function(){var r=this,e=!f||f&&!f.tpIdentifier;p="mOinGM9MTu5v-Lto835XLhlrSPY"==this.getPropertyId();var t,i=function(e){if(r.do_undo){if(window.Caspr=void 0,caspr=void 0,r.hasBeenUndone)return;r.casprize(!0),r.hasBeenUndone=!0}var t="unload"===e.type;if(r.isLoadEventFired=r.isLoadEventFired||"load"===e.type,t&&!r.isLoadEventFired&&(n=o),!r.submitted&&r.log_sample&&(Math.random()<=n||window.forceTestSampleLogging)){var i=r.dom.traverseAd(r.dom.getRootElement(r));r.blockingData={html:i||null,ar:"",r:!1,oi:null,ot:null,tag:r.tagSource,v:r.version},r.submitFindings(r.isSafeFrame,t,!1,r.isLoadEventFired)}};if(window.addEventListener("load",i),window.addEventListener("unload",i),e&&this.wrapper.init(this),e||this.creativeWrapper.init(this),this.isIEorEdgeorFF&&this.prebidIeAndEdgeFix(),this.casprize(!1),this.tagSource&&(n=function(e){for(var t in d){var i=t;if(-1<e[a("0x5")](i))return d[t]}return n}(this.tagSource)),t=g?this.tagSource:"<div id='"+this.targetId+"' class='ad-container-"+this.targetId+"'>"+this.tagSource+"</div>",this.isSafeFrame)try{this.createPatchFunction(this.patchArguments[0],this.patchArguments[1],this.patchArguments[2])([this.tagSource],this.isSafeFrame)}catch(e){x(e,{label:"validateTag"})}else document.write(t);this.postAPIEvent("confiantSlotRenderEnded")},this.setRules=function(e){this.rules="object"==typeof e?e:[e]},this.getRules=function(){return this.rules},this.submitFindings=function(e,t,i,r){if("undefined"!=typeof XMLHttpRequest&&!this.submitted){this.submitted=!0;var n=3==this.devMode,o=window.sf_||window.$sf?document.referrer:window.location.href,s={};s.u=o,s.logs=this.errors,this.blockingData&&(s.bd=this.blockingData),s.e=i?"b":t?r?"u":"uu":"l",i||s.bd.html&&(s.bd.html+="\n\x3c!-- e:"+s.e+" --\x3e"),this.prefixedTpid&&(s.uh=this.prefixedTpid),s.id=this.id,(s=this.wrapper.augmentRequest(s)).tt="w",s.tt="t";var a=this.adserverDomain+this.submitEndpoint;try{var d=null;try{d=btoa(unescape(encodeURIComponent(JSON.stringify(s))))}catch(e){if(x(e,{label:"submitFindings"}),s.bd){var h="\x3c!-- unable to display creative html --\x3e";s.bd.html=h,s.bd.ar=h,s.bd.tag=h}d=btoa(unescape(encodeURIComponent(JSON.stringify(s))))}if(!n){var c=window.navigator,u=!!this.getPropertyId().match(/(trB5nelTxsjRl85E7hL4Y1GisKY)|(Lc8WgUx65bylj2bqLTKmzFAUpoE)|(9NcWcY5ZLLLrnRYyfpvRGtJ-zMk)|(qjvXa44Qfwp61in_jX9wKlFbhJw)|(OJGRTp4tj6uR9AWNMp5iV7bNAaQ)/),l=(t||u)&&c&&c.sendBeacon;if(!l&&e){var f=btoa(JSON.stringify({sendUrl:a,payload:d,slotId:this.id,replaceWith:this.replaceWithHTML}));try{window.top.postMessage("comm"+this.targetId+f,"*")}catch(e){window.parent.postMessage("comm"+this.targetId+f,"*")}}else{var p=new XMLHttpRequest;p.onreadystatechange=function(){},l?c.sendBeacon(a,d):(p.open("POST",a,!1),p.send(d))}}s.bd.ot&&this.cb&&(this.cb(s.bd.ot,s.bd.oi,this.blockingData.r,this.wrapper.uniqueHash,this.wrapper.tpIdentifier,this.id,y),(u||2==this.devMode)&&x(Error("sortable: debugging"),{label:"submitFindings_callback",state:{ot:s.bd.ot,oi:s.bd.oi,r:this.blockingData.r,id:this.id}}))}catch(e){x(e,{label:"submitFindings_2"})}}},this.postAPIEvent=function(t){var e=(""+(new Date).getTime()).split("").reverse().join(""),i=0,r=btoa(Math.ceil(1e4*Math.random())+"cOmM"+e),n={propertyId:this.wrapper?this.wrapper.uniqueHash:this.targetId,tagId:this.wrapper?this.wrapper.tpIdentifier:"",impressionData:this.id},o=function(e){e.data&&e.data.id===r&&(i=100,window.removeEventListener("message",o))},s=function(e){3<=i||(window.top.postMessage({eventType:t,details:n,id:r},"*"),i++,e&&setTimeout(s,500))};window.addEventListener("message",o),s(this.isDfpOnPageIntegration)},this.getPropertyId=function(){return(this.wrapperArg?this.wrapperArg.uniqueHash:this.targetId)||this.prefixedTpid||""},this.casprize=function(t,i){i=i||this;var e=this;try{var r={},n=!1,o=!1,s=!1,a="OX",d=e.tagSource||"";try{var h=this.getPropertyId(),c="DrYtG2OzEhl4i3tZ5nWGN7jdUdU"===h;r=window.top,s=!!d.match(/(ad_iframe)|(sandAdm)/)||c,o=(o=-1!=d.indexOf(a))||n&&!!r[a],n=!!(d.match(/(adb.auction\()|(listenAdFromPrebid)|(listenForAdFromPrebid)|(AdGlare)|(sonobi.com)|(roimediaconsultants.com)|(adnxs\.com\/mediation)|(prebid-universal-creative)|(smartadserver.com)|(gumgum.com)|(adtelligent.com)|(ix_ht_render_adm)|(openx.net)/)||r.rubicontag||r[a])}catch(e){-1==e.message.indexOf("origin")&&-1==e.message.indexOf("Permission")&&x(e,{label:"casprize"})}try{this.shouldMonitorAllNestedFrames="C-8aLarw5k-v1_-pKNB78bTSSJA"===h||s,n=this.shouldMonitorAllNestedFrames||n}catch(e){x(e,{label:"casprize_2"})}t?t&&e.unpatchNode():(n&&e.patchNodeMethod("appendChild",i.window),s&&e.patchDocumentMethod.call(e,"getElementById",i.window),o&&e.patchNodeMethod("replaceChild",i.window));for(var u=0;u<this.rules.length;u++){var l,f;if(t?(0<e.devMode&&console.info("Un-patching!"),f=this.backupFunctions,l=i.window,this.doneWithSandbox=!0):(0<e.devMode&&console.info("Patching!"),l=this.backupFunctions,f=i.window),void 0===this.rules[u].f&&(this.rules[u].f="write"),""!=this.rules[u].f){if(void 0===this.rules[u].h)this.rules[u].h="document";else if(""==this.rules[u].h)continue;if("window"!=this.rules[u].h?(t||l[this.rules[u].h]||(l[this.rules[u].h]={}),l[this.rules[u].h][this.rules[u].f]=f[this.rules[u].h][this.rules[u].f]):(t||l[this.rules[u].h]||(l[this.rules[u].h]={}),t?l[this.rules[u].f]=f[this.rules[u].h][this.rules[u].f]:l[this.rules[u].h][this.rules[u].f]=f[this.rules[u].f]),t)this.hasBeenUndone=!0;else if(this.patch(this.rules[u],u,i),("write"==this.rules[u].f||"writeln"==this.rules[u].f)&&"document"==this.rules[u].h){var p="write"==this.rules[u].f?"writeln":"write",g={r:this.rules[u].r,h:this.rules[u].h,f:p};t||l[this.rules[u].h]||(l[this.rules[u].h]={}),l[this.rules[u].h][p]=f[this.rules[u].h][p],this.patchArguments=[g,u,i],this.patch(g,u,i)}}}}catch(e){var m=i==this;T(e)&&!m||x(e,{label:m?"casprize_3_1":"casprize_3_2"}),t||this.casprize(!0)}},this._complete_blocking=function(e,t,i,r,n,o){if(!t.r[i]||!t.r[i].l[r])return e;var s="",a=null;a=this.dom.getRootElement(this),s=(s=this.dom.traverseAd(a))+(0<c.length?"\n\x3c!-- nested frame state --\x3e\n"+c.join("\n"):"")+"\n\x3c!-- violation detected --\x3e\n"+e;var d=t.r[i].l[r],h=!1;return"rs"in d&&(h=d.rs),this.masterReset||(h=!1),this.blockingData={html:s||null,ar:o,r:h,oi:!!d.oi&&d.oi,ot:!!d.ot&&d.ot,tag:this.tagSource,v:this.version},this.replaceWithHTML="re"in d&&""!==d.re?d.re:this.replace,this.submitFindings(n,!1,!0,this.isLoadEventFired),h&&!d.isSb&&(a&&a.remove&&!g&&a.remove(),this.casprize(!0),e=this.replaceWithHTML),{replaceWithHtml:e,shouldBlock:h}},this._is_match=function(e,i,t,r){if(!i)return!1;var n=function(e){var t=i.charAt(e);return""==t||c.test(t)};e instanceof Array||(e=[e]);var o,s,a,d,h="",c=RegExp(r?"[^a-zA-Z0-9-_]":"[^a-zA-Z0-9]"),u=-1,l=-1,f=!1;if(t===this.CONSTANTS.MATCHING_STYLE_4)return RegExp(h=e[0]).test(i);for(var p=0;p<e.length;p++){if(l=i.indexOf(h=e[p],u),1==this.devMode)return!0;if(!(f=-1<l))return!1;if(o=l-1,s=l+h.length,t===this.CONSTANTS.MATCHING_STYLE_2?f=f&&(n(o)||(a=i,d=o,!(!this.shouldSupportLandingPageBlocking||!r)&&(0<=d-3?"F"==a[d]&&"2"==a[d-1]&&"%"==a[d-2]:void 0)))&&n(s):t===this.CONSTANTS.MATCHING_STYLE_1&&(f=f&&n(s)),!f)return!1;u=s}return!0},this.patchNodeMethod=function(e,t){try{var r=this,n=t.Node.prototype[e];t.Node.prototype[e]=function(e){var t=e.src||"";!e||"IFRAME"!==e.tagName||!(t.indexOf("https://")<0&&t.indexOf("http://")<0||0<=t.indexOf("//"+window.location.hostname))||r.isIEorEdgeorFF||r.shouldMonitorAllNestedFrames||(e.onload=function(){try{e.contentWindow&&r.casprize(!1,e.contentWindow)}catch(e){T(e)||x(e,{label:"patchNodeMethod"})}});var i=n.apply(this,arguments);try{e.contentDocument&&(e.contentDocument.open=r.overloadDocumentOpen(e.contentDocument.open,e))}catch(e){T(e)||x(e,{label:"patchNodeMethod_2"})}return i},t.Node.__cspr__=Node.__cspr__||[],t.Node.__cspr__.push([e,n])}catch(e){T(e)||x(e,{label:"patchNodeMethod_3"})}},this.unpatchNode=function(){if(Node.__cspr__){for(var e=Node.__cspr__,t=e.length,i=0;i<t;i++)Node.prototype[e[i][0]]=e[i][1];delete Node.__cspr__}},this.patchDocumentMethod=function(t,e){try{var i,r=e.document,n=this,o=e.document[t];r[t]=function(e){return-1!=["ad_iframe","sandAdm"].indexOf(e)&&"getElementById"===t?(i=o.call(r,e)).contentWindow.document.open=n.overloadDocumentOpen(i.contentWindow.document.open,i):i=o.call(r,e),i}}catch(e){x(e,{label:"patchDocumentMethod"})}},this.overloadDocumentOpen=function(a,d){var h=this;return function(e,t){if(p||2==h.devMode)try{var i=d.contentDocument.head.outerHTML,r=d.contentDocument.body.outerHTML;i.length<=13&&(i=""),r.length<=46&&(r="");var n=i+r;0<n.length&&c.push(n)}catch(e){T(e)||x(e,{label:"overrideOpenDoc_1"})}var o=a.call(this,e,t);try{(h.isIEorEdgeorFF||h.shouldMonitorAllNestedFrames||h.shouldOverloadDocumentOpen)&&(delete d.contentDocument.write,delete d.contentDocument.open,h.casprize(!1,d.contentWindow))}catch(e){T(e)||x(e,{label:"overrideOpenDoc_2"})}try{var s=window.top.confiant;s&&s.services&&s.services().onNestedFrameCreation&&s.services().onNestedFrameCreation(d)}catch(e){T(e)||x(e,{label:"overrideOpenDoc_3"})}return o}},this.createPatchFunction=function(S,e,T){var _=this;return function(e,t){try{var i={},r=t?e:T.window[S.h][S.f].arguments;if(!r||0===r.length)return;if("setTimeout"!=S.f&&"setInterval"!=S.f&&"onload"!=S.f){var n=S.r,o=null,s=window.sf_||window.$sf?(w=(m=document.referrer).indexOf("//"),v=m.indexOf("/",w+2),b="",-1<w&&(v<0&&(v=m.length),b=m.substr(w+=2,v-w)),b):window.location.hostname,a=r[0],d=a;if(a&&a.match(/bidswitch.net/gi)){var h=d.replace(/_R/g,"=");d=(h=h.replace(/_B/g,"/"))+a}for(var c=0;c<n.length&&!(a.length<10);c++){var u=_.CONSTANTS.MATCHING_STYLE_2;if(n[c].l&&0<n[c].l.length&&6===n[c].l[0].ot&&(u=_.CONSTANTS.MATCHING_STYLE_3,"r"===n[c].l[0].m&&(u=_.CONSTANTS.MATCHING_STYLE_4)),_._is_match(n[c].d,d,u,!0)&&!(0<=s.indexOf(n[c].d))){for(var l=!1,f=0;f<n[c].l.length;f++){var p=n[c].l[f],g=p.s?p.s:[];if(r[0]&&"string"==typeof r[0]&&(0===g.length&&2!=p.ot||_._is_match(g,d,_.CONSTANTS.MATCHING_STYLE_1,!1))){o="Found suspicious reference to: "+n[c].d+"?"+g.join("&"),console.error(o),_.errors.push(o),i=_._complete_blocking(a,S,c,f,t,window[S.h][S.f].arguments),r[0]=i.replaceWithHtml,l=!0;break}}if(l)break}}t&&l&&i.shouldBlock?window.location.replace("about:blank"):t||_.backupFunctions[S.h][S.f].apply(this,r)}y||i.shouldBlock||(y=!0)}catch(e){x(e,{label:"createPatchFunction"}),_.casprize(!0)}var m,w,v,b}},this.patch=function(e,t,i){i=i||this,"window"==e.h&&(toPatch=i.window[e.f]),toPatch=this.createPatchFunction(e,t,i),"window"==e.h?i.window[e.f]=toPatch:i.window[e.h][e.f]=toPatch},this.getSandboxingCode=function(){var t=!1,e=window.sf_||window.$sf,i=-1,r=!1,n=void 0!==this.isSandboxedSafeframe;if(e&&n)t=this.isSandboxedSafeframe,r=!0;else if(e&&!n)return i;try{document}catch(e){r=t=!0}if(!t)try{if(null!=window.frameElement){var o=window.frameElement.getAttribute("sandbox");t=o&&0<o.length,r=!0}window}catch(e){t=/(^|[\s\(\[@])sandbox(es|ed|ing|[\s\.,!\)\]@]|$)/.test(e.message.toLowerCase()),r=!0,T(e)||x(e,{label:"getSandboxingCode_2"})}return this.isForcedSandboxing&&!e&&r?4:e&&r?t?3:2:!e&&r?t?1:0:-1};var A,x=function(e,t){var i=t.label&&-1<t.label.indexOf("submitFindings")||2==this.devMode||Math.random()<=.025,r=window.navigator,n=r&&r.sendBeacon;if(i||!n){t.msg=e.message,t.src="caspr",t.tpid=this.prefixedTpid,t.uh=this.prefixedTpid,t.property_id=this.getPropertyId();try{t.url=window.sf_||window.$sf?document.referrer:window.top.location.href}catch(e){}if(n){var o=JSON.stringify(t);o=btoa(o),r.sendBeacon(this.adserverDomain+"/werror",o)}else o=JSON.stringify({sendUrl:"werror",payload:t}),o=btoa(o),window.top.postMessage("cerr"+o,"*")}}.bind(this);if(A=this,window.addEventListener("error",function(e){try{if(!((d=e).message&&d.error&&f&&S()))return;var t=(e.error+""+(e.error.stack||"")).substr(0,500).trim();n=((r=e).error+""+(r.error.stack||"")).substr(0,500).trim(),o=S(),s=RegExp({chrome:"The current window does not have permission to navigate the target frame",firefox:"InvalidAccessError: A parameter or an operation is not supported by the underlying object",safari:"The operation is insecure."}[o],"gmi"),a=RegExp(/(d9\.flashtalking\.com\/)|(s0.2mdn\.net\/ads\/studio\/cached_libs\/modernizr)|(video)/,"gmi"),_(s,r.message)&&!_(a,n)&&(i=t,A._complete_blocking("\x3c!-- "+"Browser Detected: "+S()+" "+i+"--\x3e",{f:"write",h:"document",r:[{d:"",l:[{oi:1,ot:8,rs:1,isSb:1}]}]},0,0,!1,""))}catch(e){x(e,{label:"listenForSandboxingErrors"})}var i,r,n,o,s,a,d}),this.init(),this.rules=this.getRules(),f)try{window[f.uniqueHash][f.tpIdentifier]["sb"]=this.getSandboxingCode(),3==this.devMode&&(window[f.uniqueHash][f.tpIdentifier].isPxlReq=!1)}catch(e){f&&window[f.uniqueHash]&&window[f.uniqueHash][f.tpIdentifier]&&(window[f.uniqueHash][f.tpIdentifier]["sb"]=-1)}};
+  var cache={},getSerializedCaspr=function(n,t){var i=t,o=!1;try{var e=window.top.confiant?window.top.confiant.settings:null;i||(i=e)}catch(n){o=!0,i=confiantTryToGetConfig("gpt")}if(!i)throw Error("Confiant failed to init. No configuration. Contact support@confiant.com");if(o||(window.top.confiant=window.top.confiant||{settings:i}),!Caspr)throw Error("Confiant failed to init. Blocking layer not found. Contact support@confiant.com");var r=(n=!(void 0!==n&&!o)||n)?"safeframe":"friendly";if(cache[r])return cache[r];var a,c=i.propertyId,w=i.adServer||"https://protected-by.clarium.io";a=!n&&i.rules?window.top.confiant[c]?"window.top.confiant['"+c+"'].settings.rules":"window.top.confiant.settings.rules":n&&i.rules?'"'+btoa(JSON.stringify(i.rules))+'"':'"'+i.cache+'"';var d="var Caspr = "+Caspr+";\n";return cache[r]=escape(d+="new Caspr("+a+', null, "wt_" + window["'+c+'"]["tpid"],'+'{"uniqueHash":"'+c+'","tpIdentifier":window["'+c+'"]["tpid"]},'+'"'+w+'")'+";\n("+function(n,t){var i="",o="",e=Math.ceil(1e7*Math.random()),r="",a="",c=window[n]["tpid"],w=!!c,d="wt_"+c,s="v3"+(new Date).getTime().toString(32);try{(i=JSON.stringify(window[n][c]["id"])||"")&&(i="&id="+escape(btoa(i))),o="&sb="+window[n][c]["sb"],e="&cb="+e;var f=window.sf_||window.$sf?document.referrer:window.location.href,p=f.indexOf("//"),l=f.indexOf("/",p+2);-1<p&&(l<0&&(l=f.length),r=f.substr(p+=2,l-p)),r="&h="+encodeURIComponent(r),a="&d="+btoa(JSON.stringify(window[n][c]["d"]))}catch(n){console.error(n)}t.indexOf("//")<0&&(t="https://"+t);var u=!0;try{void 0===(u=window[n][c]["isPxlReq"])&&(u=!0),u=u&&!window.isPxlSent}catch(n){u=!0}u&&w?((new Image).src=t+"/pixel?tag="+d+"&v=5&s="+s+i+o+e+r+a,window.isPxlSent=!0):console.error("skipping pixel",w,u)}+')("'+c+'", "'+w+'")'),cache[r]};
+  // NOTE! this is a slightly modified copy from serverapp: assets/wrapper/twig/prebid.tmpl
+// That one is scheduled to be deprecated once V3 is tested and GA
+// confiantTryToGetConfig function is defined by an external script
+var config = confiantTryToGetConfig('prebid') || {
+  /* Enables sandboxing on a device group
+       All:1 , Desktop:2, Mobile: 3, iOS: 4, Android: 5, Off: 0
+   */
+  sandbox: 0,
+};
+var confiantGlobal = window.confiant;
+var customPrebidNameSpace = config.prebidNameSpace || 'pbjs';
+window[customPrebidNameSpace] = window[customPrebidNameSpace] || {
+  que: [],
+};
+var prebidRef = window[customPrebidNameSpace];
+var onPrebidErrorHandler = confiantGlobal.on_prebid_error;
+
+prebidRef.que = prebidRef.que || [];
+prebidRef.que.push(function() {
+
+  // keep a reference to original renderAd function
+  confiantGlobal.renderAd = confiantGlobal.renderAd || prebidRef.renderAd;
+  
+  var onPrebidErrorHandler = confiantGlobal.on_prebid_error || config.on_prebid_error;
+  if (!confiantWrap) {
+    throw new Error('Confiant failed to init prebid wrapper');
+  }
+  var isGoogleFrame = function(c) {
+    return c.tagName === 'IFRAME' && c.id && c.id.indexOf('google_ads_iframe_') > -1;
+  };
+  var isSASAd = function(c) {
+    return c.tagName === 'IFRAME' && c.id && c.id.indexOf('sas_') > -1;
+  };
+  var shouldSandbox = function() {
+    var uaToRegexMap = {
+      mobile: /Mobile|iP(hone|od|ad)|Android|BlackBerry|IEMobile/i,
+      ios: /(.+)(iPhone|iPad|iPod)(.+)OS[\s|\_](\d)\_?(\d)?[\_]?(\d)?.+/i,
+      android: /Android/i,
+    };
+    var sbStr = '' + config.sandbox;
+    if (sbStr === '1') {
+      // all environments
+      return true;
+    } else if (sbStr === '2') {
+      // desktop
+      return !navigator.userAgent.match(uaToRegexMap['mobile']);
+    } else if (sbStr === '3') {
+      // mobile
+      return navigator.userAgent.match(uaToRegexMap['mobile']);
+    } else if (sbStr === '4') {
+      // ios only
+      return navigator.userAgent.match(uaToRegexMap['ios']);
+    } else if (sbStr === '5') {
+      // android
+      return navigator.userAgent.match(uaToRegexMap['android']);
+    } else {
+      return false;
+    }
+  };
+
+  function appendChildOverwrite() {
+    if (shouldSandbox()) {
+      Node.prototype.appendChild = (function(original) {
+        return function(child) {
+          if ((isGoogleFrame(child) || isSASAd(child)) && shouldSandbox() && !child.getAttribute('sandbox')) {
+            child.setAttribute('sandbox', 'allow-forms allow-pointer-lock allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts allow-top-navigation-by-user-activation');
+            child.setAttribute('data-forced-sandbox', true);
+          }
+          return original.call(this, child);
+        };
+      })(Node.prototype.appendChild);
+    }
+    return;
+  }
+  appendChildOverwrite();
+  // similar to startsWith but pre-ECMA2015 compatible
+  var inString = function(str, search, pos) {
+    return str.substr && str.substr(!pos || pos < 0 ? 0 : +pos, search.length) === search;
+  };
+  // callback listener
+  var callback = config.callback;
+  var propertyId = config.propertyId;
+  var sfCallback = function(event, messagePrefix) {
+    var args = JSON.parse(atob(event.data.substr(messagePrefix.length)));
+    callback.apply(this, args);
+  };
+  var isUsable = function(object) {
+    var isEmpty = object == undefined && object == null;
+    if (isEmpty) {
+      return false;
+    }
+    if (Object.prototype.toString.call(object) === '[object Array]') {
+      return object.length > 0;
+    }
+    return true;
+  };
+  var postMessageHandler = function(event) {
+    if (isUsable(event.data)) {
+      var communicationPrefix = 'comm' + propertyId;
+      var callbackPrefix = 'cb' + propertyId;
+      if (inString(event.data, callbackPrefix)) {
+        sfCallback(event, callbackPrefix);
+      }
+    }
+  };
+  var buildWerror = function(error, data) {
+    var sampleRateForErrors = 0.025;
+    var isHighRiskError = false;// data.label && data.label.indexOf('noBid') > -1;
+    var shouldBeReported = isHighRiskError || config.devMode == 2 || Math.random() <= sampleRateForErrors;
+    var navigatorRef = window.navigator;
+    var isBeaconAvailable = navigatorRef && navigatorRef.sendBeacon;
+    if (!shouldBeReported && isBeaconAvailable) {
+      return;
+    }
+    data.msg = error.message;
+    data.src = 'prebid-v3';
+    data.property_id = config.propertyId;
+    data.uh = 'wt_not_established';
+
+    try {
+      data.url = window.sf_ || window.$sf ? document.referrer : window.top.location.href;
+    } catch (e) {
+      // might throw security exception
+    }
+    var payload = JSON.stringify(data);
+    payload = btoa(payload);
+    var endpoint = config.adServer + '/werror';
+    if (isBeaconAvailable) {
+      navigatorRef.sendBeacon(endpoint, payload);
+    } else {
+      var xhr = new XMLHttpRequest();
+      xhr.open('POST', endpoint);
+      xhr.send(data);
+    }
+  };
+  // this is only enabled when this is a prebid only integration
+  // otherwise the GPT takes precedence
+  if (config['prebid']) {
+    // safe frame postMessage listener
+    if (window.addEventListener) {
+      window.top.addEventListener('message', postMessageHandler, false);
+    } else {
+      window.top.attachEvent('onmessage', postMessageHandler);
+    }
+  }
+  var serializedCasprLayer = null;
+  // override renderAd
+  prebidRef.renderAd = function(doc, id) {
+    var isAlreadyMonitored = false;
+    try {
+      isAlreadyMonitored = !!(doc && doc.defaultView.Caspr);
+    } catch (e) {
+      // if by accident this is a CORS frame
+      // security exception might be thrown
+    }
+    if (doc && id && !isAlreadyMonitored) {
+      try {
+        // get pbjs bids
+        var bids = [];
+        var bidResponses = prebidRef.getBidResponses();
+        var bidResponseForAdUnit;
+        for (var slot in bidResponses) {
+          bids = bids.concat(bidResponses[slot].bids);
+          bidResponseForAdUnit = prebidRef.getBidResponsesForAdUnitCode(slot);
+          for (var bidcache in bidResponseForAdUnit) {
+            bids = bids.concat(bidResponseForAdUnit.bids);
+          }
+        }
+        bids = bids.concat(prebidRef.getHighestCpmBids());
+        bids = prebidRef.getAllWinningBids ? bids.concat(prebidRef.getAllWinningBids()) : bids;
+        bids = prebidRef.getAllPrebidWinningBids ? bids.concat(prebidRef.getAllPrebidWinningBids()) : bids;
+        // lookup ad by ad Id (avoid ES6 array functions)
+        var bid;
+        var i;
+        for (i = 0; i < bids.length; i++) {
+          if (bids[i].adId === id) {
+            bid = bids[i];
+            break;
+          }
+        }
+        if (!bid && prebidRef.findBidByAdId) {
+          bid = prebidRef.findBidByAdId(id);
+        }
+        // Optional: list of bidders that don't need wrapping, array of strings, e.g.: ["bidder1", "bidder2"]
+        var confiantExcludeBidders = config.prebidExcludeBidders || [];
+        // check bidder exclusion (avoid ES6 array functions)
+        var excludeBidder = false;
+        if (bid) {
+          for (i = 0; i < confiantExcludeBidders.length; i++) {
+            if (bid.bidder === confiantExcludeBidders[i]) {
+              excludeBidder = true;
+              break;
+            }
+          }
+        }
+        if (bid && bid.ad && !excludeBidder) {
+          // Neutralize document
+          var docwrite = doc.write;
+          var docclose = doc.close;
+          doc.write = doc.close = function() {};
+          // call renderAd with our neutralized doc.write
+          window.confiant.renderAd(doc, id);
+          // Restore document
+          delete doc.write;
+          delete doc.close;
+          serializedCasprLayer = (function() {
+            if (typeof getSerializedCaspr === 'undefined') {
+              // for now both builds are supported v2(additional network call) and v3 (unified)
+              return null;
+            }
+            return getSerializedCaspr(false, config);
+          })();
+          // do the actual ad serving and fall back on document.write if failure
+          if (!confiantWrap(
+            doc, bid, config.confiantCdn, config.propertyId, config.callback, serializedCasprLayer, config.devMode
+          )) {
+            doc.write(bid.ad);
+            doc.close();
+          }
+          return;
+        } else if (bid && bid.ad && excludeBidder) {} else if (!bid || !bid.ad) {
+          buildWerror(new Error('bid not found'), {
+            label: 'noBid',
+            bidId: id
+          });
+        }
+      } catch (e) {
+        try {
+          if (onPrebidErrorHandler) {
+            onPrebidErrorHandler(e);
+          }
+        } catch (_) {}
+        buildWerror(e, {
+          label: 'renderAd',
+        });
+      }
+    }
+    // if bid.ad is not defined or if any error occurs, call renderAd to serve the creative
+    confiantGlobal.renderAd(doc, id);
+  };
+});
+
+})();
