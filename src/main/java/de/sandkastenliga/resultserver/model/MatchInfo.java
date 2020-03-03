@@ -1,7 +1,5 @@
 package de.sandkastenliga.resultserver.model;
 
-import de.sandkastenliga.resultserver.model.MatchState;
-
 import java.text.DateFormat;
 import java.util.Date;
 

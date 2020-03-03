@@ -1,13 +1,10 @@
 package de.sandkastenliga.resultserver.presentation.rest;
 
 import de.sandkastenliga.resultserver.jobs.RetrievalJob;
-import de.sandkastenliga.resultserver.services.ServiceException;
-import de.sandkastenliga.resultserver.services.sportsinfosource.FifaRankingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 
@@ -31,7 +28,7 @@ public class ApplicationResource {
 
     @GetMapping("/rest/application/update-rankings")
     public String updateRankings() {
-        retrievalJob.updateTeamStrengthsAndPositions();
+        retrievalJob.updateRankings();
         return "done without error";
     }
 }

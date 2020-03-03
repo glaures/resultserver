@@ -2,12 +2,10 @@ package de.sandkastenliga.resultserver.services.match;
 
 import de.sandkastenliga.resultserver.dtos.ChallengeDto;
 import de.sandkastenliga.resultserver.dtos.MatchDto;
-import de.sandkastenliga.resultserver.model.Challenge;
-import de.sandkastenliga.resultserver.model.Match;
-import de.sandkastenliga.resultserver.model.MatchState;
-import de.sandkastenliga.resultserver.model.Team;
+import de.sandkastenliga.resultserver.model.*;
 import de.sandkastenliga.resultserver.repositories.ChallengeRepository;
 import de.sandkastenliga.resultserver.repositories.MatchRepository;
+import de.sandkastenliga.resultserver.repositories.RankRepository;
 import de.sandkastenliga.resultserver.repositories.TeamRepository;
 import de.sandkastenliga.resultserver.services.AbstractJpaDependentService;
 import de.sandkastenliga.resultserver.services.ServiceException;
@@ -34,6 +32,7 @@ public class MatchService extends AbstractJpaDependentService {
     private RegionRelevanceProvider regionRelevanceProvider;
     private TeamService teamService;
     private TeamRepository teamRepository;
+    private RankRepository rankRepository;
     private Projector projector;
 
     public MatchService(MatchRepository matchRepository,
@@ -42,6 +41,7 @@ public class MatchService extends AbstractJpaDependentService {
                         RegionRelevanceProvider regionRelevanceProvider,
                         TeamService teamService,
                         TeamRepository teamRepository,
+                        RankRepository rankRepository,
                         Projector projector) {
         this.matchRepository = matchRepository;
         this.challengeRepository = challengeDao;
@@ -49,6 +49,7 @@ public class MatchService extends AbstractJpaDependentService {
         this.regionRelevanceProvider = regionRelevanceProvider;
         this.teamService = teamService;
         this.teamRepository = teamRepository;
+        this.rankRepository = rankRepository;
         this.projector = projector;
     }
 
@@ -157,20 +158,37 @@ public class MatchService extends AbstractJpaDependentService {
 
     @Transactional
     public void updateTeamStrengthsAndPositions(Integer challengeId, Map<String, Integer> ranking) throws ServiceException {
+        Challenge challenge = challengeRepository.getOne(challengeId);
         List<Match> allOpenMatchesForChallenge = matchRepository.getReadyMatches(getValid(challengeId, challengeRepository));
         for (Match m : allOpenMatchesForChallenge) {
-            int team = 1;
+            boolean home = true;
             for (Team t : new Team[]{m.getTeam1(), m.getTeam2()}) {
                 if (ranking.containsKey(t.getId())) {
-                    if (team == 1) {
+                    // legacy way of storing ranks
+                    if (home) {
                         m.setPosTeam1(ranking.get(t.getId()));
                         m.setStrengthTeam1(t.getCurrentStrength());
                     } else {
                         m.setPosTeam2(ranking.get(t.getId()));
                         m.setStrengthTeam2(t.getCurrentStrength());
                     }
+                    // new rank system
+                    int round = Integer.parseInt(m.getRound());
+                    Calendar startCal = Calendar.getInstance();
+                    startCal.setTime(m.getStart());
+                    int year = startCal.get(Calendar.YEAR);
+                    Rank r = rankRepository.getRankByChallengeAndRoundAndYearAndTeam(challenge, round, year, t);
+                    if(r == null){
+                        r = new Rank();
+                        r.setChallenge(challenge);
+                        r.setRound(round);
+                        r.setTeam(t);
+                        r.setYear(year);
+                    }
+                    r.setRank(ranking.get(t.getId()));
+                    rankRepository.save(r);
                 }
-                team++;
+                home = false;
             }
         }
     }
