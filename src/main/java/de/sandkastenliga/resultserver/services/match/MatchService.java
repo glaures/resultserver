@@ -134,7 +134,8 @@ public class MatchService extends AbstractJpaDependentService {
         m.setTeam2(t2);
         m.setGoalsTeam1(goalsTeam1);
         m.setGoalsTeam2(goalsTeam2);
-        m.setState(matchState);
+        // bei einem manuell gesetzen Spiel soll nicht wieder von ready auf scheduled gesprungen werden
+        m.setState(matchState == MatchState.scheduled && m.isManuallyScheduled() ? MatchState.ready : matchState);
         m.setLastUpdated(new Date());
         matchRepository.save(m);
         return m.getId();
@@ -178,7 +179,7 @@ public class MatchService extends AbstractJpaDependentService {
                     startCal.setTime(m.getStart());
                     int year = startCal.get(Calendar.YEAR);
                     Rank r = rankRepository.getRankByChallengeAndRoundAndYearAndTeam(challenge, round, year, t);
-                    if(r == null){
+                    if (r == null) {
                         r = new Rank();
                         r.setChallenge(challenge);
                         r.setRound(round);

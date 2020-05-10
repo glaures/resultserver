@@ -35,6 +35,7 @@ public class Match {
     private int strengthTeam1 = 1;
     private int strengthTeam2 = 1;
     private boolean featured = false;
+    private boolean manuallyScheduled = false;
     @NotNull
     private String correlationId;
     @Temporal(TemporalType.TIMESTAMP)
@@ -180,6 +181,18 @@ public class Match {
 
     public void setLastUpdated(Date lastUpdated) {
         this.lastUpdated = lastUpdated;
+    }
+
+    public boolean isFeatured() {
+        return featured;
+    }
+
+    public boolean isManuallyScheduled() {
+        return manuallyScheduled;
+    }
+
+    public void setManuallyScheduled(boolean manuallyScheduled) {
+        this.manuallyScheduled = manuallyScheduled;
     }
 
     private void updateTendence() {
