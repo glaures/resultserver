@@ -255,9 +255,9 @@ public class KickerSportsInfoSource {
         return day.getTime().after(new Date());
     }
 
-    public Map<String, Integer> getTeamRankings(String urlStr) throws IOException {
+    public Map<String, Integer[]> getTeamRankings(String urlStr) throws IOException {
         logger.info("Parsing team ranking at " + urlStr);
-        Map<String, Integer> res = new HashMap<String, Integer>();
+        Map<String, Integer[]> res = new HashMap<String, Integer[]>();
         Document doc = Jsoup.connect(BASE_URL + urlStr).get();
         Elements tableElems = doc.getElementsByClass("kick__table");
         if (tableElems.size() == 0)
@@ -266,6 +266,7 @@ public class KickerSportsInfoSource {
         Element tableElem = tableElems.first();
         for (Element tableRow : tableElem.getElementsByTag("tr")) {
             int rank = currentRank;
+            int points = 0;
             String teamId = null;
             for (Element rowCell : tableRow.getElementsByTag("td")) {
                 if (rowCell.hasClass("kick__table--ranking__rank")) {
@@ -281,9 +282,11 @@ public class KickerSportsInfoSource {
                 } else if (rowCell.hasClass("kick__table--ranking__teamname")) {
                     String teamName = removeSuffixes(rowCell.text());
                     teamId = findTeamIdInTeamGameCell(rowCell, teamName);
+                } else if(rowCell.hasClass("kick__table--ranking__master kick__respt-m-o-5")){
+                    points = Integer.parseInt(rowCell.text());
                 }
                 if (teamId != null)
-                    res.put(teamId, rank);
+                    res.put(teamId, new Integer[]{rank, points});
             }
         }
         return res;

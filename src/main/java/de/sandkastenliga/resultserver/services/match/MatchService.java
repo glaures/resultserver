@@ -25,6 +25,8 @@ import java.util.stream.Collectors;
 @Service
 public class MatchService extends AbstractJpaDependentService {
 
+    public static final int RANK_RANK_IDX = 0;
+    public static final int RANK_POINTS_IDX = 1;
     private final DateFormat df = new SimpleDateFormat("dd.MM.yyyy");
     private MatchRepository matchRepository;
     private ChallengeRepository challengeRepository;
@@ -158,7 +160,7 @@ public class MatchService extends AbstractJpaDependentService {
     }
 
     @Transactional
-    public void updateTeamStrengthsAndPositions(Integer challengeId, Map<String, Integer> ranking) throws ServiceException {
+    public void updateTeamStrengthsAndPositions(Integer challengeId, Map<String, Integer[]> ranking) throws ServiceException {
         Challenge challenge = challengeRepository.getOne(challengeId);
         List<Match> allOpenMatchesForChallenge = matchRepository.getReadyMatches(getValid(challengeId, challengeRepository));
         for (Match m : allOpenMatchesForChallenge) {
@@ -167,10 +169,10 @@ public class MatchService extends AbstractJpaDependentService {
                 if (ranking.containsKey(t.getId())) {
                     // legacy way of storing ranks
                     if (home) {
-                        m.setPosTeam1(ranking.get(t.getId()));
+                        m.setPosTeam1(ranking.get(t.getId())[RANK_RANK_IDX]);
                         m.setStrengthTeam1(t.getCurrentStrength());
                     } else {
-                        m.setPosTeam2(ranking.get(t.getId()));
+                        m.setPosTeam2(ranking.get(t.getId())[RANK_RANK_IDX]);
                         m.setStrengthTeam2(t.getCurrentStrength());
                     }
                     // new rank system
@@ -186,7 +188,8 @@ public class MatchService extends AbstractJpaDependentService {
                         r.setTeam(t);
                         r.setYear(year);
                     }
-                    r.setRank(ranking.get(t.getId()));
+                    r.setRank(ranking.get(t.getId())[RANK_RANK_IDX]);
+                    r.setPoints(ranking.get(t.getId())[RANK_POINTS_IDX]);
                     rankRepository.save(r);
                 }
                 home = false;

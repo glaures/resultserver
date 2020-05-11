@@ -65,9 +65,9 @@ public class KickerSportsInfoSourceTest {
     public void testGetTeamRankings() throws Throwable {
         String[] urls = new String[]{"/1-bundesliga/tabelle/2018-19/2", "/canadian-premier-league-fb-1/tabelle/2018-19/9"};
         for (String url : urls) {
-            Map<String, Integer> res = kickerSportsInfoSource.getTeamRankings(url);
+            Map<String, Integer[]> res = kickerSportsInfoSource.getTeamRankings(url);
             for (String teamId : res.keySet()) {
-                logger.info(res.get(teamId) + ". \t" + teamId);
+                logger.info(res.get(teamId)[0] + ". \t" + teamId);
             }
         }
     }

@@ -14,6 +14,7 @@ public class Rank {
     private Challenge challenge;
     private int round;
     private int year;
+    private int points;
     @ManyToOne
     private Team team;
 
@@ -63,5 +64,13 @@ public class Rank {
 
     public void setYear(int year) {
         this.year = year;
+    }
+
+    public int getPoints() {
+        return points;
+    }
+
+    public void setPoints(int points) {
+        this.points = points;
     }
 }

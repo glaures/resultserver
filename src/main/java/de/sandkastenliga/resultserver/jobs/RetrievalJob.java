@@ -135,7 +135,7 @@ public class RetrievalJob {
         for (ChallengeDto c : allChallengesWithOpenMatches) {
             if (regionRelevanceProvider.isRelevantRegion(c.getRegion())) {
                 try {
-                    Map<String, Integer> ranking;
+                    Map<String, Integer[]> ranking;
                     if (c.getRankUrl() != null && readyMatchesInChallenge(c)) {
                         ranking = infoSource.getTeamRankings(c.getRankUrl());
                         matchService.updateTeamStrengthsAndPositions(c.getId(), ranking);

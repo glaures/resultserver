@@ -7,6 +7,7 @@ public class RankDto {
     private int rank;
     private String teamId;
     private String team;
+    private int points;
 
     public RankDto() {
     }
@@ -15,6 +16,7 @@ public class RankDto {
         this.rank = r.getRank();
         this.teamId = r.getTeam().getId();
         this.team = r.getTeam().getName();
+        this.points = r.getPoints();
     }
 
     public int getRank() {
@@ -39,5 +41,13 @@ public class RankDto {
 
     public void setTeamId(String teamId) {
         this.teamId = teamId;
+    }
+
+    public int getPoints() {
+        return points;
+    }
+
+    public void setPoints(int points) {
+        this.points = points;
     }
 }
