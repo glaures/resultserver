@@ -11,7 +11,7 @@
 
     <target name="compile" depends="clean">
         <mkdir dir="${dir.classes}"/>
-        <javac source="1.6" target="1.6" srcdir="./src/main/java" destdir="${dir.classes}" classpath="/Users/guido/.m2/repository/de/sandkastenliga/modelprojector/1.0.0/modelprojector-1.0.0.jar">
+        <javac source="1.8" target="1.8" srcdir="./src/main/java" destdir="${dir.classes}" classpath="/Users/guido/.m2/repository/de/sandkastenliga/modelprojector/1.0.0/modelprojector-1.0.0.jar">
             <include name="de/sandkastenliga/resultserver/dtos/*"/>
         </javac>
     </target>

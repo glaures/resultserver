@@ -1,7 +1,5 @@
 package de.sandkastenliga.resultserver.dtos;
 
-import de.sandkastenliga.resultserver.model.Rank;
-
 public class RankDto {
 
     private int rank;
@@ -9,14 +7,11 @@ public class RankDto {
     private String team;
     private int points;
 
-    public RankDto() {
-    }
-
-    public RankDto(Rank r) {
-        this.rank = r.getRank();
-        this.teamId = r.getTeam().getId();
-        this.team = r.getTeam().getName();
-        this.points = r.getPoints();
+    public RankDto(int rank, String teamId, String team, int points) {
+        this.rank = rank;
+        this.teamId = teamId;
+        this.team = team;
+        this.points = points;
     }
 
     public int getRank() {
