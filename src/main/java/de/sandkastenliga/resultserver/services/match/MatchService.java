@@ -2,10 +2,11 @@ package de.sandkastenliga.resultserver.services.match;
 
 import de.sandkastenliga.resultserver.dtos.ChallengeDto;
 import de.sandkastenliga.resultserver.dtos.MatchDto;
-import de.sandkastenliga.resultserver.model.*;
-import de.sandkastenliga.resultserver.repositories.ChallengeRepository;
+import de.sandkastenliga.resultserver.model.Challenge;
+import de.sandkastenliga.resultserver.model.Match;
+import de.sandkastenliga.resultserver.model.MatchState;
+import de.sandkastenliga.resultserver.model.Team;
 import de.sandkastenliga.resultserver.repositories.MatchRepository;
-import de.sandkastenliga.resultserver.repositories.RankRepository;
 import de.sandkastenliga.resultserver.repositories.TeamRepository;
 import de.sandkastenliga.resultserver.services.AbstractJpaDependentService;
 import de.sandkastenliga.resultserver.services.ServiceException;
@@ -19,44 +20,38 @@ import org.springframework.transaction.annotation.Transactional;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
 public class MatchService extends AbstractJpaDependentService {
 
-    public static final int RANK_RANK_IDX = 0;
-    public static final int RANK_POINTS_IDX = 1;
     private final DateFormat df = new SimpleDateFormat("dd.MM.yyyy");
     private MatchRepository matchRepository;
-    private ChallengeRepository challengeRepository;
     private ChallengeService challengeService;
     private RegionRelevanceProvider regionRelevanceProvider;
     private TeamService teamService;
     private TeamRepository teamRepository;
-    private RankRepository rankRepository;
     private Projector projector;
 
     public MatchService(MatchRepository matchRepository,
-                        ChallengeRepository challengeDao,
                         ChallengeService challengeService,
                         RegionRelevanceProvider regionRelevanceProvider,
                         TeamService teamService,
                         TeamRepository teamRepository,
-                        RankRepository rankRepository,
                         Projector projector) {
         this.matchRepository = matchRepository;
-        this.challengeRepository = challengeDao;
         this.challengeService = challengeService;
         this.regionRelevanceProvider = regionRelevanceProvider;
         this.teamService = teamService;
         this.teamRepository = teamRepository;
-        this.rankRepository = rankRepository;
         this.projector = projector;
     }
 
     // retrieval methods
-
     public MatchDto getClosestMatchByTeams(String team1, String team2, Date date) {
         List<Match> matches = matchRepository.findClosestMatchesByTeams(team1, team2);
         if (matches.size() == 0) {
@@ -86,14 +81,8 @@ public class MatchService extends AbstractJpaDependentService {
     }
 
     public List<MatchDto> getUnfinishedMatchesStartedBetween(Date start, Date end) {
-        // return matchRepository.getUnfinishedMatchesStartedBefore(date).stream().map(m -> projector.project(m, MatchDto.class)).collect(Collectors.toList());
         List<Match> matches = matchRepository.findMatchesByStartAfterAndStartBeforeAndStateInOrderByStartDesc(start, end, MatchState.getUnfinishedStates());
         return matches.stream().map(m -> projector.project(m, MatchDto.class)).collect(Collectors.toList());
-    }
-
-    public List<Match> getReadyMatches(int challengeId) throws ServiceException {
-        Challenge c = getValid(challengeId, challengeRepository);
-        return matchRepository.getReadyMatches(c);
     }
 
     public List<MatchDto> getMatchesByIdList(List<Integer> idList) {
@@ -105,9 +94,12 @@ public class MatchService extends AbstractJpaDependentService {
         return matchRepository.getAllChallengesWithOpenMatches(MatchState.getUnfinishedStates()).stream().map(c -> projector.project(c, ChallengeDto.class)).collect(Collectors.toList());
     }
 
+    public List<MatchDto> getAllMatchesByRegionChallengeAndDay(String country, String challengeName, String day) throws ParseException {
+        Date d = df.parse(day);
+        return matchRepository.findMatchesByChallenge_RegionAndChallenge_NameAndStart(country, challengeName, d).stream().map(m -> projector.project(m, MatchDto.class)).collect(Collectors.toList());
+    }
 
     // manipulative methods
-
     @Transactional
     public int handleMatchUpdate(String correlationId, String region, String challenge, String challengeRankingUrl, String round,
                                  String team1Id, String team1Name, String team2Id, String team2Name, Date date, int goalsTeam1, int goalsTeam2, MatchState matchState, Date start, boolean exactTime) {
@@ -143,10 +135,6 @@ public class MatchService extends AbstractJpaDependentService {
         return m.getId();
     }
 
-    private boolean threeHoursPassedSinceStart(Date d) {
-        return new Date().getTime() - d.getTime() > 1000 * 60 * 60 * 3;
-    }
-
     @Transactional
     public void markMatchAsCanceled(Integer matchId) throws ServiceException {
         Match m = getValid(matchId, matchRepository);
@@ -154,74 +142,7 @@ public class MatchService extends AbstractJpaDependentService {
         matchRepository.save(m);
     }
 
-    public List<MatchDto> getAllMatchesByRegionChallengeAndDay(String country, String challengeName, String day) throws ParseException {
-        Date d = df.parse(day);
-        return matchRepository.findMatchesByChallenge_RegionAndChallenge_NameAndStart(country, challengeName, d).stream().map(m -> projector.project(m, MatchDto.class)).collect(Collectors.toList());
-    }
-
-    @Transactional
-    public void updateTeamStrengthsAndPositions(Integer challengeId, Map<String, Integer[]> ranking) throws ServiceException {
-        Challenge challenge = challengeRepository.getOne(challengeId);
-        List<Match> allOpenMatchesForChallenge = matchRepository.getReadyMatches(getValid(challengeId, challengeRepository));
-        for (Match m : allOpenMatchesForChallenge) {
-            boolean home = true;
-            for (Team t : new Team[]{m.getTeam1(), m.getTeam2()}) {
-                if (ranking.containsKey(t.getId())) {
-                    // legacy way of storing ranks
-                    if (home) {
-                        m.setPosTeam1(ranking.get(t.getId())[RANK_RANK_IDX]);
-                        m.setStrengthTeam1(t.getCurrentStrength());
-                    } else {
-                        m.setPosTeam2(ranking.get(t.getId())[RANK_RANK_IDX]);
-                        m.setStrengthTeam2(t.getCurrentStrength());
-                    }
-                    // new rank system
-                    int round = Integer.parseInt(m.getRound());
-                    Calendar startCal = Calendar.getInstance();
-                    startCal.setTime(m.getStart());
-                    int year = startCal.get(Calendar.YEAR);
-                    Rank r = rankRepository.getRankByChallengeAndRoundAndYearAndTeam(challenge, round, year, t);
-                    if (r == null) {
-                        r = new Rank();
-                        r.setChallenge(challenge);
-                        r.setRound(round);
-                        r.setTeam(t);
-                        r.setYear(year);
-                    }
-                    r.setRank(ranking.get(t.getId())[RANK_RANK_IDX]);
-                    r.setPoints(ranking.get(t.getId())[RANK_POINTS_IDX]);
-                    rankRepository.save(r);
-                }
-                home = false;
-            }
-        }
-    }
-
-    @Transactional
-    public void updateTeamStrengthsForTeamsWithoutRanking(Integer challengeId) throws ServiceException {
-        List<Match> allOpenMatchesForChallenge = matchRepository.getReadyMatches(getValid(challengeId, challengeRepository));
-        for (Match m : allOpenMatchesForChallenge) {
-            m.setStrengthTeam1(m.getTeam1().getCurrentStrength());
-            m.setStrengthTeam2(m.getTeam2().getCurrentStrength());
-            matchRepository.save(m);
-        }
-    }
-
-
     // private helpers
-
-    private Match fuzzyFindMatch(Challenge c, Team t1, Team t2, String round, Date start) {
-        Calendar cal = Calendar.getInstance();
-        cal.add(Calendar.MONTH, -2);
-        Date minStart = cal.getTime();
-        cal.add(Calendar.MONTH, 4);
-        Date maxStart = cal.getTime();
-        List<Match> matches = matchRepository.findMatchByChallengeAndTeamsAndTimeframe(c, t1, t2, round, minStart, maxStart);
-        if (matches.size() > 0)
-            return matches.get(0);
-        return null;
-    }
-
     private Date getStartOfDay(Date d) {
         Calendar cal = Calendar.getInstance();
         cal.setTime(d);

@@ -6,7 +6,7 @@ import de.sandkastenliga.resultserver.model.MatchInfo;
 import de.sandkastenliga.resultserver.model.MatchState;
 import de.sandkastenliga.resultserver.repositories.ChallengeRepository;
 import de.sandkastenliga.resultserver.repositories.MatchRepository;
-import de.sandkastenliga.resultserver.repositories.TeamStrengthSnapshotRepository;
+import de.sandkastenliga.resultserver.repositories.RankRepository;
 import de.sandkastenliga.resultserver.services.challenge.ChallengeService;
 import de.sandkastenliga.resultserver.services.error.ErrorHandlingService;
 import de.sandkastenliga.resultserver.services.match.MatchService;
@@ -45,13 +45,13 @@ public class RetrievalJob {
     @Autowired
     private ChallengeRepository challengeRepository;
     @Autowired
-    private TeamStrengthSnapshotRepository teamStrengthSnapshotRepository;
-    @Autowired
     private TeamService teamService;
     @Autowired
     private RegionRelevanceProvider regionRelevanceProvider;
     @Autowired
     private ErrorHandlingService errorHandlingService;
+    @Autowired
+    private RankRepository rankRepository;
 
     private Date turboStop = new Date();
 
@@ -59,9 +59,6 @@ public class RetrievalJob {
     public void initIfEmptyDB() throws IOException {
         if (challengeService.getAllChallenges().size() == 0)
             updateSchedule();
-        if (teamStrengthSnapshotRepository.findAll().size() == 0) {
-            teamService.setInitialTeamStrengths();
-        }
     }
 
     @Scheduled(fixedDelayString = "${timing.every2Minutes}", initialDelayString = "${timing.initialDelay}")
@@ -138,7 +135,7 @@ public class RetrievalJob {
                     Map<String, Integer[]> ranking;
                     if (c.getRankUrl() != null && readyMatchesInChallenge(c)) {
                         ranking = infoSource.getTeamRankings(c.getRankUrl());
-                        matchService.updateTeamStrengthsAndPositions(c.getId(), ranking);
+                        teamService.updateTeamRankingsForChallenge(c.getId(), ranking);
                     }
                 } catch (Throwable t) {
                     errorHandlingService.handleError(t);

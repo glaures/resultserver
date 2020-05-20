@@ -14,7 +14,7 @@ public class Rank {
     private Challenge challenge;
     private int round;
     private int year;
-    private int points;
+    private int points = 0;
     @ManyToOne
     private Team team;
 

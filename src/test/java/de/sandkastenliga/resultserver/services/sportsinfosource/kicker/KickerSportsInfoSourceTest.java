@@ -63,11 +63,11 @@ public class KickerSportsInfoSourceTest {
 
     @Test
     public void testGetTeamRankings() throws Throwable {
-        String[] urls = new String[]{"/1-bundesliga/tabelle/2018-19/2", "/canadian-premier-league-fb-1/tabelle/2018-19/9"};
+        String[] urls = new String[]{"/2-bundesliga/tabelle/2019-20/32"};
         for (String url : urls) {
             Map<String, Integer[]> res = kickerSportsInfoSource.getTeamRankings(url);
             for (String teamId : res.keySet()) {
-                logger.info(res.get(teamId)[0] + ". \t" + teamId);
+                logger.info(res.get(teamId)[0] + ". \t" + teamId + " \t" + res.get(teamId)[1]);
             }
         }
     }

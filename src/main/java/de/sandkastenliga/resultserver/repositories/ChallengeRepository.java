@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.Date;
 import java.util.List;
 
 public interface ChallengeRepository extends JpaRepository<Challenge, Integer> {
@@ -25,4 +26,16 @@ public interface ChallengeRepository extends JpaRepository<Challenge, Integer> {
                                              @Param("year") int year);
 
 
+    @Query("SELECT distinct(m.round) from Match m "
+            + "WHERE m.challenge.id=:challengeId "
+            + "AND m.state<=2 "
+            + "AND m.start>=current_date "
+            + "ORDER BY m.round ASC")
+    List<String> getUnfinishedRoundsForChallenge(@Param("challengeId") int challengeId);
+
+    @Query("SELECT min(m.start) from Match m "
+            + "WHERE m.challenge.id=:challengeId "
+            + "AND m.round=:round "
+            + "AND m.start>=current_date")
+    Date getDateOfRoundInChallenge(@Param("challengeId") int challengeId, @Param("round") String round);
 }

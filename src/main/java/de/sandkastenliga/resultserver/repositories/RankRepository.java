@@ -11,7 +11,7 @@ import java.util.List;
 @Repository
 public interface RankRepository extends JpaRepository<Rank, Long> {
 
-    Rank getRankByChallengeAndRoundAndYearAndTeam(Challenge challenge, int round, int year, Team team);
+    Rank getRankByChallengeAndRoundAndYearAndTeam_Id(Challenge challenge, int round, int year, String teamId);
 
     List<Rank> getRanksByChallengeAndRoundAndYearOrderByRankAsc(long challengeId, int round, int year);
 
