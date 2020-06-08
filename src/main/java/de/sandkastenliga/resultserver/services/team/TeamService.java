@@ -2,6 +2,7 @@ package de.sandkastenliga.resultserver.services.team;
 
 import de.sandkastenliga.resultserver.dtos.TeamDto;
 import de.sandkastenliga.resultserver.model.Challenge;
+import de.sandkastenliga.resultserver.model.Match;
 import de.sandkastenliga.resultserver.model.Rank;
 import de.sandkastenliga.resultserver.model.Team;
 import de.sandkastenliga.resultserver.repositories.ChallengeRepository;
@@ -89,6 +90,16 @@ public class TeamService extends AbstractJpaDependentService {
                     r.setRank(ranking.get(teamId)[RANK_RANK_IDX]);
                     r.setPoints(ranking.get(teamId)[RANK_POINTS_IDX]);
                     rankRepository.save(r);
+                    // update legacy rankings
+                    List<Match> matchesOfTeam = matchRepository.getScheduledOrReadyMatchesOfTeamInChallenge(c, teamId);
+                    for(Match m : matchesOfTeam){
+                        if(m.getTeam1() != null && m.getTeam1().getId().equals(teamId)){
+                            m.setPosTeam1(r.getRank());
+                        }
+                        if(m.getTeam2() != null && m.getTeam2().getId().equals(teamId)){
+                            m.setPosTeam2(r.getRank());
+                        }
+                    }
                 }
             }
         }

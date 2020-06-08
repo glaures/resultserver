@@ -40,4 +40,6 @@ public interface MatchRepository extends JpaRepository<Match, Integer> {
 
     Optional<Match> findMatchByCorrelationId(String correlationId);
 
+    @Query("FROM Match m WHERE m.state in (0, 1) AND (m.team1.id=:teamId OR m.team2.id=:teamId) AND m.challenge=:c")
+    List<Match> getScheduledOrReadyMatchesOfTeamInChallenge(Challenge c, String teamId);
 }
