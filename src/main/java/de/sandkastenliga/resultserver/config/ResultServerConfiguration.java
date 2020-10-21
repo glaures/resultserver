@@ -2,7 +2,6 @@ package de.sandkastenliga.resultserver.config;
 
 import de.sandkastenliga.resultserver.services.sportsinfosource.FifaRankingService;
 import de.sandkastenliga.resultserver.services.sportsinfosource.KickerSportsInfoSource;
-import de.sandkastenliga.tools.projector.core.Projector;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.context.annotation.Bean;
@@ -24,12 +23,6 @@ import java.util.concurrent.Executor;
 public class ResultServerConfiguration {
 
     private final static Log log = LogFactory.getLog(ResultServerConfiguration.class);
-    private final Projector projector = new Projector();
-
-    @Bean
-    public Projector projector() {
-        return this.projector;
-    }
 
     @Bean
     public TaskScheduler taskScheduler() {

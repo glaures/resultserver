@@ -1,5 +1,8 @@
 package de.sandkastenliga.resultserver.dtos;
 
+import lombok.Data;
+
+@Data
 public class RankDto {
 
     private int rank;
@@ -14,35 +17,4 @@ public class RankDto {
         this.points = points;
     }
 
-    public int getRank() {
-        return rank;
-    }
-
-    public void setRank(int rank) {
-        this.rank = rank;
-    }
-
-    public String getTeam() {
-        return team;
-    }
-
-    public void setTeam(String team) {
-        this.team = team;
-    }
-
-    public String getTeamId() {
-        return teamId;
-    }
-
-    public void setTeamId(String teamId) {
-        this.teamId = teamId;
-    }
-
-    public int getPoints() {
-        return points;
-    }
-
-    public void setPoints(int points) {
-        this.points = points;
-    }
 }

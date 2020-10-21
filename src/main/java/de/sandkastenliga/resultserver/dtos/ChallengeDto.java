@@ -1,10 +1,11 @@
 package de.sandkastenliga.resultserver.dtos;
 
-import de.sandkastenliga.tools.projector.core.Projection;
-import de.sandkastenliga.tools.projector.core.ProjectionType;
+import de.sandkastenliga.resultserver.model.Challenge;
+import lombok.Data;
 
 import java.util.Date;
 
+@Data
 public class ChallengeDto {
 
     private Integer id;
@@ -14,52 +15,15 @@ public class ChallengeDto {
     private Date rankUrlDate;
     private int challengeModeEnum;
 
-    public Integer getId() {
-        return id;
-    }
+    public ChallengeDto(){}
 
-    public void setId(Integer id) {
-        this.id = id;
-    }
+    public ChallengeDto(Challenge c){
+        this.id = c.getId();
+        this.region = c.getRegion();
+        this.name = c.getName();
+        this.rankUrl = c.getRankUrl();
+        this.rankUrlDate = c.getRankUrlDate();
+        this.challengeModeEnum = c.getChallengeMode().getIntValue();
 
-    public String getRegion() {
-        return region;
-    }
-
-    public void setRegion(String region) {
-        this.region = region;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getRankUrl() {
-        return rankUrl;
-    }
-
-    public void setRankUrl(String rankUrl) {
-        this.rankUrl = rankUrl;
-    }
-
-    public Date getRankUrlDate() {
-        return rankUrlDate;
-    }
-
-    public void setRankUrlDate(Date rankUrlDate) {
-        this.rankUrlDate = rankUrlDate;
-    }
-
-    public int getChallengeModeEnum() {
-        return challengeModeEnum;
-    }
-
-    @Projection(value = ProjectionType.property, propertyName = "challengeMode", referencePropertyName = "intValue")
-    public void setChallengeMode(int challengeMode) {
-        this.challengeModeEnum = challengeMode;
     }
 }

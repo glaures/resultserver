@@ -11,7 +11,6 @@ import de.sandkastenliga.resultserver.repositories.RankRepository;
 import de.sandkastenliga.resultserver.repositories.TeamRepository;
 import de.sandkastenliga.resultserver.services.AbstractJpaDependentService;
 import de.sandkastenliga.resultserver.services.sportsinfosource.RegionRelevanceProvider;
-import de.sandkastenliga.tools.projector.core.Projector;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.*;
 
 @Service
+@Transactional
 public class TeamService extends AbstractJpaDependentService {
 
     public static final int RANK_RANK_IDX = 0;
@@ -33,27 +33,23 @@ public class TeamService extends AbstractJpaDependentService {
     private MatchRepository matchRepository;
     private RankRepository rankRepository;
     private RegionRelevanceProvider regionRelevanceProvider;
-    private Projector projector;
 
     @Autowired
     public TeamService(TeamRepository teamRepository, ChallengeRepository challengeRepository,
                        MatchRepository matchRepository,
                        RankRepository rankRepository,
-                       RegionRelevanceProvider regionRelevanceProvider,
-                       Projector projector) {
+                       RegionRelevanceProvider regionRelevanceProvider) {
         this.teamRepository = teamRepository;
         this.challengeRepository = challengeRepository;
         this.rankRepository = rankRepository;
         this.regionRelevanceProvider = regionRelevanceProvider;
         this.matchRepository = matchRepository;
-        this.projector = projector;
     }
 
     public TeamDto getOneById(String id) {
-        return projector.project(teamRepository.getOne(id), TeamDto.class);
+        return new TeamDto(teamRepository.getOne(id));
     }
 
-    @Transactional
     public TeamDto getOrCreateTeam(String id, String name) {
         Optional<Team> tOpt = teamRepository.findById(id);
         if (!tOpt.isPresent()) {
@@ -61,12 +57,11 @@ public class TeamService extends AbstractJpaDependentService {
             t.setId(id);
             t.setName(name);
             t = teamRepository.save(t);
-            return projector.project(t, TeamDto.class);
+            return new TeamDto(t);
         }
-        return projector.project(tOpt.get(), TeamDto.class);
+        return new TeamDto(tOpt.get());
     }
 
-    @Transactional
     public void updateTeamRankingsForChallenge(int challengeId, Map<String, Integer[]> ranking) {
         Challenge c = challengeRepository.getOne(challengeId);
         if (regionRelevanceProvider.isRelevantRegion(c.getRegion())) {

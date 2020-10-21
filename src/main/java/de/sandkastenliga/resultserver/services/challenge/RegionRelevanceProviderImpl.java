@@ -13,5 +13,9 @@ public class RegionRelevanceProviderImpl implements de.sandkastenliga.resultserv
         return Arrays.asList(RELEVANT_REGIONS).contains(region);
     }
 
+    @Override
+    public String[] getRelevantRegions() {
+        return RELEVANT_REGIONS;
+    }
 
 }

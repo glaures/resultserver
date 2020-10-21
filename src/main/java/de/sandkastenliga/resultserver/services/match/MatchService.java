@@ -13,7 +13,6 @@ import de.sandkastenliga.resultserver.services.ServiceException;
 import de.sandkastenliga.resultserver.services.challenge.ChallengeService;
 import de.sandkastenliga.resultserver.services.sportsinfosource.RegionRelevanceProvider;
 import de.sandkastenliga.resultserver.services.team.TeamService;
-import de.sandkastenliga.tools.projector.core.Projector;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,6 +26,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
+@Transactional
 public class MatchService extends AbstractJpaDependentService {
 
     private final DateFormat df = new SimpleDateFormat("dd.MM.yyyy");
@@ -35,20 +35,17 @@ public class MatchService extends AbstractJpaDependentService {
     private RegionRelevanceProvider regionRelevanceProvider;
     private TeamService teamService;
     private TeamRepository teamRepository;
-    private Projector projector;
 
     public MatchService(MatchRepository matchRepository,
                         ChallengeService challengeService,
                         RegionRelevanceProvider regionRelevanceProvider,
                         TeamService teamService,
-                        TeamRepository teamRepository,
-                        Projector projector) {
+                        TeamRepository teamRepository) {
         this.matchRepository = matchRepository;
         this.challengeService = challengeService;
         this.regionRelevanceProvider = regionRelevanceProvider;
         this.teamService = teamService;
         this.teamRepository = teamRepository;
-        this.projector = projector;
     }
 
     // retrieval methods
@@ -69,34 +66,47 @@ public class MatchService extends AbstractJpaDependentService {
                 break;
             }
         }
-        return projector.project(closest, MatchDto.class);
+        return new MatchDto(closest);
     }
 
     public List<MatchDto> getAllMatchesAtDays(Date startDay, Date endDay) {
-        return matchRepository.getAllMatchesAtDays(getStartOfDay(startDay), getEndOfDay(endDay)).stream().map(m -> projector.project(m, MatchDto.class)).collect(Collectors.toList());
+        return matchRepository.getAllMatchesAtDays(getStartOfDay(startDay), getEndOfDay(endDay))
+                .stream()
+                .map(m -> new MatchDto(m))
+                .collect(Collectors.toList());
     }
 
     public MatchDto getMatch(Integer matchId) throws ServiceException {
-        return projector.project(getValid(matchId, matchRepository), MatchDto.class);
+        return new MatchDto(getValid(matchId, matchRepository));
     }
 
     public List<MatchDto> getUnfinishedMatchesStartedBetween(Date start, Date end) {
         List<Match> matches = matchRepository.findMatchesByStartAfterAndStartBeforeAndStateInOrderByStartDesc(start, end, MatchState.getUnfinishedStates());
-        return matches.stream().map(m -> projector.project(m, MatchDto.class)).collect(Collectors.toList());
+        return matches.stream()
+                .map(m -> new MatchDto(m))
+                .collect(Collectors.toList());
     }
 
     public List<MatchDto> getMatchesByIdList(List<Integer> idList) {
-        return matchRepository.getMatchesByIdList(idList).stream().map(m -> projector.project(m, MatchDto.class)).collect(Collectors.toList());
-
+        return matchRepository.getMatchesByIdList(idList)
+                .stream()
+                .map(m -> new MatchDto(m))
+                .collect(Collectors.toList());
     }
 
     public List<ChallengeDto> getAllChallengesWithOpenMatches() {
-        return matchRepository.getAllChallengesWithOpenMatches(MatchState.getUnfinishedStates()).stream().map(c -> projector.project(c, ChallengeDto.class)).collect(Collectors.toList());
+        return matchRepository.getAllChallengesWithOpenMatches(MatchState.getUnfinishedStates())
+                .stream()
+                .map(c -> new ChallengeDto(c))
+                .collect(Collectors.toList());
     }
 
     public List<MatchDto> getAllMatchesByRegionChallengeAndDay(String country, String challengeName, String day) throws ParseException {
         Date d = df.parse(day);
-        return matchRepository.findMatchesByChallenge_RegionAndChallenge_NameAndStart(country, challengeName, d).stream().map(m -> projector.project(m, MatchDto.class)).collect(Collectors.toList());
+        return matchRepository.findMatchesByChallenge_RegionAndChallenge_NameAndStart(country, challengeName, d)
+                .stream()
+                .map(m -> new MatchDto(m))
+                .collect(Collectors.toList());
     }
 
     // manipulative methods
@@ -128,6 +138,8 @@ public class MatchService extends AbstractJpaDependentService {
         m.setTeam2(t2);
         m.setGoalsTeam1(goalsTeam1);
         m.setGoalsTeam2(goalsTeam2);
+        m.setStrengthTeam1(t1.getCurrentStrength());
+        m.setStrengthTeam2(t2.getCurrentStrength());
         // bei einem manuell gesetzen Spiel soll nicht wieder von ready auf scheduled gesprungen werden
         m.setState(matchState == MatchState.scheduled && m.isManuallyScheduled() ? MatchState.ready : matchState);
         m.setLastUpdated(new Date());

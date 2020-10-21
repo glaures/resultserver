@@ -4,4 +4,6 @@ public interface RegionRelevanceProvider {
 
     public boolean isRelevantRegion(String region);
 
+    public String[] getRelevantRegions();
+
 }

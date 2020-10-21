@@ -4,7 +4,6 @@ import de.sandkastenliga.resultserver.dtos.ChallengeDto;
 import de.sandkastenliga.resultserver.model.Challenge;
 import de.sandkastenliga.resultserver.model.ChallengeMode;
 import de.sandkastenliga.resultserver.repositories.ChallengeRepository;
-import de.sandkastenliga.tools.projector.core.Projector;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,11 +17,12 @@ public class ChallengeService {
 
     @Autowired
     private ChallengeRepository challengeRepository;
-    @Autowired
-    private Projector projector;
 
     public List<ChallengeDto> getAllChallenges() {
-        return challengeRepository.findAll().stream().map(c -> projector.project(c, ChallengeDto.class)).collect(Collectors.toList());
+        return challengeRepository.findAll()
+                .stream()
+                .map(c -> new ChallengeDto(c))
+                .collect(Collectors.toList());
     }
 
     @Transactional
