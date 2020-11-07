@@ -1,7 +1,9 @@
-package de.sandkastenliga.resultserver.presentation.rest;
+package de.sandkastenliga.resultserver.rest.resources;
 
+import de.sandkastenliga.resultserver.dtos.ChallengeDto;
 import de.sandkastenliga.resultserver.dtos.RankDto;
 import de.sandkastenliga.resultserver.repositories.ChallengeRepository;
+import de.sandkastenliga.resultserver.services.sportsinfosource.RegionRelevanceProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -14,6 +16,8 @@ public class ChallengeResource {
 
     @Autowired
     private ChallengeRepository challengeRepository;
+    @Autowired
+    private RegionRelevanceProvider regionRelevanceProvider;
 
     @GetMapping("/rest/challenge/ranking")
     public List<RankDto> getChallengeRanking(@RequestParam("challenge") String challenge,
@@ -25,6 +29,16 @@ public class ChallengeResource {
         String c = challenge.substring(slashIdx + 1, challenge.length());
         List<RankDto> res = challengeRepository.getChallengeRanking(c, r, round, year);
         return res;
+    }
+
+    @GetMapping("/rest/challenges")
+    public List<ChallengeDto> getAllChallenges(@RequestParam("region") String region) {
+        return challengeRepository.getAllChallengesByRegion(region);
+    }
+
+    @GetMapping("/rest/regions")
+    public String[] getAllRelevantRegions() {
+        return regionRelevanceProvider.getRelevantRegions();
     }
 
 

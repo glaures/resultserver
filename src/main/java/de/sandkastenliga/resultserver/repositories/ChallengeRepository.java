@@ -1,5 +1,6 @@
 package de.sandkastenliga.resultserver.repositories;
 
+import de.sandkastenliga.resultserver.dtos.ChallengeDto;
 import de.sandkastenliga.resultserver.dtos.RankDto;
 import de.sandkastenliga.resultserver.model.Challenge;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -12,6 +13,12 @@ import java.util.List;
 public interface ChallengeRepository extends JpaRepository<Challenge, Integer> {
 
     public Challenge findChallengeByRegionAndName(String region, String name);
+
+    @Query("SELECT new de.sandkastenliga.resultserver.dtos.ChallengeDto(c) "
+            + "FROM Challenge c "
+            + "WHERE c.region = :region "
+            + "ORDER by c.level ASC")
+    public List<ChallengeDto> getAllChallengesByRegion(@Param("region") String region);
 
     @Query("SELECT new de.sandkastenliga.resultserver.dtos.RankDto(r.rank, r.team.id, r.team.name, r.points) "
             + "FROM Rank r "

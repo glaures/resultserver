@@ -10,6 +10,9 @@ import org.springframework.core.task.SimpleAsyncTaskExecutor;
 import org.springframework.scheduling.TaskScheduler;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.concurrent.ConcurrentTaskScheduler;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
 import javax.annotation.PostConstruct;
 import java.io.IOException;
@@ -20,9 +23,14 @@ import java.util.concurrent.Executor;
 
 @Configuration
 @EnableScheduling
-public class ResultServerConfiguration {
+public class ResultServerConfiguration implements WebMvcConfigurer {
 
     private final static Log log = LogFactory.getLog(ResultServerConfiguration.class);
+
+    public void addCorsMappings(CorsRegistry registry) {
+        registry.addMapping("/**")
+                .allowedMethods("HEAD", "GET", "PUT", "POST", "DELETE", "PATCH");
+    }
 
     @Bean
     public TaskScheduler taskScheduler() {

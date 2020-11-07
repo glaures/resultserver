@@ -1,4 +1,4 @@
-package de.sandkastenliga.resultserver.presentation.rest;
+package de.sandkastenliga.resultserver.rest.resources;
 
 import de.sandkastenliga.resultserver.dtos.MatchDto;
 import de.sandkastenliga.resultserver.repositories.TeamRepository;

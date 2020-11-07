@@ -4,6 +4,7 @@ import de.sandkastenliga.resultserver.dtos.ChallengeDto;
 import de.sandkastenliga.resultserver.model.Challenge;
 import de.sandkastenliga.resultserver.model.ChallengeMode;
 import de.sandkastenliga.resultserver.repositories.ChallengeRepository;
+import de.sandkastenliga.resultserver.services.sportsinfosource.RegionRelevanceProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

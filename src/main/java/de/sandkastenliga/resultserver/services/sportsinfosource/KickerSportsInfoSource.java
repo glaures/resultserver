@@ -64,7 +64,7 @@ public class KickerSportsInfoSource {
         String url = BASE_URL + URL_PREFIX + ("/" + this.dateFormat.format(matchDate)) + URL_POSTFIX;
         Document doc = Jsoup.parse(loadContentByHttpClient(url), "UTF-8", "");
         List<MatchInfo> res = getMatchInfoForDayFromDoc(matchDate, doc);
-        logger.info("... done parsing " + url + ". Found " + res.size() + " matches.");
+        logger.debug("... done parsing " + url + ". Found " + res.size() + " matches.");
         return res;
     }
 
@@ -178,7 +178,7 @@ public class KickerSportsInfoSource {
                     mi.setStart(matchDateCal != null ? matchDateCal.getTime() : null);
                     mi.setState(matchState);
                     res.add(mi);
-                    logger.info(mi.toString());
+                    logger.debug(mi.toString());
                 }
             }
         }
@@ -256,7 +256,7 @@ public class KickerSportsInfoSource {
     }
 
     public Map<String, Integer[]> getTeamRankings(String urlStr) throws IOException {
-        logger.info("Parsing team ranking at " + urlStr);
+        logger.debug("Parsing team ranking at " + urlStr);
         Map<String, Integer[]> res = new HashMap<String, Integer[]>();
         Document doc = Jsoup.connect(BASE_URL + urlStr).get();
         Elements tableElems = doc.getElementsByClass("kick__table");

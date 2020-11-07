@@ -1,4 +1,4 @@
-package de.sandkastenliga.resultserver.presentation.rest;
+package de.sandkastenliga.resultserver.rest.resources;
 
 import de.sandkastenliga.resultserver.jobs.RetrievalJob;
 import org.springframework.beans.factory.annotation.Autowired;

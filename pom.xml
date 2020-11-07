@@ -59,6 +59,7 @@
             <version>1.12.1</version>
         </dependency>
 		<!-- required for Java 11 -->
+		<!--
 		<dependency>
 			<groupId>com.sun.xml.bind</groupId>
 			<artifactId>jaxb-core</artifactId>
@@ -74,6 +75,7 @@
 			<artifactId>jaxb-impl</artifactId>
 			<version>2.3.1</version>
 		</dependency>
+		-->
 		<!-- hibernate -->
 		<dependency>
 			<groupId>org.javassist</groupId>

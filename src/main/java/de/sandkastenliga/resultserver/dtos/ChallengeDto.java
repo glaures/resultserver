@@ -13,12 +13,14 @@ public class ChallengeDto {
     private String name;
     private String rankUrl;
     private Date rankUrlDate;
+    private int level = 1;
     private int challengeModeEnum;
 
     public ChallengeDto(){}
 
     public ChallengeDto(Challenge c){
         this.id = c.getId();
+        this.level = c.getLevel();
         this.region = c.getRegion();
         this.name = c.getName();
         this.rankUrl = c.getRankUrl();
