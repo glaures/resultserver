@@ -18,7 +18,7 @@ import javax.persistence.NoResultException;
 import java.util.*;
 
 @Service
-@Transactional
+@Transactional(rollbackFor = {Throwable.class})
 public class TeamStrengthService extends AbstractJpaDependentService {
 
     final
@@ -203,10 +203,10 @@ public class TeamStrengthService extends AbstractJpaDependentService {
                 .setParameter("challengeId", challengeId)
                 .getResultList();
         double avg = min ? Float.MAX_VALUE : 0f;
-        for(double f : res){
+        for (double f : res) {
             avg = min ? Math.min(avg, f) : Math.max(avg, f);
         }
-        return flatten((float)avg, flatFactor);
+        return flatten((float) avg, flatFactor);
     }
 
     private float flatten(float avg, int flatFactor) {
