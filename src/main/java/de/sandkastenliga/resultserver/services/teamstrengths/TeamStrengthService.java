@@ -99,7 +99,7 @@ public class TeamStrengthService extends AbstractJpaDependentService {
                             Integer.parseInt(unfinishedRounds.get(0)),
                             Calendar.getInstance().get(Calendar.YEAR));
             if (ranks.size() == 0)
-                throw new ServiceException("error.noUnfinishedMatchesForStrengthSnapshot");
+                throw new ServiceException("error.noRanksAvailable", c.getName(), c.getRegion(), unfinishedRounds.get(0));
             for (RankDto r : ranks) {
                 TeamStrengthValue tsv = new TeamStrengthValue();
                 tsv.setSnapshot(tss);

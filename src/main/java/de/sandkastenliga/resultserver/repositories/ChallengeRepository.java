@@ -37,7 +37,7 @@ public interface ChallengeRepository extends JpaRepository<Challenge, Integer> {
             + "WHERE m.challenge.id=:challengeId "
             + "AND m.state<=2 "
             + "AND m.start>=current_date "
-            + "ORDER BY m.round ASC")
+            + "ORDER BY m.start ASC")
     List<String> getUnfinishedRoundsForChallenge(@Param("challengeId") int challengeId);
 
     @Query("SELECT min(m.start) from Match m "
