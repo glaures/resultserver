@@ -17,6 +17,7 @@ public class RegionRelevanceProviderImpl implements de.sandkastenliga.resultserv
             "Schweiz",
             "Weltweit",
             "Europa",
+            "Türkei",
             "(Weltweit)",
             "(Europa)"};
 
