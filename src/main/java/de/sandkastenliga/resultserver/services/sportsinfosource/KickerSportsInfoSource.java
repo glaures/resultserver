@@ -191,10 +191,16 @@ public class KickerSportsInfoSource {
         String link = anchor.attr("href");
         if (link.startsWith(BASE_URL))
             link = link.substring(BASE_URL.length());
-        // skip leading slash
+        // remove leading slash
         if (link.startsWith("/"))
             link = link.substring(1);
-        return link.substring(0, link.indexOf("/"));
+        int lastDashIndex = link.lastIndexOf("-");
+        if(lastDashIndex > 0) {
+            // remove SEO string prior to last dash
+            link = link.substring(lastDashIndex + 1);
+        }
+        link = link.substring(0, link.indexOf("/"));
+        return link;
     }
 
     /**
@@ -282,7 +288,7 @@ public class KickerSportsInfoSource {
                 } else if (rowCell.hasClass("kick__table--ranking__teamname")) {
                     String teamName = removeSuffixes(rowCell.text());
                     teamId = findTeamIdInTeamGameCell(rowCell, teamName);
-                } else if(rowCell.hasClass("kick__table--ranking__master kick__respt-m-o-5")){
+                } else if (rowCell.hasClass("kick__table--ranking__master kick__respt-m-o-5")) {
                     points = Integer.parseInt(rowCell.text());
                 }
                 if (teamId != null)
