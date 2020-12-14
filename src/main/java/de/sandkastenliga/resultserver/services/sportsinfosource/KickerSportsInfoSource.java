@@ -282,7 +282,7 @@ public class KickerSportsInfoSource {
                             rank = (NumberFormat.getIntegerInstance().parse(rankStr)).intValue();
                             currentRank = rank;
                         } catch (ParseException pe) {
-                            logger.warn("parsinfg ranks at " + urlStr + " failed: " + pe.getMessage());
+                            logger.warn("parsing ranks at " + urlStr + " failed: " + pe.getMessage());
                         }
                     }
                 } else if (rowCell.hasClass("kick__table--ranking__teamname")) {

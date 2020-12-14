@@ -13,6 +13,8 @@ import de.sandkastenliga.resultserver.services.ServiceException;
 import de.sandkastenliga.resultserver.services.challenge.ChallengeService;
 import de.sandkastenliga.resultserver.services.sportsinfosource.RegionRelevanceProvider;
 import de.sandkastenliga.resultserver.services.team.TeamService;
+import org.apache.juli.logging.Log;
+import org.apache.juli.logging.LogFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,6 +32,7 @@ import java.util.stream.Collectors;
 public class MatchService extends AbstractJpaDependentService {
 
     private final DateFormat df = new SimpleDateFormat("dd.MM.yyyy");
+    private final Log log = LogFactory.getLog(getClass());
     private MatchRepository matchRepository;
     private ChallengeService challengeService;
     private RegionRelevanceProvider regionRelevanceProvider;
@@ -144,6 +147,12 @@ public class MatchService extends AbstractJpaDependentService {
         m.setState(matchState == MatchState.scheduled && m.isManuallyScheduled() ? MatchState.ready : matchState);
         m.setLastUpdated(new Date());
         matchRepository.save(m);
+        log.info(df.format(m.getStart()) + " \t" +
+                m.getId() + "[" + m.getCorrelationId() + "] \t" +
+                m.getState() + " \t" +
+                m.getChallenge().getName() + " \t" +
+                t1.getName() + "  - " + t2.getName() + " \t" +
+                (goalsTeam1 >= 0 ? goalsTeam1 : "-") + ":" + (goalsTeam2 >= 0 ? goalsTeam2 : "-") + " \t");
         return m.getId();
     }
 
