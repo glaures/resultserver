@@ -16,4 +16,8 @@ public interface TeamRepository extends JpaRepository<Team, String> {
     @Query(value = "SELECT DISTINCT t.name FROM Team t JOIN Match m ON (m.team1=t OR m.team2=t) " +
             " WHERE m.challenge.region in :relevantRegions AND t.name LIKE :query")
     public List<String> fuzzyFindTeamByName(String query, String[] relevantRegions, Pageable page);
+
+    @Query(value = "SELECT DISTINCT t FROM Team t JOIN Match m ON (m.team1=t OR m.team2=t) " +
+            " WHERE m.challenge.id=:challengeId")
+    List<Team> findAllByChallenge(int challengeId);
 }

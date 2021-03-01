@@ -86,21 +86,23 @@ public class TeamStrengthService extends AbstractJpaDependentService {
                 values.add(new TeamStrengthValueDto(newVal));
             });
         } else {
+            List<RankDto> ranks = new ArrayList<>();
             // initialen Snapshot für Wettbewerb erstellen
-            List<String> unfinishedRounds = Collections.emptyList();
-            try {
-                unfinishedRounds = challengeRepository.getUnfinishedRoundsForChallenge(c.getId());
-            } catch(Exception e) {
-                throw new ServiceException("error.noUnfinishedMatchesForStrengthSnapshot");
+            List<String> unfinishedRounds = challengeRepository.getUnfinishedRoundsForChallenge(c.getId());
+            if (unfinishedRounds.size() > 0) {
+                ranks.addAll(challengeRepository.getChallengeRanking(
+                        c.getName(),
+                        c.getRegion(),
+                        Integer.parseInt(unfinishedRounds.get(0)),
+                        Calendar.getInstance().get(Calendar.YEAR)));
             }
-            List<RankDto> ranks =
-                    challengeRepository.getChallengeRanking(
-                            c.getName(),
-                            c.getRegion(),
-                            Integer.parseInt(unfinishedRounds.get(0)),
-                            Calendar.getInstance().get(Calendar.YEAR));
-            if (ranks.size() == 0)
-                throw new ServiceException("error.noRanksAvailable", c.getName(), c.getRegion(), unfinishedRounds.get(0));
+            if(ranks.size() == 0) {
+                // kein ranking verfügbar -> teams holen und ranking erstellen
+                List<Team> teams = teamRepository.findAllByChallenge(c.getId());
+                for (Team t : teams) {
+                    ranks.add(new RankDto(1, t.getId(), t.getName(), 0));
+                }
+            }
             for (RankDto r : ranks) {
                 TeamStrengthValue tsv = new TeamStrengthValue();
                 tsv.setSnapshot(tss);
@@ -117,7 +119,8 @@ public class TeamStrengthService extends AbstractJpaDependentService {
     }
 
     public TeamStrengthSettingsDto updateTeamStrengthSettings(TeamStrengthSettingsDto settings) {
-        TeamStrengthSettings curr = entityManager.find(TeamStrengthSettings.class, settings.getId());
+        TeamStrengthSettings curr =
+                entityManager.find(TeamStrengthSettings.class, settings.getId());
         curr.setMinStrength(settings.getMinStrength());
         curr.setMaxStrength(settings.getMaxStrength());
         curr.setFlatFactor(settings.getFlatFactor());
