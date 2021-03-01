@@ -146,6 +146,7 @@ public class MatchService extends AbstractJpaDependentService {
         // bei einem manuell gesetzen Spiel soll nicht wieder von ready auf scheduled gesprungen werden
         m.setState(matchState == MatchState.scheduled && m.isManuallyScheduled() ? MatchState.ready : matchState);
         m.setLastUpdated(new Date());
+        m.setManuallyScheduled(false);
         matchRepository.save(m);
         log.info(df.format(m.getStart()) + " \t" +
                 m.getId() + "[" + m.getCorrelationId() + "] \t" +

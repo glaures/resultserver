@@ -33,6 +33,8 @@ public class ChallengeResource {
 
     @GetMapping("/rest/challenges")
     public List<ChallengeDto> getAllChallenges(@RequestParam("region") String region) {
+        if(region.startsWith("("))
+            region = region.substring(1, region.length() - 1);
         return challengeRepository.getAllChallengesByRegion(region);
     }
 

@@ -87,11 +87,12 @@ public class TeamStrengthService extends AbstractJpaDependentService {
             });
         } else {
             // initialen Snapshot für Wettbewerb erstellen
-            List<String> unfinishedRounds = challengeRepository.getUnfinishedRoundsForChallenge(c.getId());
-            // sollten keine Matches mehr geplant sein, ist ein neuer Snapshot
-            // nicht sinnvoll und auch eher schwer umzusetzen
-            if (unfinishedRounds.size() == 0)
+            List<String> unfinishedRounds = Collections.emptyList();
+            try {
+                unfinishedRounds = challengeRepository.getUnfinishedRoundsForChallenge(c.getId());
+            } catch(Exception e) {
                 throw new ServiceException("error.noUnfinishedMatchesForStrengthSnapshot");
+            }
             List<RankDto> ranks =
                     challengeRepository.getChallengeRanking(
                             c.getName(),
