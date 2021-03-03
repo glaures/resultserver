@@ -9,6 +9,7 @@ import de.sandkastenliga.resultserver.repositories.ChallengeRepository;
 import de.sandkastenliga.resultserver.repositories.TeamRepository;
 import de.sandkastenliga.resultserver.services.AbstractJpaDependentService;
 import de.sandkastenliga.resultserver.services.ServiceException;
+import de.sandkastenliga.resultserver.services.match.MatchService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,15 +28,19 @@ public class TeamStrengthService extends AbstractJpaDependentService {
     ChallengeRepository challengeRepository;
     final
     TeamRepository teamRepository;
+    final MatchService matchService;
 
     @Autowired
-    public TeamStrengthService(EntityManager entityManager, ChallengeRepository challengeRepository, TeamRepository teamRepository) {
+    public TeamStrengthService(EntityManager entityManager, ChallengeRepository challengeRepository,
+                               TeamRepository teamRepository,
+                               MatchService matchService) {
         this.entityManager = entityManager;
         this.challengeRepository = challengeRepository;
         this.teamRepository = teamRepository;
+        this.matchService = matchService;
     }
 
-    public TeamStrengthSettingsDto getOrCreateTeamStrengthSettingsByChallenge(int challengeId) {
+    public TeamStrengthSettingsDto getOrCreateTeamStrengthSettingsByChallenge(int challengeId) throws ServiceException {
         TeamStrengthSettings settings;
         try {
             settings = (TeamStrengthSettings) entityManager.createQuery(
@@ -118,7 +123,7 @@ public class TeamStrengthService extends AbstractJpaDependentService {
         return res;
     }
 
-    public TeamStrengthSettingsDto updateTeamStrengthSettings(TeamStrengthSettingsDto settings) {
+    public TeamStrengthSettingsDto updateTeamStrengthSettings(TeamStrengthSettingsDto settings) throws ServiceException {
         TeamStrengthSettings curr =
                 entityManager.find(TeamStrengthSettings.class, settings.getId());
         curr.setMinStrength(settings.getMinStrength());
@@ -159,7 +164,7 @@ public class TeamStrengthService extends AbstractJpaDependentService {
                 .getResultList();
     }
 
-    public int deleteSnapshot(int snapshotId) {
+    public int deleteSnapshot(int snapshotId) throws ServiceException {
         TeamStrengthSnapshot snapshot = entityManager.find(TeamStrengthSnapshot.class, snapshotId);
         int challengeId = snapshot.getChallenge().getId();
         entityManager.createQuery("DELETE FROM TeamStrengthValue WHERE snapshot.id=:id")
@@ -172,7 +177,7 @@ public class TeamStrengthService extends AbstractJpaDependentService {
         return challengeId;
     }
 
-    private void updateTeamStrengths(int challengeId) {
+    private void updateTeamStrengths(int challengeId) throws ServiceException {
         final TeamStrengthSettings settings = (TeamStrengthSettings) entityManager.createQuery(
                 "SELECT tss from TeamStrengthSettings tss " +
                         "WHERE tss.challenge.id=:challengeId")
@@ -196,6 +201,7 @@ public class TeamStrengthService extends AbstractJpaDependentService {
                     (settings.getMaxStrength() - settings.getMinStrength()) * percentProjection);
             t.setCurrentStrength((int) strength);
             entityManager.persist(t);
+            matchService.handleTeamStrengthUpdate(challengeId, t.getId());
         }
     }
 

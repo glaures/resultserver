@@ -6,6 +6,7 @@ import de.sandkastenliga.resultserver.model.Challenge;
 import de.sandkastenliga.resultserver.model.Match;
 import de.sandkastenliga.resultserver.model.MatchState;
 import de.sandkastenliga.resultserver.model.Team;
+import de.sandkastenliga.resultserver.repositories.ChallengeRepository;
 import de.sandkastenliga.resultserver.repositories.MatchRepository;
 import de.sandkastenliga.resultserver.repositories.TeamRepository;
 import de.sandkastenliga.resultserver.services.AbstractJpaDependentService;
@@ -38,17 +39,20 @@ public class MatchService extends AbstractJpaDependentService {
     private RegionRelevanceProvider regionRelevanceProvider;
     private TeamService teamService;
     private TeamRepository teamRepository;
+    private ChallengeRepository challengeRepository;
 
     public MatchService(MatchRepository matchRepository,
                         ChallengeService challengeService,
                         RegionRelevanceProvider regionRelevanceProvider,
                         TeamService teamService,
-                        TeamRepository teamRepository) {
+                        TeamRepository teamRepository,
+                        ChallengeRepository challengeRepository) {
         this.matchRepository = matchRepository;
         this.challengeService = challengeService;
         this.regionRelevanceProvider = regionRelevanceProvider;
         this.teamService = teamService;
         this.teamRepository = teamRepository;
+        this.challengeRepository = challengeRepository;
     }
 
     // retrieval methods
@@ -111,6 +115,21 @@ public class MatchService extends AbstractJpaDependentService {
                 .map(m -> new MatchDto(m))
                 .collect(Collectors.toList());
     }
+
+    @Transactional
+    public void handleTeamStrengthUpdate(int challengeId, String teamId) throws ServiceException {
+        Challenge challenge = getValid(challengeId, challengeRepository);
+        Team team = getValid(teamId, teamRepository);
+        List<Match> matches = matchRepository.getScheduledOrReadyMatchesOfTeamInChallenge(challenge, teamId);
+        for(Match match : matches){
+            boolean home = match.getTeam1().getId().equals(teamId);
+            if(home)
+                match.setStrengthTeam1(team.getCurrentStrength());
+            else
+                match.setStrengthTeam2(team.getCurrentStrength());
+        }
+    }
+
 
     // manipulative methods
     @Transactional

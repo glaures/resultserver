@@ -52,7 +52,7 @@ public class TeamStrengthsResource {
     }
 
     @PostMapping("/rest/teamstrengthsettings")
-    public TeamStrengthSettingsDto updateTeamStrengthSettings(@RequestBody TeamStrengthSettingsDto settings) {
+    public TeamStrengthSettingsDto updateTeamStrengthSettings(@RequestBody TeamStrengthSettingsDto settings) throws ServiceException {
         return teamStrengthService.updateTeamStrengthSettings(settings);
     }
 
