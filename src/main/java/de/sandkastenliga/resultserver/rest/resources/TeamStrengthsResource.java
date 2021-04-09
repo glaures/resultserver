@@ -7,20 +7,24 @@ import de.sandkastenliga.resultserver.rest.dtos.TeamStrengthDto;
 import de.sandkastenliga.resultserver.rest.dtos.TeamStrengthSnapshotViewDto;
 import de.sandkastenliga.resultserver.services.ServiceException;
 import de.sandkastenliga.resultserver.services.teamstrengths.TeamStrengthService;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
+@PreAuthorize("hasRole('ROLE_ADMIN')")
 public class TeamStrengthsResource {
 
-    @Autowired
-    private TeamStrengthSnapshotRepository teamStrengthSnapshotRepository;
-    @Autowired
-    private TeamStrengthService teamStrengthService;
+    private final TeamStrengthSnapshotRepository teamStrengthSnapshotRepository;
+    private final TeamStrengthService teamStrengthService;
 
-    @GetMapping("/rest/teamstrengthsview")
+    public TeamStrengthsResource(TeamStrengthSnapshotRepository teamStrengthSnapshotRepository, TeamStrengthService teamStrengthService) {
+        this.teamStrengthSnapshotRepository = teamStrengthSnapshotRepository;
+        this.teamStrengthService = teamStrengthService;
+    }
+
+    @GetMapping("/teamstrengthsview")
     public TeamStrengthSnapshotViewDto getTeamStrengthView(@RequestParam("c") Integer challengeId) throws ServiceException {
         TeamStrengthSnapshotViewDto res = new TeamStrengthSnapshotViewDto();
         res.setSettings(teamStrengthService.getOrCreateTeamStrengthSettingsByChallenge(challengeId));
@@ -51,24 +55,24 @@ public class TeamStrengthsResource {
         return res;
     }
 
-    @PostMapping("/rest/teamstrengthsettings")
+    @PostMapping("/teamstrengthsettings")
     public TeamStrengthSettingsDto updateTeamStrengthSettings(@RequestBody TeamStrengthSettingsDto settings) throws ServiceException {
         return teamStrengthService.updateTeamStrengthSettings(settings);
     }
 
-    @PostMapping("/rest/teamstrengthsnapshots")
+    @PostMapping("/teamstrengthsnapshots")
     public TeamStrengthSnapshotViewDto updateTeamStrengthSettings(@RequestBody TeamStrengthSnapshotDto snapshot) throws ServiceException {
         teamStrengthService.updateTeamStrengthSnapshot(snapshot);
         return getTeamStrengthView(snapshot.getChallenge().getId());
     }
 
-    @PutMapping("/rest/teamstrengthsnapshots")
+    @PutMapping("/teamstrengthsnapshots")
     public TeamStrengthSnapshotViewDto createNewSnapshot(@RequestParam("c") int challengeId) throws ServiceException {
         teamStrengthService.createSnapshot(challengeId);
         return getTeamStrengthView(challengeId);
     }
 
-    @DeleteMapping("/rest/teamstrengthsnapshots")
+    @DeleteMapping("/teamstrengthsnapshots")
     public TeamStrengthSnapshotViewDto deleteSnapshot(@RequestParam("s") int snapshotId) throws ServiceException {
         int challengeId = teamStrengthService.deleteSnapshot(snapshotId);
         return getTeamStrengthView(challengeId);

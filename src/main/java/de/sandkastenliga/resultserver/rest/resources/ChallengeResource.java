@@ -14,12 +14,15 @@ import java.util.List;
 @RestController
 public class ChallengeResource {
 
-    @Autowired
-    private ChallengeRepository challengeRepository;
-    @Autowired
-    private RegionRelevanceProvider regionRelevanceProvider;
+    private final ChallengeRepository challengeRepository;
+    private final RegionRelevanceProvider regionRelevanceProvider;
 
-    @GetMapping("/rest/challenge/ranking")
+    public ChallengeResource(ChallengeRepository challengeRepository, RegionRelevanceProvider regionRelevanceProvider) {
+        this.challengeRepository = challengeRepository;
+        this.regionRelevanceProvider = regionRelevanceProvider;
+    }
+
+    @GetMapping("/challenge/ranking")
     public List<RankDto> getChallengeRanking(@RequestParam("challenge") String challenge,
                                              @RequestParam("round") Integer round,
                                              @RequestParam("year") Integer year) {
@@ -31,14 +34,14 @@ public class ChallengeResource {
         return res;
     }
 
-    @GetMapping("/rest/challenges")
+    @GetMapping("/challenges")
     public List<ChallengeDto> getAllChallenges(@RequestParam("region") String region) {
         if(region.startsWith("("))
             region = region.substring(1, region.length() - 1);
         return challengeRepository.getAllChallengesByRegion(region);
     }
 
-    @GetMapping("/rest/regions")
+    @GetMapping("/regions")
     public String[] getAllRelevantRegions() {
         return regionRelevanceProvider.getRelevantRegions();
     }

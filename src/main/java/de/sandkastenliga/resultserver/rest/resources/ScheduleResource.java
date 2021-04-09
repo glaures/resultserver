@@ -5,11 +5,7 @@ import de.sandkastenliga.resultserver.services.ServiceException;
 import de.sandkastenliga.resultserver.services.match.MatchService;
 import de.sandkastenliga.resultserver.services.schedule.ScheduleService;
 import de.sandkastenliga.resultserver.utils.DateUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.text.ParseException;
 import java.util.Calendar;
@@ -17,14 +13,18 @@ import java.util.Date;
 import java.util.List;
 
 @RestController
+@RequestMapping("/schedule")
 public class ScheduleResource {
 
-    @Autowired
-    private MatchService matchService;
-    @Autowired
-    private ScheduleService scheduleService;
+    private final MatchService matchService;
+    private final ScheduleService scheduleService;
 
-    @GetMapping("/rest/schedule/{start}/{end}")
+    public ScheduleResource(MatchService matchService, ScheduleService scheduleService) {
+        this.matchService = matchService;
+        this.scheduleService = scheduleService;
+    }
+
+    @GetMapping("/{start}/{end}")
     public MatchDto[] getMatch(@PathVariable("start") Long start, @PathVariable("end") Long end) {
         Calendar startCal = Calendar.getInstance();
         startCal.setTime(new Date(start));
@@ -40,7 +40,7 @@ public class ScheduleResource {
         return res;
     }
 
-    @GetMapping("/rest/schedule/{region}/{challenge}/{day}")
+    @GetMapping("/{region}/{challenge}/{day}")
     public MatchDto[] getMatch(@PathVariable("region") String region,
                                @PathVariable("challenge") String challenge, @PathVariable("day") String day) throws ParseException {
         List<MatchDto> allMatches = matchService.getAllMatchesByRegionChallengeAndDay(region, challenge,
@@ -52,7 +52,7 @@ public class ScheduleResource {
         return res;
     }
 
-    @PostMapping("/rest/schedule/update/{date}")
+    @PostMapping("/update/{date}")
     public void getMatch(@PathVariable("date") Long date) throws ServiceException {
         Date startTime = new Date(date);
         scheduleService.updateSchedule(startTime);

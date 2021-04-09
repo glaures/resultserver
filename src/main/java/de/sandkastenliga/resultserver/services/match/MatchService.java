@@ -201,4 +201,11 @@ public class MatchService extends AbstractJpaDependentService {
         return cal.getTime();
     }
 
+    @Transactional
+    public MatchDto setFeatured(int id, boolean featured) throws ServiceException {
+        Match m = matchRepository.getOne(id);
+        m.setFeatured(featured);
+        matchRepository.save(m);
+        return getMatch(id);
+    }
 }

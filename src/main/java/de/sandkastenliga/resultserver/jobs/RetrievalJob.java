@@ -144,7 +144,7 @@ public class RetrievalJob {
         }
     }
 
-    @Scheduled(cron = "${timing.everyMorningCron}") // every day morning at 3am
+    @Scheduled(cron = "${timing.everyMorningCron}")
     public void cleanUp() {
         // delete unfinished outdated games
     }

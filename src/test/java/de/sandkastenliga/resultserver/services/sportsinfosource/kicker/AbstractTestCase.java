@@ -6,9 +6,10 @@ import de.sandkastenliga.resultserver.services.challenge.RegionRelevanceProvider
 import de.sandkastenliga.resultserver.services.sportsinfosource.KickerSportsInfoSource;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.*;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.ClassPathResource;
@@ -30,7 +31,7 @@ public abstract class AbstractTestCase {
     private final DateFormat timeFormat = new SimpleDateFormat("HH:mm");
     private KickerSportsInfoSource kickerSportsInfoSource;
 
-    @Before
+    @BeforeEach
     public void setup() throws IOException {
         this.kickerSportsInfoSource = new KickerSportsInfoSource(new RegionRelevanceProviderImpl());
     }
@@ -67,7 +68,7 @@ public abstract class AbstractTestCase {
     }
 
     private void checkResultList(List<MatchInfo> matchList) {
-        Assert.assertEquals(getMatchCount(), matchList.size());
+        assertEquals(getMatchCount(), matchList.size());
         // TODO check challenge count
         for (MatchInfoStruct mis : getMatchInfoStructs()) {
             logger.info(mis.toString());
@@ -80,17 +81,17 @@ public abstract class AbstractTestCase {
             if (region == null || region.equalsIgnoreCase((mi.getRegion()))) {
                 if (challenge == null || challenge.equalsIgnoreCase(mi.getChallenge())) {
                     if (team1.equalsIgnoreCase(mi.getTeam1()) && team2.equalsIgnoreCase(mi.getTeam2())) {
-                        Assert.assertEquals("result is wrong " + mi, goalsTeam1, mi.getGoalsTeam1());
-                        Assert.assertEquals("result is wrong " + mi, goalsTeam2, mi.getGoalsTeam2());
-                        Assert.assertEquals(state, mi.getState());
+                        assertEquals(goalsTeam1, mi.getGoalsTeam1(), "result is wrong " + mi) ;
+                        assertEquals(goalsTeam2, mi.getGoalsTeam2(), "result is wrong " + mi);
+                        assertEquals(state, mi.getState());
                         if (timeString != null) {
-                            Assert.assertEquals(timeString, timeFormat.format(mi.getStart()));
+                            assertEquals(timeString, timeFormat.format(mi.getStart()));
                         }
                         return;
                     }
                 }
             }
         }
-        Assert.fail("not found: " + challenge + "\t" + region + "\t" + team1 + "-" + team2 + "\t" + state + "\t" + goalsTeam1 + ":" + goalsTeam2);
+        fail("not found: " + challenge + "\t" + region + "\t" + team1 + "-" + team2 + "\t" + state + "\t" + goalsTeam1 + ":" + goalsTeam2);
     }
 }

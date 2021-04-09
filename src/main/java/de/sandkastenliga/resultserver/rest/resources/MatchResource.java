@@ -4,22 +4,23 @@ import de.sandkastenliga.resultserver.dtos.MatchDto;
 import de.sandkastenliga.resultserver.jobs.RetrievalJob;
 import de.sandkastenliga.resultserver.services.match.MatchService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
 
 @RestController
+@RequestMapping("/match")
 public class MatchResource {
 
-    @Autowired
-    private MatchService matchService;
-    @Autowired
-    private RetrievalJob retrievalJob;
+    private final MatchService matchService;
+    private final RetrievalJob retrievalJob;
 
-    @GetMapping("/rest/match")
+    public MatchResource(MatchService matchService, RetrievalJob retrievalJob) {
+        this.matchService = matchService;
+        this.retrievalJob = retrievalJob;
+    }
+
+    @GetMapping("/")
     public MatchDto getMatchByTeamsAndDate(@RequestParam("team1") String team1,
                                            @RequestParam("team2") String team2, @RequestParam("date") String date) {
         Date d = new Date(Long.parseLong(date));
@@ -30,7 +31,7 @@ public class MatchResource {
         return res;
     }
 
-    @GetMapping("/rest/match/{matchIds}")
+    @GetMapping("/{matchIds}")
     public MatchDto[] getMatchesByIdList(@PathVariable("matchIds") String matchIds) {
         List<Integer> idList = new ArrayList<Integer>();
         StringTokenizer tok = new StringTokenizer(matchIds, ",", false);

@@ -4,24 +4,23 @@ import de.sandkastenliga.resultserver.model.MatchInfo;
 import de.sandkastenliga.resultserver.services.challenge.RegionRelevanceProviderImpl;
 import de.sandkastenliga.resultserver.services.sportsinfosource.FifaRankingService;
 import de.sandkastenliga.resultserver.services.sportsinfosource.KickerSportsInfoSource;
-import de.sandkastenliga.resultserver.services.sportsinfosource.RegionRelevanceProvider;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.*;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class KickerSportsInfoSourceTest {
 
     private final Logger logger = LoggerFactory.getLogger(KickerSportsInfoSource.class);
     private KickerSportsInfoSource kickerSportsInfoSource;
 
-    @Before
+    @BeforeEach
     public void setup() throws IOException {
         FifaRankingService frs = new FifaRankingService();
         this.kickerSportsInfoSource = new KickerSportsInfoSource(new RegionRelevanceProviderImpl());
