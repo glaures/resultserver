@@ -30,7 +30,7 @@ public interface MatchRepository extends JpaRepository<Match, Integer> {
     @Query("select m from Match m where id in (:idList)")
     List<Match> getMatchesByIdList(@Param("idList") List<Integer> idList);
 
-    @Query("select m from Match m where m.start>=:startDate and m.start<=:endDate order by challenge, start desc")
+    @Query("select m from Match m where m.start>=:startDate and m.start<=:endDate order by m.challenge.level, m.challenge.id, m.start desc")
     List<Match> getAllMatchesAtDays(@Param("startDate") Date start, @Param("endDate") Date end);
 
     List<Match> findMatchesByChallenge_RegionAndChallenge_NameAndStart(String country, String challengeName, Date date);
