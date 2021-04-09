@@ -22,7 +22,7 @@ public class ChallengeResource {
         this.regionRelevanceProvider = regionRelevanceProvider;
     }
 
-    @GetMapping("/challenge/ranking")
+    @GetMapping("/challenges/ranking")
     public List<RankDto> getChallengeRanking(@RequestParam("challenge") String challenge,
                                              @RequestParam("round") Integer round,
                                              @RequestParam("year") Integer year) {
