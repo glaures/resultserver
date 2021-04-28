@@ -160,6 +160,8 @@ public class KickerSportsInfoSource {
                     } else {
                         logger.debug("no resultholder element for match " + team1 + " - " + team2);
                     }
+                    if(isUndetermined(team1) || isUndetermined(team2))
+                        matchState = MatchState.scheduled;
                     int i = 0;
                     i++;
                     MatchInfo mi = new MatchInfo();
@@ -183,6 +185,14 @@ public class KickerSportsInfoSource {
             }
         }
         return res;
+    }
+
+    private boolean isUndetermined(String team) {
+        final String t = team.toLowerCase();
+        return t.startsWith("sieger")
+                || t.startsWith("verlierer")
+                || t.startsWith("zweiter")
+                || t.startsWith("dritter");
     }
 
     private String getCorrelationIdFromGameRow(Element gameRow) {
