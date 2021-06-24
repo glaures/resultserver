@@ -192,7 +192,8 @@ public class KickerSportsInfoSource {
         return t.startsWith("sieger")
                 || t.startsWith("verlierer")
                 || t.startsWith("zweiter")
-                || t.startsWith("dritter");
+                || t.startsWith("dritter")
+                || t.contains("/");
     }
 
     private String getCorrelationIdFromGameRow(Element gameRow) {
